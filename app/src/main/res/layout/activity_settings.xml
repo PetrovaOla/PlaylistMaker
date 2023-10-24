@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarSetting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/arrow_back"
+        app:title="@string/settings"
+        app:titleTextAppearance="@style/ToolbarTextAppearance"
+        app:titleTextColor="@color/YPBlack" />
+
+    <TextView
+        android:id="@+id/darkThemeTv"
+        style="@style/setting_text"
+        android:text="@string/darkTheme"
+        app:layout_constraintEnd_toStartOf="@id/switchSetting"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbarSetting" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:showText="false"
+        app:layout_constraintBottom_toBottomOf="@+id/darkThemeTv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/darkThemeTv" />
+
+    <TextView
+        android:id="@+id/shareTv"
+        style="@style/setting_text"
+        android:text="@string/share"
+        app:layout_constraintEnd_toStartOf="@id/shareButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/darkThemeTv" />
+
+    <ImageButton
+        android:id="@+id/shareButton"
+        style="@style/image_button_setting"
+        android:src="@drawable/share"
+        app:layout_constraintBottom_toBottomOf="@id/shareTv"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintTop_toTopOf="@id/shareTv" />
+
+    <TextView
+        android:id="@+id/supportTv"
+        style="@style/setting_text"
+        android:text="@string/support"
+        android:textAppearance="@style/setting_text"
+        app:layout_constraintEnd_toStartOf="@id/supportButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/shareTv" />
+
+    <ImageButton
+        android:id="@+id/supportButton"
+        style="@style/image_button_setting"
+        android:src="@drawable/support"
+        app:layout_constraintBottom_toBottomOf="@+id/supportTv"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/supportTv" />
+
+    <TextView
+        android:id="@+id/user_agreementTv"
+        style="@style/setting_text"
+        android:text="@string/user_agreement"
+        app:layout_constraintEnd_toStartOf="@id/user_agreementButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/supportTv" />
+
+    <ImageButton
+        android:id="@+id/user_agreementButton"
+        style="@style/image_button_setting"
+        android:src="@drawable/arrow_forward"
+        app:layout_constraintBottom_toBottomOf="@+id/user_agreementTv"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/user_agreementTv" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
