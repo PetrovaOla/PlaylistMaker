@@ -15,34 +15,32 @@
         app:title="@string/toolbar_title"
         app:titleTextAppearance="@style/ToolbarTextAppearance"
         app:titleTextColor="@color/white"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"
+        />
 
     <Button
         android:id="@+id/search_button"
         style="@style/Button"
-        android:layout_width="match_parent"
-        android:layout_height="220dp"
         android:background="@drawable/custom_button"
         android:text="@string/search"
         app:icon="@drawable/search"
+        android:layout_weight="1"
         />
 
     <Button
         android:id="@+id/medialibrary_button"
         style="@style/Button"
-        android:layout_width="match_parent"
-        android:layout_height="220dp"
         android:background="@drawable/custom_button"
         android:text="@string/medialibrary"
-        app:icon="@drawable/media" />
+        app:icon="@drawable/media"
+        android:layout_weight="1"/>
 
     <Button
         android:id="@+id/settings_button"
         style="@style/Button"
-        android:layout_width="match_parent"
-        android:layout_height="220dp"
         android:background="@drawable/custom_button"
         android:text="@string/settings"
-        app:icon="@drawable/settings" />
+        app:icon="@drawable/settings"
+        android:layout_weight="1"/>
 
 </LinearLayout>
