@@ -28,7 +28,7 @@
         />
 
     <Button
-        android:id="@+id/medialibrary_button"
+        android:id="@+id/mediaLibrary_button"
         style="@style/Button"
         android:background="@drawable/custom_button"
         android:text="@string/medialibrary"
