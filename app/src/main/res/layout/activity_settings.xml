@@ -3,14 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarSetting"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
+        style="@style/ToolbarStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/arrow_back"
@@ -47,6 +44,7 @@
     <ImageButton
         android:id="@+id/shareButton"
         style="@style/image_button_setting"
+        android:contentDescription="@string/share"
         android:src="@drawable/share"
         app:layout_constraintBottom_toBottomOf="@id/shareTv"
         app:layout_constraintEnd_toEndOf="@id/guideline"
@@ -64,6 +62,7 @@
     <ImageButton
         android:id="@+id/supportButton"
         style="@style/image_button_setting"
+        android:contentDescription="@string/support"
         android:src="@drawable/support"
         app:layout_constraintBottom_toBottomOf="@+id/supportTv"
         app:layout_constraintEnd_toEndOf="@id/guideline"
@@ -80,6 +79,7 @@
     <ImageButton
         android:id="@+id/user_agreementButton"
         style="@style/image_button_setting"
+        android:contentDescription="@string/user_agreement"
         android:src="@drawable/arrow_forward"
         app:layout_constraintBottom_toBottomOf="@+id/user_agreementTv"
         app:layout_constraintEnd_toEndOf="@id/guideline"
@@ -91,6 +91,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="16dp" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
