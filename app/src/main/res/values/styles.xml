@@ -13,7 +13,7 @@
         <item name="android:layout_gravity">top</item>
     </style>
 
-    <style name="Button" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
+    <style name="Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
