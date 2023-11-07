@@ -10,7 +10,7 @@
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/YGrey</item>
         <item name="colorSecondaryVariant">@color/white</item>
-        <item name="colorOnSecondary">@color/YWhite</item>
+        <item name="colorOnSecondary">@color/YLightGray</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimary</item>
 
