@@ -3,21 +3,24 @@ package petrova.ola.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputLayout as Input
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+
 
 class SearchActivity : AppCompatActivity() {
+    private lateinit var inputEditText: TextInputEditText
+    private var searchQuery = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarSearch)
-        val inputLayoutText = findViewById<Input>(R.id.input_layout_text)
-        val inputEditText =
-            findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.input_edit_text)
-
+        val inputLayoutText = findViewById<TextInputLayout>(R.id.input_layout_text)
+        inputEditText = findViewById(R.id.input_edit_text)
 
         toolbar.setNavigationOnClickListener {
             val mainActivityIntent = Intent(this, MainActivity::class.java)
@@ -29,7 +32,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
+                searchQuery=s?.toString()?:""
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -47,4 +50,21 @@ class SearchActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        outState.putString("search", inputEditText.getText().toString());
+    }
+
+    override fun onRestoreInstanceState(
+        savedInstanceState: Bundle?,
+        persistentState: PersistableBundle?
+    ) {
+        super.onRestoreInstanceState(savedInstanceState, persistentState)
+        savedInstanceState?.let {
+            inputEditText.setText(it.getString("search") ?: "")
+        }
+
+    }
+
 }
