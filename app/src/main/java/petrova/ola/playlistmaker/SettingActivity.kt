@@ -1,20 +1,16 @@
 package petrova.ola.playlistmaker
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_NIGHT_UNDEFINED
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
-import java.lang.IllegalStateException
 
 
 class SettingActivity : AppCompatActivity() {
@@ -78,28 +74,14 @@ class SettingActivity : AppCompatActivity() {
             }
         }
         shareTv.setOnClickListener {
-            val intent = Intent.makeMainSelectorActivity(
-                    Intent.ACTION_MAIN, Intent.CATEGORY_APP_MARKET)
+            val intent = Intent(Intent.ACTION_SEND)
+            val shareContent = getString(R.string.share_app_text)
+            intent.setType("text/plain")
 
-            if (intent.resolveActivity(packageManager) != null) {
-                startActivity(intent)
-
-            } else {
-                val error = resources.getString(R.string.message_error)
-                Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
-            }
-
-//            val appId = "com.Practicum.PlaylistMaker"
-//            val shareintent = Intent(Intent.ACTION_SEND)
-//            shareintent.type = "text/plain"
-//            shareintent.putExtra(
-//                Intent.EXTRA_TEXT,
-//                getString(R.string.share_app_text, appId)
-//            )
-//            startActivity(Intent.createChooser(shareintent, getString(R.string.app_name)))
-
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject))
+            intent.putExtra(Intent.EXTRA_TEXT, shareContent)
+            startActivity(Intent.createChooser(intent, getString(R.string.share_using)))
         }
-
 
 
     }
