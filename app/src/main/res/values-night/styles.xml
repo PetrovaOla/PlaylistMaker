@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<style name="ActivityStyle">
+    <item name="android:background"></item>
+</style>
+    <style name="ToolbarTextAppearance">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/sp22</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
+    <style name="ToolbarStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">top</item>
+
+    </style>
+
+    <style name="ToolbarSettingStyle" parent="ToolbarStyle">
+        <item name="android:titleTextColor">@color/white</item>
+    </style>
+
+    <style name="Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">@dimen/dp16</item>
+        <item name="android:layout_marginBottom">@dimen/dp16</item>
+        <!--<item name="android:background">@drawable/custom_button</item>-->
+        <item name="cornerRadius">16dp</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:layout_weight">1</item>
+        <!--text-->
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/sp22</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="textAllCaps">false</item>
+        <!--background-->
+        <!-- <item name="backgroundTint">@color/white</item>-->
+        <!--<item name="shapeAppearance">?attr/shapeAppearanceSmallComponent</item>-->
+        <item name="iconTint">@color/YPBlack</item>
+        <item name="iconPadding">8dp</item>
+        <item name="iconGravity">textStart</item>
+
+    </style>
+
+    <style name="setting_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:layout_marginStart">@dimen/dp16</item>
+        <item name="android:paddingVertical">@dimen/dp20</item>
+        <item name="layout_constraintHorizontal_bias">0</item>
+    </style>
+
+    <style name="image_button_setting">
+        <item name="backgroundTint">@color/YPBlack</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="MySwitch" parent="Theme.AppCompat.Light">
+        <!-- активное состояние (30% прозрачности для фона) -->
+        <item name="colorControlActivated">@color/switch_circle</item>
+
+        <!-- неактивное состояние ползунка -->
+        <item name="colorSwitchThumbNormal">@color/switch_circle</item>
+
+        <!-- цвет дорожки для неактивного состояния (30% прозрачности) -->
+        <item name="android:colorForeground">@color/switch_stick</item>
+    </style>
+</resources>
