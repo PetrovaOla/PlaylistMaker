@@ -23,6 +23,9 @@ class SettingActivity : AppCompatActivity() {
         setContentView(binding.root)
         val switchSetting = binding.switchSetting
 
+        binding.toolbarSetting.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
         switchSetting.setChecked(
             when (resources.configuration.uiMode and UI_MODE_NIGHT_MASK) {
                 UI_MODE_NIGHT_YES -> true
@@ -40,10 +43,7 @@ class SettingActivity : AppCompatActivity() {
 
         }
 
-        binding.toolbarSetting.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
-        binding.supportTv.setOnClickListener {
+        binding.supportButton.setOnClickListener {
             val mailSubject = resources.getString(R.string.messageSubject)
             val mailBody = getResources().getString(R.string.message)
             val shareIntent = Intent(Intent.ACTION_SENDTO)
@@ -59,7 +59,16 @@ class SettingActivity : AppCompatActivity() {
                 Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
             }
         }
-        binding.userAgreementTv.setOnClickListener {
+        binding.shareButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_SEND)
+            val shareContent = getString(R.string.share_app_text)
+            intent.setType("text/plain")
+
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject))
+            intent.putExtra(Intent.EXTRA_TEXT, shareContent)
+            startActivity(Intent.createChooser(intent, getString(R.string.share_using)))
+        }
+        binding.userAgreementButton.setOnClickListener {
             val url = resources.getString(R.string.url)
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
 
@@ -71,15 +80,7 @@ class SettingActivity : AppCompatActivity() {
                 Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
             }
         }
-        binding.shareTv.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SEND)
-            val shareContent = getString(R.string.share_app_text)
-            intent.setType("text/plain")
 
-            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject))
-            intent.putExtra(Intent.EXTRA_TEXT, shareContent)
-            startActivity(Intent.createChooser(intent, getString(R.string.share_using)))
-        }
     }
 
     companion object {
