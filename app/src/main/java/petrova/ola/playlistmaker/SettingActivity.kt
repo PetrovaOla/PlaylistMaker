@@ -1,28 +1,27 @@
 package petrova.ola.playlistmaker
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.os.Bundle
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.SwitchCompat
+import petrova.ola.playlistmaker.databinding.ActivitySettingsBinding
 
 
 class SettingActivity : AppCompatActivity() {
+    private val binding by lazy {
+        ActivitySettingsBinding.inflate(layoutInflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarSetting)
-        val supportTv = findViewById<TextView>(R.id.supportTv)
-        val userAgreementTv = findViewById<TextView>(R.id.user_agreementTv)
-        val shareTv = findViewById<TextView>(R.id.shareTv)
-        val switchSetting = findViewById<SwitchCompat>(R.id.switchSetting)
-
+        setContentView(binding.root)
+        val switchSetting = binding.switchSetting
 
         switchSetting.setChecked(
             when (resources.configuration.uiMode and UI_MODE_NIGHT_MASK) {
@@ -41,11 +40,10 @@ class SettingActivity : AppCompatActivity() {
 
         }
 
-        toolbar.setNavigationOnClickListener {
-            val mainActivityIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainActivityIntent)
+        binding.toolbarSetting.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
-        supportTv.setOnClickListener {
+        binding.supportTv.setOnClickListener {
             val mailSubject = resources.getString(R.string.messageSubject)
             val mailBody = getResources().getString(R.string.message)
             val shareIntent = Intent(Intent.ACTION_SENDTO)
@@ -61,7 +59,7 @@ class SettingActivity : AppCompatActivity() {
                 Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
             }
         }
-        userAgreementTv.setOnClickListener {
+        binding.userAgreementTv.setOnClickListener {
             val url = resources.getString(R.string.url)
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
 
@@ -73,7 +71,7 @@ class SettingActivity : AppCompatActivity() {
                 Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
             }
         }
-        shareTv.setOnClickListener {
+        binding.shareTv.setOnClickListener {
             val intent = Intent(Intent.ACTION_SEND)
             val shareContent = getString(R.string.share_app_text)
             intent.setType("text/plain")
@@ -82,7 +80,9 @@ class SettingActivity : AppCompatActivity() {
             intent.putExtra(Intent.EXTRA_TEXT, shareContent)
             startActivity(Intent.createChooser(intent, getString(R.string.share_using)))
         }
+    }
 
-
+    companion object {
+        fun newIntent(context: Context) = Intent(context, SettingActivity::class.java)
     }
 }

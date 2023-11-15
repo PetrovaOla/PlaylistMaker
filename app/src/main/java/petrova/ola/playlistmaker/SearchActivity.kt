@@ -8,23 +8,23 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
 
 
 class SearchActivity : AppCompatActivity() {
-    private lateinit var inputEditText: TextInputEditText
+
+    private val binding by lazy {
+        ActivitySearchBinding.inflate(layoutInflater)
+    }
+    val inputEditText = binding.inputEditText
+
     private var searchQuery = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarSearch)
-        val inputLayoutText = findViewById<TextInputLayout>(R.id.input_layout_text)
-        inputEditText = findViewById(R.id.input_edit_text)
+        setContentView(binding.root)
 
-        toolbar.setNavigationOnClickListener {
-            val mainActivityIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainActivityIntent)
+        binding.toolbarSearch.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -32,7 +32,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchQuery=s?.toString()?:""
+                searchQuery = s?.toString() ?: ""
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -41,7 +41,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         inputEditText.addTextChangedListener(textWatcher)
-        inputLayoutText.setEndIconOnClickListener {
+        binding.inputLayoutText.setEndIconOnClickListener {
             inputEditText.setText("")
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -53,7 +53,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         super.onSaveInstanceState(outState, outPersistentState)
-        outState.putString("search", inputEditText.getText().toString());
+        outState.putString("search", inputEditText.getText().toString())
     }
 
     override fun onRestoreInstanceState(
@@ -65,6 +65,10 @@ class SearchActivity : AppCompatActivity() {
             inputEditText.setText(it.getString("search") ?: "")
         }
 
+    }
+
+    companion object {
+        fun newIntent(context: Context) = Intent(context, SearchActivity::class.java)
     }
 
 }
