@@ -47,8 +47,8 @@ class SettingActivity : AppCompatActivity() {
             val mailSubject = resources.getString(R.string.messageSubject)
             val mailBody = getResources().getString(R.string.message)
             val shareIntent = Intent(Intent.ACTION_SENDTO)
-            shareIntent.data = Uri.parse("mailto:")
-            shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("ola.mzsk@ya.ru"))
+            shareIntent.data = Uri.parse(getString(R.string.mailto))
+            shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email)))
             shareIntent.putExtra(Intent.EXTRA_TEXT, mailSubject)
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, mailBody)
 
@@ -62,7 +62,7 @@ class SettingActivity : AppCompatActivity() {
         binding.shareButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_SEND)
             val shareContent = getString(R.string.share_app_text)
-            intent.setType("text/plain")
+            intent.setType(getString(R.string.text_plain))
 
             intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject))
             intent.putExtra(Intent.EXTRA_TEXT, shareContent)

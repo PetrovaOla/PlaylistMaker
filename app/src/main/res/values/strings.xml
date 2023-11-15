@@ -18,4 +18,7 @@
     </string>
     <string name="share_subject">Яндекс Практикум</string>
     <string name="share_using">Отправить сообщение</string>
+    <string name="email">ola.mzsk@ya.ru</string>
+    <string name="mailto">mailto:</string>
+    <string name="text_plain">text/plain</string>
 </resources>
