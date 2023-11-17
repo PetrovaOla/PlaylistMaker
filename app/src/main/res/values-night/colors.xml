@@ -5,6 +5,7 @@
     <color name="arrow">#FFFFFFFF</color>
     <color name="icon_color_setting">#FFFFFFFF</color>
     <color name="hint_color_search">#FF000000</color>
-
+    <color name="item_band_text_color">#FFFFFF</color>
+    <color name="item_text_color">#FFFFFF</color>
 
 </resources>

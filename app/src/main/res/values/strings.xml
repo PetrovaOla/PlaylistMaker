@@ -21,4 +21,7 @@
     <string name="email">ola.mzsk@ya.ru</string>
     <string name="mailto">mailto:</string>
     <string name="text_plain">text/plain</string>
+    <string name="track_name">track_name</string>
+    <string name="track_artist">artist</string>
+    <string name="track_time">time</string>
 </resources>
