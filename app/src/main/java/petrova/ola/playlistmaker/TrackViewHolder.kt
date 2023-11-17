@@ -6,11 +6,12 @@ import petrova.ola.playlistmaker.data.Track
 import petrova.ola.playlistmaker.databinding.ItemTrackBinding
 
 class TrackViewHolder(val binding: ItemTrackBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(model: Track) {
+   /* fun bind(model: Track) {
         binding.trackItemName.text = model.trackName
         binding.trackItemArtist.text = model.artistName
         binding.itemTime.text = model.trackTime
-    }
+        binding.imageTrack.sr(model.artworkUrl100)
+    }*/
 
 
 
