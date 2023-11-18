@@ -54,7 +54,8 @@
         android:src="@drawable/ic"
         app:layout_constraintEnd_toStartOf="@id/item_time"
         app:layout_constraintStart_toEndOf="@id/track_item_artist"
-        app:layout_constraintTop_toBottomOf="@id/track_item_name" />
+        app:layout_constraintTop_toBottomOf="@id/track_item_name"
+        app:layout_constraintHorizontal_bias="0"/>
 
     <TextView
         android:id="@+id/item_time"
@@ -72,7 +73,6 @@
         android:layout_width="@dimen/dp24"
         android:layout_height="@dimen/dp24"
         android:layout_marginVertical="@dimen/dp18"
-
         android:layout_marginEnd="@dimen/dp12"
         android:src="@drawable/arrow_forward"
         app:layout_constraintBottom_toBottomOf="parent"
