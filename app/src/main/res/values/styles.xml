@@ -36,7 +36,23 @@
         <item name="iconGravity">textStart</item>
 
     </style>
+    <style name="Button_update" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+<!--        <item name="android:foreground">?attr/selectableItemBackground</item>-->
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
 
+        <item name="cornerRadius">54dp</item>
+        <item name="backgroundTint">@color/placeholder_search</item>
+
+        <!--text-->
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/sp14</item>
+        <item name="android:textColor">@color/update</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="textAllCaps">false</item>
+
+
+    </style>
     <style name="setting_text">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">0dp</item>

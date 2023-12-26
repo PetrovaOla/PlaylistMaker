@@ -7,5 +7,6 @@
     <color name="hint_color_search">#FF000000</color>
     <color name="item_band_text_color">#FFFFFF</color>
     <color name="item_text_color">#FFFFFF</color>
-
+    <color name="placeholder_search">#FFFFFF</color>
+    <color name="update">#1A1B22</color>
 </resources>
