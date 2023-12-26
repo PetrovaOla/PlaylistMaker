@@ -20,14 +20,14 @@
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:cursorColor="@color/cursor"
         app:endIconDrawable="@drawable/cancel"
         app:endIconMode="clear_text"
         app:endIconTint="@color/hint_color_search"
         app:hintEnabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbarSearch"
-        app:cursorColor="@color/cursor">
+        app:layout_constraintTop_toBottomOf="@id/toolbarSearch">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_edit_text"
@@ -39,25 +39,114 @@
             android:drawablePadding="@dimen/dp8"
             android:fontFamily="@font/ys_text_regular"
             android:hint="@string/search"
+            android:imeOptions="actionDone"
             android:inputType="text"
-            android:lines="1"
             android:padding="@dimen/dp8"
+            android:singleLine="true"
             android:textColor="@color/black"
             android:textColorHint="@color/hint_color_search"
             android:textCursorDrawable="@drawable/cursor"
-            android:textSize="16sp"
-            android:imeOptions="flagNoExtractUi"/>
+            android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_not_found"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="not_found_txt, img_placeholder" />
+
+    <ImageView
+        android:id="@+id/img_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="102dp"
+        android:src="@drawable/not_found"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_layout_text" />
+
+    <TextView
+        android:id="@+id/not_found_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp16"
+        android:fontFamily="@font/ys_display_medium"
+        android:text="@string/not_found_txt"
+        android:textAlignment="center"
+        android:textColor="@color/placeholder_search"
+        android:textFontWeight="400"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/img_placeholder" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_not_internet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="img_placeholder_int, not_int_txt, check_connection, update_button" />
+
+    <ImageView
+        android:id="@+id/img_placeholder_int"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="102dp"
+        android:src="@drawable/not_internet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_layout_text" />
+
+    <TextView
+        android:id="@+id/not_int_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp16"
+        android:fontFamily="@font/ys_display_medium"
+        android:text="@string/not_internet_txt"
+        android:textAlignment="center"
+        android:textColor="@color/placeholder_search"
+        android:textFontWeight="400"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/img_placeholder_int" />
+
+    <TextView
+        android:id="@+id/check_connection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp24"
+        android:layout_marginTop="@dimen/dp16"
+        android:fontFamily="@font/ys_display_medium"
+        android:text="@string/check_connection_txt"
+        android:textAlignment="center"
+        android:textColor="@color/placeholder_search"
+        android:textFontWeight="400"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/not_int_txt" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/track_list_recycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/dp16"
-        app:layout_constraintTop_toBottomOf="@id/input_layout_text"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem = "@layout/item_track"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_layout_text"
+        tools:listitem="@layout/item_track" />
 
+
+    <Button
+        android:id="@+id/update_button"
+        style="@style/Button_update"
+        android:layout_marginTop="@dimen/dp24"
+        android:text="@string/update_txt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/check_connection" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

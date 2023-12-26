@@ -18,4 +18,6 @@
     <color name="cursor">#3772E7</color>
     <color name="item_band_text_color">#AEAFB4</color>
     <color name="item_text_color">#FF000000</color>
+    <color name="placeholder_search">#1A1B22</color>
+    <color name="update">#FFFFFF</color>
 </resources>
