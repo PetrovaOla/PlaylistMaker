@@ -182,6 +182,7 @@ class SearchActivity : AppCompatActivity() {
                 TypeToken.getArray(Track::class.java).type
             )
         )
+        rvAdapter.notifyDataSetChanged()
 
         groupNotInternet.visibility = savedInstanceState.getInt(NOT_INTERNET, View.GONE)
         groupNotFound.visibility = savedInstanceState.getInt(NOT_FOUND, View.GONE)
