@@ -20,4 +20,5 @@
     <color name="item_text_color">#FF000000</color>
     <color name="placeholder_search">#1A1B22</color>
     <color name="update">#FFFFFF</color>
+    <color name="text_switch">#000000</color>
 </resources>
