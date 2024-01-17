@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker.data
+package petrova.ola.playlistmaker.model
 
 data class Track(
     val trackName: String, // Название композиции

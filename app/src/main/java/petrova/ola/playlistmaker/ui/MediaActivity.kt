@@ -1,7 +1,8 @@
-package petrova.ola.playlistmaker
+package petrova.ola.playlistmaker.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import petrova.ola.playlistmaker.R
 
 class MediaActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

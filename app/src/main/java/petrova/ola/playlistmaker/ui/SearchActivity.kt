@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker
+package petrova.ola.playlistmaker.ui
 
 import android.content.Context
 import android.content.Intent
@@ -18,9 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import petrova.ola.playlistmaker.api.ApiService
-import petrova.ola.playlistmaker.data.Track
-import petrova.ola.playlistmaker.data.TrackResponse
+import petrova.ola.playlistmaker.model.api.ApiService
+import petrova.ola.playlistmaker.model.Track
+import petrova.ola.playlistmaker.model.TrackResponse
 import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback

@@ -1,6 +1,6 @@
-package petrova.ola.playlistmaker.api
+package petrova.ola.playlistmaker.model.api
 
-import petrova.ola.playlistmaker.data.TrackResponse
+import petrova.ola.playlistmaker.model.TrackResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

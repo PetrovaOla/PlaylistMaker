@@ -1,20 +1,16 @@
-package petrova.ola.playlistmaker
+package petrova.ola.playlistmaker.ui
 
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.Configuration.UI_MODE_NIGHT_MASK
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.switchmaterial.SwitchMaterial
-import petrova.ola.playlistmaker.App.Companion.APP_PREFERENCES
-import petrova.ola.playlistmaker.App.Companion.NIGHT_MODE
+import petrova.ola.playlistmaker.R
+import petrova.ola.playlistmaker.ui.App.Companion.APP_PREFERENCES
+import petrova.ola.playlistmaker.ui.App.Companion.NIGHT_MODE
 import petrova.ola.playlistmaker.databinding.ActivitySettingsBinding
 
 

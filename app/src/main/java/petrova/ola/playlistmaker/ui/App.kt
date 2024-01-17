@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker
+package petrova.ola.playlistmaker.ui
 
 import android.app.Application
 import android.content.SharedPreferences
