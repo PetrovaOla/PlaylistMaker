@@ -79,14 +79,10 @@
        <item name="textAllCaps">false</item>
        <item name="android:paddingVertical">@dimen/dp20</item>
        <item name="layout_constraintHorizontal_bias">0</item>
-    <!-- активное состояние (30% прозрачности для фона) -->
-    <item name="colorControlActivated">@color/switch_circle</item>
 
-    <!-- неактивное состояние ползунка -->
-    <item name="colorSwitchThumbNormal">@color/switch_circle</item>
-
-    <!-- цвет дорожки для неактивного состояния (30% прозрачности) -->
-    <item name="android:colorForeground">@color/switch_stick</item>
+       <item name="thumbTint">@color/switch_circle</item>
+       <item name="trackTint">@color/switch_stick</item>
+       <item name="trackTintMode">src_in</item>
 </style>
 
 

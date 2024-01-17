@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<style name="ActivityStyle">
-    <item name="android:background"></item>
-</style>
+
     <style name="ToolbarTextAppearance">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/sp22</item>
@@ -69,13 +67,10 @@
         <item name="textAllCaps">false</item>
         <item name="android:paddingVertical">@dimen/dp20</item>
         <item name="layout_constraintHorizontal_bias">0</item>
-        <!-- активное состояние (30% прозрачности для фона) -->
-        <item name="colorControlActivated">@color/switch_circle</item>
 
-        <!-- неактивное состояние ползунка -->
-        <item name="colorSwitchThumbNormal">@color/switch_circle</item>
+        <item name="thumbTint">@color/switch_circle</item>
+        <item name="trackTint">@color/switch_stick</item>
 
-        <!-- цвет дорожки для неактивного состояния (30% прозрачности) -->
-        <item name="android:colorForeground">@color/switch_stick</item>
-    </style>
+       <item name="trackTintMode">src_in</item>
+   </style>
 </resources>

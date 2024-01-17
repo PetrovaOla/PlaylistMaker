@@ -19,6 +19,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/darkTheme"
+        app:useMaterialThemeColors="false"
         style="@style/MySwitch"
         android:textColor="@color/text_switch"
         app:layout_constraintEnd_toStartOf="@id/guideline"
