@@ -93,10 +93,14 @@ class SearchActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            historySearchTv.visibility =
-                if (hasFocus && inputEditText.text!!.isEmpty()) View.VISIBLE else View.GONE
-            clearHistoryButton.visibility =
-                if (hasFocus && inputEditText.text!!.isEmpty()) View.VISIBLE else View.GONE
+            val historyVisible = if (
+                hasFocus &&
+                inputEditText.text!!.isEmpty() &&
+                trackListHistory.isNotEmpty()
+            ) View.VISIBLE else View.GONE
+
+            historySearchTv.visibility = historyVisible
+            clearHistoryButton.visibility = historyVisible
             recycler.adapter =
                 if (hasFocus && inputEditText.text!!.isEmpty()) rvAdapterHistory else rvAdapter
         }
@@ -107,10 +111,13 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchQuery = s?.toString() ?: SEARCH_EMPTY
-                historySearchTv.visibility =
-                    if (inputEditText.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
-                clearHistoryButton.visibility =
-                    if (inputEditText.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
+                val historyVisible = if (
+                    inputEditText.hasFocus() &&
+                    s?.isEmpty() == true &&
+                    trackListHistory.isNotEmpty()
+                ) View.VISIBLE else View.GONE
+                historySearchTv.visibility = historyVisible
+                clearHistoryButton.visibility = historyVisible
                 recycler.adapter =
                     if (inputEditText.hasFocus() && inputEditText.text!!.isEmpty()) rvAdapterHistory else rvAdapter
             }
@@ -148,11 +155,11 @@ class SearchActivity : AppCompatActivity() {
         recycler.layoutManager = LinearLayoutManager(this)
 
         rvAdapter = SearchRecyclerAdapter(trackList) {
-            updateHistory(it)
+            appendHistory(it)
         }
 
         rvAdapterHistory = SearchRecyclerAdapter(trackListHistory) {
-            updateHistory(it)
+            appendHistory(it)
         }
         recycler.adapter = rvAdapterHistory
 
@@ -166,11 +173,25 @@ class SearchActivity : AppCompatActivity() {
                 rvAdapterHistory.notifyItemRangeRemoved(0, this)
             }
             callSave()
+            updateHistoryVisibility()
         }
     }
 
-    private fun updateHistory(track: Track) {
+    private fun updateHistoryVisibility() {
+        with(
+            if (
+                inputEditText.hasFocus() &&
+                inputEditText.text!!.isEmpty() &&
+                trackListHistory.isNotEmpty()
+            ) View.VISIBLE
+            else View.GONE
+        ) {
+            historySearchTv.visibility = this
+            clearHistoryButton.visibility = this
+        }
+    }
 
+    private fun appendHistory(track: Track) {
         when (val indexOf = trackListHistory.indexOf(track)) {
             -1 -> {
                 trackListHistory.add(0, track)
@@ -192,6 +213,7 @@ class SearchActivity : AppCompatActivity() {
             trackListHistory.removeAt(i)
         rvAdapterHistory.notifyItemRangeRemoved(10, trackListHistory.size - 1)
 
+        updateHistoryVisibility()
         callSave()
     }
 
@@ -263,6 +285,11 @@ class SearchActivity : AppCompatActivity() {
 
         groupNotInternet.visibility = savedInstanceState.getInt(NOT_INTERNET, View.GONE)
         groupNotFound.visibility = savedInstanceState.getInt(NOT_FOUND, View.GONE)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        inputEditText.requestFocus()
     }
 
     companion object {
