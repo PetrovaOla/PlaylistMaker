@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker
+package petrova.ola.playlistmaker.ui
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isGone
@@ -18,9 +19,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import petrova.ola.playlistmaker.api.ApiService
-import petrova.ola.playlistmaker.data.Track
-import petrova.ola.playlistmaker.data.TrackResponse
+import petrova.ola.playlistmaker.model.api.ApiService
+import petrova.ola.playlistmaker.model.Track
+import petrova.ola.playlistmaker.model.TrackResponse
 import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -36,11 +37,15 @@ class SearchActivity : AppCompatActivity() {
     }
     private lateinit var inputEditText: TextInputEditText
     private lateinit var rvAdapter: SearchRecyclerAdapter
+    private lateinit var rvAdapterHistory: SearchRecyclerAdapter
     private lateinit var trackList: MutableList<Track>
+    private var trackListHistory: MutableList<Track> = mutableListOf()
     private lateinit var recycler: RecyclerView
     private lateinit var groupNotFound: Group
     private lateinit var groupNotInternet: Group
     private lateinit var updateButton: Button
+    private lateinit var historySearchTv: TextView
+    private lateinit var clearHistoryButton: Button
     private val gson = Gson()
     private var searchQuery = SEARCH_EMPTY
 
@@ -50,12 +55,30 @@ class SearchActivity : AppCompatActivity() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
+    private fun callSave() {
+        val sharedPreferences = getSharedPreferences(APPLICATION_SHARE_ID, MODE_PRIVATE)
+        sharedPreferences.edit()
+            .putString(SEARCH_HISTORY_SHARED, gson.toJson(trackListHistory))
+            .apply()
+    }
+
     private val apiService = retrofit.create(ApiService::class.java)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+
+        val sharedPreferences = getSharedPreferences(APPLICATION_SHARE_ID, MODE_PRIVATE)
+
+        trackListHistory.addAll(
+            gson.fromJson(
+                sharedPreferences.getString(SEARCH_HISTORY_SHARED, "[]"),
+                Array<Track>::class.java
+            )
+        )
+
         groupNotFound = binding.groupNotFound
         groupNotInternet = binding.groupNotInternet
         groupNotFound.isGone = true
@@ -63,11 +86,24 @@ class SearchActivity : AppCompatActivity() {
         recycler = binding.trackListRecycler
         inputEditText = binding.inputEditText
         updateButton = binding.updateButton
+        clearHistoryButton = binding.clearHistoryBtn
+        historySearchTv = binding.historySearchTv
 
         binding.toolbarSearch.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            val historyVisible = if (
+                hasFocus &&
+                inputEditText.text!!.isEmpty() &&
+                trackListHistory.isNotEmpty()
+            ) View.VISIBLE else View.GONE
 
+            historySearchTv.visibility = historyVisible
+            clearHistoryButton.visibility = historyVisible
+            recycler.adapter =
+                if (hasFocus && inputEditText.text!!.isEmpty()) rvAdapterHistory else rvAdapter
+        }
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
@@ -75,6 +111,15 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchQuery = s?.toString() ?: SEARCH_EMPTY
+                val historyVisible = if (
+                    inputEditText.hasFocus() &&
+                    s?.isEmpty() == true &&
+                    trackListHistory.isNotEmpty()
+                ) View.VISIBLE else View.GONE
+                historySearchTv.visibility = historyVisible
+                clearHistoryButton.visibility = historyVisible
+                recycler.adapter =
+                    if (inputEditText.hasFocus() && inputEditText.text!!.isEmpty()) rvAdapterHistory else rvAdapter
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -82,13 +127,13 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
+
         inputEditText.addTextChangedListener(textWatcher)
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // ВЫПОЛНЯЙТЕ ПОИСКОВЫЙ ЗАПРОС ЗДЕСЬ
                 requestHandler(searchQuery)
                 inputEditText.clearFocus()
-                true
             }
 
             false
@@ -108,14 +153,68 @@ class SearchActivity : AppCompatActivity() {
 
         trackList = mutableListOf()
         recycler.layoutManager = LinearLayoutManager(this)
-        rvAdapter = SearchRecyclerAdapter(trackList)
-        recycler.adapter = rvAdapter
 
+        rvAdapter = SearchRecyclerAdapter(trackList) {
+            appendHistory(it)
+        }
+
+        rvAdapterHistory = SearchRecyclerAdapter(trackListHistory) {
+            appendHistory(it)
+        }
+        recycler.adapter = rvAdapterHistory
 
         updateButton.setOnClickListener {
             requestHandler(searchQuery)
         }
 
+        clearHistoryButton.setOnClickListener {
+            with(trackListHistory.size) {
+                trackListHistory.clear()
+                rvAdapterHistory.notifyItemRangeRemoved(0, this)
+            }
+            callSave()
+            updateHistoryVisibility()
+        }
+    }
+
+    private fun updateHistoryVisibility() {
+        with(
+            if (
+                inputEditText.hasFocus() &&
+                inputEditText.text!!.isEmpty() &&
+                trackListHistory.isNotEmpty()
+            ) View.VISIBLE
+            else View.GONE
+        ) {
+            historySearchTv.visibility = this
+            clearHistoryButton.visibility = this
+        }
+    }
+
+    private fun appendHistory(track: Track) {
+        when (val indexOf = trackListHistory.indexOf(track)) {
+            -1 -> {
+                trackListHistory.add(0, track)
+                rvAdapterHistory.notifyItemInserted(0)
+            }
+
+            0 -> {
+
+            }
+
+            else -> {
+                trackListHistory.removeAt(indexOf)
+                trackListHistory.add(0, track)
+                rvAdapterHistory.notifyItemMoved(indexOf, 0)
+            }
+        }
+
+        for (i in 10 until trackListHistory.size)
+            trackListHistory.removeAt(i)
+        rvAdapterHistory.notifyItemRangeRemoved(10, trackListHistory.size - 1)
+
+        updateHistoryVisibility()
+        callSave()
     }
 
     private fun requestHandler(searchQuery: String) {
@@ -182,9 +281,15 @@ class SearchActivity : AppCompatActivity() {
                 TypeToken.getArray(Track::class.java).type
             )
         )
+        rvAdapter.notifyDataSetChanged()
 
         groupNotInternet.visibility = savedInstanceState.getInt(NOT_INTERNET, View.GONE)
         groupNotFound.visibility = savedInstanceState.getInt(NOT_FOUND, View.GONE)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        inputEditText.requestFocus()
     }
 
     companion object {
@@ -195,6 +300,8 @@ class SearchActivity : AppCompatActivity() {
         private const val NOT_INTERNET = "NOT_INTERNET"
         private const val NOT_FOUND = "NOT_FOUND"
         private const val TRACK_LIST = "TRACK_LIST"
+        private const val SEARCH_HISTORY_SHARED = "search_history_shared"
+        const val APPLICATION_SHARE_ID = "application_share_id"
 
     }
 

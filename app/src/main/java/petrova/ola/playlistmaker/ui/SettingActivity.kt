@@ -1,15 +1,16 @@
-package petrova.ola.playlistmaker
+package petrova.ola.playlistmaker.ui
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration.UI_MODE_NIGHT_MASK
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.switchmaterial.SwitchMaterial
+import petrova.ola.playlistmaker.R
+import petrova.ola.playlistmaker.ui.App.Companion.APP_PREFERENCES
+import petrova.ola.playlistmaker.ui.App.Companion.NIGHT_MODE
 import petrova.ola.playlistmaker.databinding.ActivitySettingsBinding
 
 
@@ -17,30 +18,20 @@ class SettingActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivitySettingsBinding.inflate(layoutInflater)
     }
-
+    private lateinit var themeSwitcher: SwitchMaterial
+    private lateinit var preferences: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        val switchSetting = binding.switchSetting
-
+        val app = applicationContext as App
+        themeSwitcher = binding.themeSwitcher
+        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
         binding.toolbarSetting.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-        switchSetting.setChecked(
-            when (resources.configuration.uiMode and UI_MODE_NIGHT_MASK) {
-                UI_MODE_NIGHT_YES -> true
-                UI_MODE_NIGHT_NO -> false
-                else -> throw IllegalStateException()
-            }
-        )
-        switchSetting.setOnCheckedChangeListener { _, isChecked ->
-
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-
+        themeSwitcher.setChecked(app.darkTheme)
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            app.switchTheme(checked)
         }
 
         binding.supportButton.setOnClickListener {
@@ -82,6 +73,12 @@ class SettingActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onStop() {
+        super.onStop()
+        preferences.edit().putBoolean(NIGHT_MODE, themeSwitcher.isChecked).apply()
+    }
+
 
     companion object {
         fun newIntent(context: Context) = Intent(context, SettingActivity::class.java)

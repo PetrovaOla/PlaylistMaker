@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker
+package petrova.ola.playlistmaker.ui
 
 import android.content.Context
 import android.content.Intent

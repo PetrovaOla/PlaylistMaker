@@ -1,6 +1,7 @@
-package petrova.ola.playlistmaker.data
+package petrova.ola.playlistmaker.model
 
 data class Track(
+    val trackId: Int,
     val trackName: String, // Название композиции
     val artistName: String, // Имя исполнителя
     val trackTimeMillis: Long, // Продолжительность трека
