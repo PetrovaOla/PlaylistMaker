@@ -17,10 +17,11 @@ class PlayerActivity : AppCompatActivity() {
         ActivityPlayerBinding.inflate(layoutInflater)
     }
     private lateinit var track: Track
+    private val simpleDateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        val simpleDateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
+
         binding.toolbarPlayer.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -45,9 +46,9 @@ class PlayerActivity : AppCompatActivity() {
                 album.text = track.collectionName
                 album.isVisible = album.text.isNotEmpty()
                 albumTv.isVisible = album.isVisible
-
-                year.text = track.releaseDate.substring(0, 4)
-
+                if (track.releaseDate.length > 3) {
+                    year.text = track.releaseDate.substring(0, 4)
+                }
                 genre.text = track.primaryGenreName
                 country.text = track.country
             }
