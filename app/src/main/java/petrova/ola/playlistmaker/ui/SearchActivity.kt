@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import petrova.ola.playlistmaker.model.api.ApiService
+import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
 import petrova.ola.playlistmaker.model.Track
 import petrova.ola.playlistmaker.model.TrackResponse
-import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
+import petrova.ola.playlistmaker.model.api.ApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -156,10 +156,12 @@ class SearchActivity : AppCompatActivity() {
 
         rvAdapter = SearchRecyclerAdapter(trackList) {
             appendHistory(it)
+            openPlayer(it)
         }
 
         rvAdapterHistory = SearchRecyclerAdapter(trackListHistory) {
             appendHistory(it)
+            openPlayer(it)
         }
         recycler.adapter = rvAdapterHistory
 
@@ -189,6 +191,12 @@ class SearchActivity : AppCompatActivity() {
             historySearchTv.visibility = this
             clearHistoryButton.visibility = this
         }
+    }
+    private fun openPlayer(track: Track) {
+        val intent = Intent(this, PlayerActivity::class.java)
+        intent.putExtra(EXTRAS_KEY, gson.toJson(track))
+        startActivity(intent)
+
     }
 
     private fun appendHistory(track: Track) {
@@ -302,7 +310,7 @@ class SearchActivity : AppCompatActivity() {
         private const val TRACK_LIST = "TRACK_LIST"
         private const val SEARCH_HISTORY_SHARED = "search_history_shared"
         const val APPLICATION_SHARE_ID = "application_share_id"
-
+        const val EXTRAS_KEY: String = "TRACK"
     }
 
 }

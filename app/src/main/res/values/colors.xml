@@ -21,4 +21,8 @@
     <color name="placeholder_search">#1A1B22</color>
     <color name="update">#FFFFFF</color>
     <color name="text_switch">#000000</color>
+    <color name="text">#1A1B22</color>
+    <color name="text_det">#AEAFB4</color>
+    <color name="play">#1A1B22</color>
+
 </resources>

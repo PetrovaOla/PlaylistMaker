@@ -10,5 +10,6 @@
     <color name="placeholder_search">#FFFFFF</color>
     <color name="update">#1A1B22</color>
     <color name="text_switch">#FFFFFF</color>
-
+    <color name="text">#FFFFFF</color>
+    <color name="play">#FFFFFF</color>
 </resources>
