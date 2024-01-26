@@ -30,4 +30,10 @@
     <string name="check_connection_txt">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="history_search">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
+    <string name="album">Альбом</string>
+    <string name="year">Год</string>
+    <string name="genre">Жанр</string>
+    <string name="country">Страна</string>
+    <string name="duration">Длительность</string>
+    <string name="time">0:29</string>
 </resources>

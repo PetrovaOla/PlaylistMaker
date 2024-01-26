@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.constraintlayout)
     implementation(libs.glide)
+    implementation(libs.androidx.activity)
     annotationProcessor(libs.compiler)
     implementation (libs.gson)
     implementation (libs.squareup.retrofit)

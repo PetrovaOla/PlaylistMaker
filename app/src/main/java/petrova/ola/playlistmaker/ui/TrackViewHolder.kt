@@ -4,13 +4,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import petrova.ola.playlistmaker.R
-import petrova.ola.playlistmaker.model.Track
 import petrova.ola.playlistmaker.databinding.ItemTrackBinding
+import petrova.ola.playlistmaker.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class TrackViewHolder(
-    private val binding: ItemTrackBinding
+    private val binding: ItemTrackBinding,
+    val trackOnClickListener: TrackOnClickListener
 ) : RecyclerView.ViewHolder(binding.root) {
     private val simpleDateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
     fun bind(track: Track) {
@@ -31,6 +32,7 @@ class TrackViewHolder(
                 .placeholder(R.drawable.placeholder)
                 .into(imageTrack)
         }
+        itemView.setOnClickListener { trackOnClickListener.onClick(track) }
     }
 }
 
