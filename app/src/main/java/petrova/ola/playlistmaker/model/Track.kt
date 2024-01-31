@@ -11,5 +11,4 @@ data class Track(
     val primaryGenreName: String,//Жанр трека
     val country: String, //Страна исполнителя
     val previewUrl: String,  //Ссылка на трек
-
-) {}
+)

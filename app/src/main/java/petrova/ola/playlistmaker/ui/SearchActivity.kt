@@ -118,7 +118,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchDebounce()
+
                 searchQuery = s?.toString() ?: SEARCH_EMPTY
                 val historyVisible = if (
                     inputEditText.hasFocus() &&
@@ -132,7 +132,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-
+                searchDebounce()
             }
         }
 
@@ -254,6 +254,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun requestHandler(searchQuery: String) {
+        if (searchQuery.isEmpty())
+            return
+
         recycler.isGone = true
         progressBar.isVisible = true
 
@@ -264,8 +267,8 @@ class SearchActivity : AppCompatActivity() {
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
-                    progressBar.visibility =
-                        View.GONE // Прячем ProgressBar после успешного выполнения запроса
+                    progressBar.isGone =
+                        true   // Прячем ProgressBar после успешного выполнения запроса
                     val tracksResponse = response.body()?.results
 
 
