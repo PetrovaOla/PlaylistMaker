@@ -31,6 +31,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.properties.Delegates
 
 
 class SearchActivity : AppCompatActivity() {
@@ -39,10 +40,34 @@ class SearchActivity : AppCompatActivity() {
         ActivitySearchBinding.inflate(layoutInflater)
     }
     private lateinit var inputEditText: TextInputEditText
-    private lateinit var rvAdapter: SearchRecyclerAdapter
-    private lateinit var rvAdapterHistory: SearchRecyclerAdapter
-    private lateinit var trackList: MutableList<Track>
+
+    private var trackList: MutableList<Track> = mutableListOf()
     private var trackListHistory: MutableList<Track> = mutableListOf()
+
+    private var rvAdapter: SearchRecyclerAdapter = SearchRecyclerAdapter(
+        SearchRecyclerAdapter.SearchListType.SEARCH, trackList
+    ) {
+        if (clickDebounce()) {
+            appendHistory(it)
+            openPlayer(it)
+        }
+    }
+    private var rvAdapterHistory: SearchRecyclerAdapter = SearchRecyclerAdapter(
+        SearchRecyclerAdapter.SearchListType.HISTORY,
+        trackListHistory
+    ) {
+        if (clickDebounce()) {
+            appendHistory(it)
+            openPlayer(it)
+        }
+    }
+    private var currentAdapter: SearchRecyclerAdapter
+            by Delegates.observable(rvAdapter) { _, old, new ->
+                println("Switching from ${old.type} to ${new.type}")
+                if (new.type != old.type) recycler.adapter = new
+            }
+
+
     private lateinit var recycler: RecyclerView
     private lateinit var groupNotFound: Group
     private lateinit var groupNotInternet: Group
@@ -52,6 +77,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private val gson = Gson()
     private var searchQuery = SEARCH_EMPTY
+    private val token = Any()
 
     private val baseUrl = "https://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
@@ -109,17 +135,15 @@ class SearchActivity : AppCompatActivity() {
 
             historySearchTv.visibility = historyVisible
             clearHistoryButton.visibility = historyVisible
-            recycler.adapter =
+            currentAdapter =
                 if (hasFocus && inputEditText.text!!.isEmpty()) rvAdapterHistory else rvAdapter
         }
         val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchQuery = s?.toString().orEmpty()
 
-                searchQuery = s?.toString() ?: SEARCH_EMPTY
                 val historyVisible = if (
                     inputEditText.hasFocus() &&
                     s?.isEmpty() == true &&
@@ -127,8 +151,10 @@ class SearchActivity : AppCompatActivity() {
                 ) View.VISIBLE else View.GONE
                 historySearchTv.visibility = historyVisible
                 clearHistoryButton.visibility = historyVisible
-                recycler.adapter =
-                    if (inputEditText.hasFocus() && inputEditText.text!!.isEmpty()) rvAdapterHistory else rvAdapter
+
+                currentAdapter = if (inputEditText.hasFocus() && inputEditText.text!!.isEmpty())
+                    rvAdapterHistory
+                else rvAdapter
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -160,23 +186,9 @@ class SearchActivity : AppCompatActivity() {
             inputEditText.clearFocus()
         }
 
-        trackList = mutableListOf()
         recycler.layoutManager = LinearLayoutManager(this)
 
-        rvAdapter = SearchRecyclerAdapter(trackList) {
-            if (clickDebounce()) {
-                appendHistory(it)
-                openPlayer(it)
-            }
-        }
-
-        rvAdapterHistory = SearchRecyclerAdapter(trackListHistory) {
-            if (clickDebounce()) {
-                appendHistory(it)
-                openPlayer(it)
-            }
-        }
-        recycler.adapter = rvAdapterHistory
+        currentAdapter = rvAdapterHistory
 
         updateButton.setOnClickListener {
             requestHandler(searchQuery)
@@ -202,8 +214,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        handler.removeCallbacksAndMessages(token)
+        handler.postDelayed(searchRunnable, token, SEARCH_DEBOUNCE_DELAY)
     }
 
     private fun updateHistoryVisibility() {
