@@ -63,7 +63,6 @@ class SearchActivity : AppCompatActivity() {
     }
     private var currentAdapter: SearchRecyclerAdapter
             by Delegates.observable(rvAdapter) { _, old, new ->
-                println("Switching from ${old.type} to ${new.type}")
                 if (new.type != old.type) recycler.adapter = new
             }
 
@@ -139,7 +138,9 @@ class SearchActivity : AppCompatActivity() {
                 if (hasFocus && inputEditText.text!!.isEmpty()) rvAdapterHistory else rvAdapter
         }
         val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                groupNotFound.visibility = View.GONE
+            }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchQuery = s?.toString().orEmpty()
@@ -151,6 +152,9 @@ class SearchActivity : AppCompatActivity() {
                 ) View.VISIBLE else View.GONE
                 historySearchTv.visibility = historyVisible
                 clearHistoryButton.visibility = historyVisible
+
+                if (historyVisible == View.VISIBLE)
+                    recycler.visibility = View.VISIBLE
 
                 currentAdapter = if (inputEditText.hasFocus() && inputEditText.text!!.isEmpty())
                     rvAdapterHistory
@@ -176,8 +180,17 @@ class SearchActivity : AppCompatActivity() {
 
         binding.inputLayoutText.setEndIconOnClickListener {
             inputEditText.setText(SEARCH_EMPTY)
+            currentAdapter = rvAdapterHistory
+
+            val visibility = if (trackListHistory.isEmpty()) View.GONE else View.VISIBLE
+            recycler.visibility = visibility
+            historySearchTv.visibility = visibility
+            clearHistoryButton.visibility = visibility
+
+            val oldSize = trackList.size
             trackList.clear()
-            rvAdapter.notifyDataSetChanged()
+            rvAdapter.notifyItemRangeRemoved(0, oldSize)
+
             groupNotInternet.isGone = true
             groupNotFound.isGone = true
             val inputMethodManager =
@@ -308,10 +321,9 @@ class SearchActivity : AppCompatActivity() {
                     groupNotInternet.isVisible = true
                     groupNotFound.isGone = true
                     progressBar.isGone = true
+                    val size = trackList.size
                     trackList.clear()
-                    rvAdapter.notifyDataSetChanged()
-
-
+                    rvAdapter.notifyItemRangeRemoved(0, size)
                 }
             })
 
@@ -351,8 +363,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun newIntent(context: Context) = Intent(context, SearchActivity::class.java)
-
         private const val SEARCH = "SEARCH"
         private const val SEARCH_EMPTY = ""
         private const val NOT_INTERNET = "NOT_INTERNET"
