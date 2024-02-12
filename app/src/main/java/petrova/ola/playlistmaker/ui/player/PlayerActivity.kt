@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker.ui
+package petrova.ola.playlistmaker.ui.player
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -13,7 +13,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.ActivityPlayerBinding
-import petrova.ola.playlistmaker.model.Track
+import petrova.ola.playlistmaker.domain.models.Track
+import petrova.ola.playlistmaker.ui.search.SearchActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 

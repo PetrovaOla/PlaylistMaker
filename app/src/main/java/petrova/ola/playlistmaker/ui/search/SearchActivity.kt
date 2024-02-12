@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker.ui
+package petrova.ola.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
@@ -23,14 +23,11 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
-import petrova.ola.playlistmaker.model.Track
-import petrova.ola.playlistmaker.model.TrackResponse
-import petrova.ola.playlistmaker.model.api.ApiService
+import petrova.ola.playlistmaker.domain.models.Track
+import petrova.ola.playlistmaker.ui.player.PlayerActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.properties.Delegates
 
 
@@ -78,11 +75,7 @@ class SearchActivity : AppCompatActivity() {
     private var searchQuery = SEARCH_EMPTY
     private val token = Any()
 
-    private val baseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
@@ -95,7 +88,7 @@ class SearchActivity : AppCompatActivity() {
             .apply()
     }
 
-    private val apiService = retrofit.create(ApiService::class.java)
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -286,18 +279,18 @@ class SearchActivity : AppCompatActivity() {
         progressBar.isVisible = true
 
         apiService.getTrack(searchQuery)
-            .enqueue(object : Callback<TrackResponse> {
+            .enqueue(object : Callback<petrova.ola.playlistmaker.data.dto.TrackSearchResponse> {
 
                 override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
+                    call: Call<petrova.ola.playlistmaker.data.dto.TrackSearchResponse>,
+                    trackSearchResponse: Response<petrova.ola.playlistmaker.data.dto.TrackSearchResponse>
                 ) {
                     progressBar.isGone =
                         true   // Прячем ProgressBar после успешного выполнения запроса
-                    val tracksResponse = response.body()?.results
+                    val tracksResponse = trackSearchResponse.body()?.results
 
 
-                    if (response.isSuccessful && tracksResponse != null) {
+                    if (trackSearchResponse.isSuccessful && tracksResponse != null) {
                         if (tracksResponse.isEmpty()) {
                             groupNotFound.isVisible = true
                             groupNotInternet.isGone = true
@@ -317,7 +310,10 @@ class SearchActivity : AppCompatActivity() {
                     rvAdapter.notifyDataSetChanged()
                 }
 
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                override fun onFailure(
+                    call: Call<petrova.ola.playlistmaker.data.dto.TrackSearchResponse>,
+                    t: Throwable
+                ) {
                     groupNotInternet.isVisible = true
                     groupNotFound.isGone = true
                     progressBar.isGone = true

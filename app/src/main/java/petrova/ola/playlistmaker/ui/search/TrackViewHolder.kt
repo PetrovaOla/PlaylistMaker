@@ -1,11 +1,11 @@
-package petrova.ola.playlistmaker.ui
+package petrova.ola.playlistmaker.ui.search
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.ItemTrackBinding
-import petrova.ola.playlistmaker.model.Track
+import petrova.ola.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 

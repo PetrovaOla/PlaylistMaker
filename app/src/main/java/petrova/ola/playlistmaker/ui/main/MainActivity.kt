@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker.ui
+package petrova.ola.playlistmaker.ui.main
 
 import android.content.Context
 import android.content.Intent
@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import petrova.ola.playlistmaker.databinding.ActivityMainBinding
+import petrova.ola.playlistmaker.ui.media.MediaActivity
+import petrova.ola.playlistmaker.ui.search.SearchActivity
+import petrova.ola.playlistmaker.ui.settings.SettingActivity
 
 class MainActivity : AppCompatActivity() {
 
