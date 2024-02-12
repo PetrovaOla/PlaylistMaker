@@ -3,12 +3,15 @@ package petrova.ola.playlistmaker.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
@@ -28,6 +31,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.properties.Delegates
 
 
 class SearchActivity : AppCompatActivity() {
@@ -36,24 +40,53 @@ class SearchActivity : AppCompatActivity() {
         ActivitySearchBinding.inflate(layoutInflater)
     }
     private lateinit var inputEditText: TextInputEditText
-    private lateinit var rvAdapter: SearchRecyclerAdapter
-    private lateinit var rvAdapterHistory: SearchRecyclerAdapter
-    private lateinit var trackList: MutableList<Track>
+
+    private var trackList: MutableList<Track> = mutableListOf()
     private var trackListHistory: MutableList<Track> = mutableListOf()
+
+    private var rvAdapter: SearchRecyclerAdapter = SearchRecyclerAdapter(
+        SearchRecyclerAdapter.SearchListType.SEARCH, trackList
+    ) {
+        if (clickDebounce()) {
+            appendHistory(it)
+            openPlayer(it)
+        }
+    }
+    private var rvAdapterHistory: SearchRecyclerAdapter = SearchRecyclerAdapter(
+        SearchRecyclerAdapter.SearchListType.HISTORY,
+        trackListHistory
+    ) {
+        if (clickDebounce()) {
+            appendHistory(it)
+            openPlayer(it)
+        }
+    }
+    private var currentAdapter: SearchRecyclerAdapter
+            by Delegates.observable(rvAdapter) { _, old, new ->
+                if (new.type != old.type) recycler.adapter = new
+            }
+
+
     private lateinit var recycler: RecyclerView
     private lateinit var groupNotFound: Group
     private lateinit var groupNotInternet: Group
     private lateinit var updateButton: Button
     private lateinit var historySearchTv: TextView
     private lateinit var clearHistoryButton: Button
+    private lateinit var progressBar: ProgressBar
     private val gson = Gson()
     private var searchQuery = SEARCH_EMPTY
+    private val token = Any()
 
     private val baseUrl = "https://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { requestHandler(searchQuery) }
 
     private fun callSave() {
         val sharedPreferences = getSharedPreferences(APPLICATION_SHARE_ID, MODE_PRIVATE)
@@ -88,7 +121,7 @@ class SearchActivity : AppCompatActivity() {
         updateButton = binding.updateButton
         clearHistoryButton = binding.clearHistoryBtn
         historySearchTv = binding.historySearchTv
-
+        progressBar = binding.progressBar
         binding.toolbarSearch.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -101,16 +134,17 @@ class SearchActivity : AppCompatActivity() {
 
             historySearchTv.visibility = historyVisible
             clearHistoryButton.visibility = historyVisible
-            recycler.adapter =
+            currentAdapter =
                 if (hasFocus && inputEditText.text!!.isEmpty()) rvAdapterHistory else rvAdapter
         }
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
+                groupNotFound.visibility = View.GONE
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchQuery = s?.toString() ?: SEARCH_EMPTY
+                searchQuery = s?.toString().orEmpty()
+
                 val historyVisible = if (
                     inputEditText.hasFocus() &&
                     s?.isEmpty() == true &&
@@ -118,12 +152,17 @@ class SearchActivity : AppCompatActivity() {
                 ) View.VISIBLE else View.GONE
                 historySearchTv.visibility = historyVisible
                 clearHistoryButton.visibility = historyVisible
-                recycler.adapter =
-                    if (inputEditText.hasFocus() && inputEditText.text!!.isEmpty()) rvAdapterHistory else rvAdapter
+
+                if (historyVisible == View.VISIBLE)
+                    recycler.visibility = View.VISIBLE
+
+                currentAdapter = if (inputEditText.hasFocus() && inputEditText.text!!.isEmpty())
+                    rvAdapterHistory
+                else rvAdapter
             }
 
             override fun afterTextChanged(s: Editable?) {
-
+                searchDebounce()
             }
         }
 
@@ -141,8 +180,17 @@ class SearchActivity : AppCompatActivity() {
 
         binding.inputLayoutText.setEndIconOnClickListener {
             inputEditText.setText(SEARCH_EMPTY)
+            currentAdapter = rvAdapterHistory
+
+            val visibility = if (trackListHistory.isEmpty()) View.GONE else View.VISIBLE
+            recycler.visibility = visibility
+            historySearchTv.visibility = visibility
+            clearHistoryButton.visibility = visibility
+
+            val oldSize = trackList.size
             trackList.clear()
-            rvAdapter.notifyDataSetChanged()
+            rvAdapter.notifyItemRangeRemoved(0, oldSize)
+
             groupNotInternet.isGone = true
             groupNotFound.isGone = true
             val inputMethodManager =
@@ -151,19 +199,9 @@ class SearchActivity : AppCompatActivity() {
             inputEditText.clearFocus()
         }
 
-        trackList = mutableListOf()
         recycler.layoutManager = LinearLayoutManager(this)
 
-        rvAdapter = SearchRecyclerAdapter(trackList) {
-            appendHistory(it)
-            openPlayer(it)
-        }
-
-        rvAdapterHistory = SearchRecyclerAdapter(trackListHistory) {
-            appendHistory(it)
-            openPlayer(it)
-        }
-        recycler.adapter = rvAdapterHistory
+        currentAdapter = rvAdapterHistory
 
         updateButton.setOnClickListener {
             requestHandler(searchQuery)
@@ -179,6 +217,20 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacksAndMessages(token)
+        handler.postDelayed(searchRunnable, token, SEARCH_DEBOUNCE_DELAY)
+    }
+
     private fun updateHistoryVisibility() {
         with(
             if (
@@ -192,6 +244,7 @@ class SearchActivity : AppCompatActivity() {
             clearHistoryButton.visibility = this
         }
     }
+
     private fun openPlayer(track: Track) {
         val intent = Intent(this, PlayerActivity::class.java)
         intent.putExtra(EXTRAS_KEY, gson.toJson(track))
@@ -226,6 +279,12 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun requestHandler(searchQuery: String) {
+        if (searchQuery.isEmpty())
+            return
+
+        recycler.isGone = true
+        progressBar.isVisible = true
+
         apiService.getTrack(searchQuery)
             .enqueue(object : Callback<TrackResponse> {
 
@@ -233,6 +292,8 @@ class SearchActivity : AppCompatActivity() {
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
+                    progressBar.isGone =
+                        true   // Прячем ProgressBar после успешного выполнения запроса
                     val tracksResponse = response.body()?.results
 
 
@@ -242,6 +303,7 @@ class SearchActivity : AppCompatActivity() {
                             groupNotInternet.isGone = true
                             trackList.clear()
                         } else {
+                            recycler.isVisible = true
                             trackList.clear()
                             trackList.addAll(tracksResponse.toMutableList())
                             groupNotFound.isGone = true
@@ -258,10 +320,10 @@ class SearchActivity : AppCompatActivity() {
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
                     groupNotInternet.isVisible = true
                     groupNotFound.isGone = true
+                    progressBar.isGone = true
+                    val size = trackList.size
                     trackList.clear()
-                    rvAdapter.notifyDataSetChanged()
-
-
+                    rvAdapter.notifyItemRangeRemoved(0, size)
                 }
             })
 
@@ -301,8 +363,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun newIntent(context: Context) = Intent(context, SearchActivity::class.java)
-
         private const val SEARCH = "SEARCH"
         private const val SEARCH_EMPTY = ""
         private const val NOT_INTERNET = "NOT_INTERNET"
@@ -311,6 +371,8 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_HISTORY_SHARED = "search_history_shared"
         const val APPLICATION_SHARE_ID = "application_share_id"
         const val EXTRAS_KEY: String = "TRACK"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
 }
