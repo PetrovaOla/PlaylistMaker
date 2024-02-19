@@ -14,9 +14,9 @@ data class Track(
     val country: String, //Страна исполнителя
     val previewUrl: String,  //Ссылка на трек
 ) {
-    val bigCoverUrl: String
+    val bigImg: String
         get() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-    val releaseYear: String
+    val date: String
         get() = releaseDate.substringBefore('-')
     val trackTime: String
         get() = msToTime(trackTimeMillis)

@@ -20,14 +20,12 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import petrova.ola.playlistmaker.Creator
+import petrova.ola.playlistmaker.data.repository.TracksHistoryRepositoryImplShared
 import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
+import petrova.ola.playlistmaker.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.domain.models.Track
 import petrova.ola.playlistmaker.ui.player.PlayerActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import kotlin.properties.Delegates
 
 
@@ -40,6 +38,8 @@ class SearchActivity : AppCompatActivity() {
 
     private var trackList: MutableList<Track> = mutableListOf()
     private var trackListHistory: MutableList<Track> = mutableListOf()
+
+    private lateinit var tracksInteractor: TracksInteractor
 
     private var rvAdapter: SearchRecyclerAdapter = SearchRecyclerAdapter(
         SearchRecyclerAdapter.SearchListType.SEARCH, trackList
@@ -71,39 +71,31 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historySearchTv: TextView
     private lateinit var clearHistoryButton: Button
     private lateinit var progressBar: ProgressBar
-    private val gson = Gson()
+
     private var searchQuery = SEARCH_EMPTY
     private val token = Any()
-
 
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { requestHandler(searchQuery) }
 
-    private fun callSave() {
-        val sharedPreferences = getSharedPreferences(APPLICATION_SHARE_ID, MODE_PRIVATE)
-        sharedPreferences.edit()
-            .putString(SEARCH_HISTORY_SHARED, gson.toJson(trackListHistory))
-            .apply()
+    val tracksHistoryRepository by lazy {
+        TracksHistoryRepositoryImplShared(
+            getSharedPreferences(APPLICATION_SHARE_ID, MODE_PRIVATE)
+        )
     }
 
-
-
+    val bundleCodecTrack = Creator.provideBundleCodec<Track>()
+    val bundleCodecTrackList = Creator.provideBundleCodec<MutableList<Track>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        tracksInteractor = Creator.provideTracksInteractor()
 
-        val sharedPreferences = getSharedPreferences(APPLICATION_SHARE_ID, MODE_PRIVATE)
-
-        trackListHistory.addAll(
-            gson.fromJson(
-                sharedPreferences.getString(SEARCH_HISTORY_SHARED, "[]"),
-                Array<Track>::class.java
-            )
-        )
+        trackListHistory.addAll(tracksHistoryRepository.getHistory())
 
         groupNotFound = binding.groupNotFound
         groupNotInternet = binding.groupNotInternet
@@ -203,9 +195,9 @@ class SearchActivity : AppCompatActivity() {
         clearHistoryButton.setOnClickListener {
             with(trackListHistory.size) {
                 trackListHistory.clear()
+                tracksHistoryRepository.clearHistory()
                 rvAdapterHistory.notifyItemRangeRemoved(0, this)
             }
-            callSave()
             updateHistoryVisibility()
         }
     }
@@ -240,9 +232,8 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openPlayer(track: Track) {
         val intent = Intent(this, PlayerActivity::class.java)
-        intent.putExtra(EXTRAS_KEY, gson.toJson(track))
+        intent.putExtra(EXTRAS_KEY, bundleCodecTrack.encodeData(track))
         startActivity(intent)
-
     }
 
     private fun appendHistory(track: Track) {
@@ -268,9 +259,11 @@ class SearchActivity : AppCompatActivity() {
         rvAdapterHistory.notifyItemRangeRemoved(10, trackListHistory.size - 1)
 
         updateHistoryVisibility()
-        callSave()
+
+        tracksHistoryRepository.putHistory(trackListHistory)
     }
 
+    val providerTracksInteractor = Creator.provideTracksInteractor()
     private fun requestHandler(searchQuery: String) {
         if (searchQuery.isEmpty())
             return
@@ -278,52 +271,40 @@ class SearchActivity : AppCompatActivity() {
         recycler.isGone = true
         progressBar.isVisible = true
 
-        apiService.getTrack(searchQuery)
-            .enqueue(object : Callback<petrova.ola.playlistmaker.data.dto.TrackSearchResponse> {
+        providerTracksInteractor.searchTracks(
+            searchQuery,
+            object : TracksInteractor.TracksConsumer {
+                override fun consume(trackResponse: List<Track>) {
+                    mainExecutor.execute {
+                        progressBar.isGone =
+                            true   // Прячем ProgressBar после успешного выполнения запроса
 
-                override fun onResponse(
-                    call: Call<petrova.ola.playlistmaker.data.dto.TrackSearchResponse>,
-                    trackSearchResponse: Response<petrova.ola.playlistmaker.data.dto.TrackSearchResponse>
-                ) {
-                    progressBar.isGone =
-                        true   // Прячем ProgressBar после успешного выполнения запроса
-                    val tracksResponse = trackSearchResponse.body()?.results
-
-
-                    if (trackSearchResponse.isSuccessful && tracksResponse != null) {
-                        if (tracksResponse.isEmpty()) {
+                        if (trackResponse.isEmpty()) {
                             groupNotFound.isVisible = true
                             groupNotInternet.isGone = true
                             trackList.clear()
                         } else {
                             recycler.isVisible = true
                             trackList.clear()
-                            trackList.addAll(tracksResponse.toMutableList())
+                            trackList.addAll(trackResponse)
                             groupNotFound.isGone = true
                             groupNotInternet.isGone = true
                         }
-                    } else {
-                        trackList.clear()
+                        rvAdapter.notifyDataSetChanged()
+                    }
+                }
+
+                override fun onFailure() {
+                    mainExecutor.execute {
                         groupNotInternet.isVisible = true
                         groupNotFound.isGone = true
+                        progressBar.isGone = true
+                        val size = trackList.size
+                        trackList.clear()
+                        rvAdapter.notifyItemRangeRemoved(0, size)
                     }
-                    rvAdapter.notifyDataSetChanged()
-                }
-
-                override fun onFailure(
-                    call: Call<petrova.ola.playlistmaker.data.dto.TrackSearchResponse>,
-                    t: Throwable
-                ) {
-                    groupNotInternet.isVisible = true
-                    groupNotFound.isGone = true
-                    progressBar.isGone = true
-                    val size = trackList.size
-                    trackList.clear()
-                    rvAdapter.notifyItemRangeRemoved(0, size)
                 }
             })
-
-
     }
 
 
@@ -332,7 +313,7 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(SEARCH, searchQuery)
         outState.putInt(NOT_INTERNET, groupNotInternet.visibility)
         outState.putInt(NOT_FOUND, groupNotFound.visibility)
-        outState.putString(TRACK_LIST, gson.toJson(trackList))
+        outState.putString(TRACK_LIST, bundleCodecTrackList.encodeData(trackList))
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -342,10 +323,13 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.setText(searchQuery)
 
         trackList.addAll(
-            gson.fromJson<Array<Track>>(
-                savedInstanceState.getString(TRACK_LIST),
-                TypeToken.getArray(Track::class.java).type
+            bundleCodecTrackList.decodeData(
+                savedInstanceState.getString(TRACK_LIST, "[]")
             )
+//            gson.fromJson<Array<Track>>(
+//                ,savedInstanceState.getString(TRACK_LIST)
+//                TypeToken.getArray(Track::class.java).type
+//            )
         )
         rvAdapter.notifyDataSetChanged()
 
@@ -364,7 +348,7 @@ class SearchActivity : AppCompatActivity() {
         private const val NOT_INTERNET = "NOT_INTERNET"
         private const val NOT_FOUND = "NOT_FOUND"
         private const val TRACK_LIST = "TRACK_LIST"
-        private const val SEARCH_HISTORY_SHARED = "search_history_shared"
+        const val SEARCH_HISTORY_SHARED = "search_history_shared"
         const val APPLICATION_SHARE_ID = "application_share_id"
         const val EXTRAS_KEY: String = "TRACK"
         private const val CLICK_DEBOUNCE_DELAY = 1000L

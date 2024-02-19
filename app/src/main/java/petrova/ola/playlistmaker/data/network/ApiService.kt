@@ -15,5 +15,4 @@ interface ApiService {
     fun getTrack(@Query("term") text: String): Call<TrackSearchResponse>
 
 
-
 }

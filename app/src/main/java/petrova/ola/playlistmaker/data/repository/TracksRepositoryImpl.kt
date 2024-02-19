@@ -1,9 +1,12 @@
-package petrova.ola.playlistmaker.data
+package petrova.ola.playlistmaker.data.repository
 
+import android.util.Log
+import petrova.ola.playlistmaker.data.NetworkClient
 import petrova.ola.playlistmaker.data.dto.TrackSearchRequest
 import petrova.ola.playlistmaker.data.dto.TrackSearchResponse
 import petrova.ola.playlistmaker.domain.api.TracksRepository
 import petrova.ola.playlistmaker.domain.models.Track
+import java.io.IOException
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
     override fun searchTracks(expression: String): List<Track> {
@@ -26,7 +29,8 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
             }
 
         } else {
-            return emptyList()
+            Log.d("TrackListLoader", "Failed load track list (http code ${response.resultCode})")
+            throw IOException("Failed load track list (http code ${response.resultCode})")
         }
     }
 }

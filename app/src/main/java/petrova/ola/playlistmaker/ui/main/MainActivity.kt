@@ -29,11 +29,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(mediaIntent)
         }
 
-        val clickListener: View.OnClickListener = object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                val settingIntent = Intent(applicationContext, SettingActivity::class.java)
-                startActivity(settingIntent)
-            }
+        val clickListener: View.OnClickListener = View.OnClickListener {
+            val settingIntent = Intent(applicationContext, SettingActivity::class.java)
+            startActivity(settingIntent)
         }
 
        binding.settingsButton.setOnClickListener(clickListener)
