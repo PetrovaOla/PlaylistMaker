@@ -85,10 +85,6 @@ class SearchActivity : AppCompatActivity() {
             getSharedPreferences(APPLICATION_SHARE_ID, MODE_PRIVATE)
         )
     }
-
-    val bundleCodecTrack = Creator.provideBundleCodec<Track>()
-    val bundleCodecTrackList = Creator.provideBundleCodec<MutableList<Track>>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -232,7 +228,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openPlayer(track: Track) {
         val intent = Intent(this, PlayerActivity::class.java)
-        intent.putExtra(EXTRAS_KEY, bundleCodecTrack.encodeData(track))
+        intent.putExtra(EXTRAS_KEY, Creator.bundleCodecTrack.encodeData(track))
         startActivity(intent)
     }
 
@@ -313,7 +309,7 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(SEARCH, searchQuery)
         outState.putInt(NOT_INTERNET, groupNotInternet.visibility)
         outState.putInt(NOT_FOUND, groupNotFound.visibility)
-        outState.putString(TRACK_LIST, bundleCodecTrackList.encodeData(trackList))
+        outState.putString(TRACK_LIST, Creator.bundleCodecTrackList.encodeData(trackList))
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -323,13 +319,9 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.setText(searchQuery)
 
         trackList.addAll(
-            bundleCodecTrackList.decodeData(
+            Creator.bundleCodecTrackList.decodeData(
                 savedInstanceState.getString(TRACK_LIST, "[]")
             )
-//            gson.fromJson<Array<Track>>(
-//                ,savedInstanceState.getString(TRACK_LIST)
-//                TypeToken.getArray(Track::class.java).type
-//            )
         )
         rvAdapter.notifyDataSetChanged()
 
