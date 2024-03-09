@@ -1,10 +1,10 @@
-package petrova.ola.playlistmaker.ui
+package petrova.ola.playlistmaker.ui.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import petrova.ola.playlistmaker.databinding.ItemTrackBinding
-import petrova.ola.playlistmaker.model.Track
+import petrova.ola.playlistmaker.domain.models.Track
 
 class SearchRecyclerAdapter(
     val type: SearchListType,

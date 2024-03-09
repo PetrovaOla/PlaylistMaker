@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker.ui
+package petrova.ola.playlistmaker.ui.player
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -8,14 +8,12 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.gson.Gson
+import petrova.ola.playlistmaker.Creator
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.ActivityPlayerBinding
-import petrova.ola.playlistmaker.model.Track
-import java.text.SimpleDateFormat
-import java.util.Locale
+import petrova.ola.playlistmaker.domain.models.Track
+import petrova.ola.playlistmaker.ui.search.SearchActivity
+import petrova.ola.playlistmaker.utils.msToTime
 
 class PlayerActivity : AppCompatActivity() {
     private val binding by lazy {
@@ -26,11 +24,11 @@ class PlayerActivity : AppCompatActivity() {
     private var mediaPlayer = MediaPlayer()
     private lateinit var play: ImageView
     private lateinit var track: Track
-    private lateinit var durationTrack: String
     private var currentPosition: String = ""
 
-    private val simpleDateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
     private val mainThreadHandler by lazy { Handler(Looper.getMainLooper()) }
+
+    private val imageLoader = Creator.provideImageLoader()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,35 +37,32 @@ class PlayerActivity : AppCompatActivity() {
         binding.toolbarPlayer.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-        track = Gson().fromJson(
-            intent.extras?.getString(SearchActivity.EXTRAS_KEY) ?: "",
-            Track::class.java
-        )
-        val context =
-            with(binding) {
-                Glide // Отрисовка с Glide
-                    .with(this.main)
-                    .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
-                    .centerCrop()
-                    .transform(RoundedCorners(8))
-                    .error(R.drawable.album)
-                    .placeholder(R.drawable.album)
-                    .into(poster)
 
-                name.text = track.trackName
-                artist.text = track.artistName
-                duration.text = simpleDateFormat.format(track.trackTimeMillis)
-                album.text = track.collectionName
-                album.isVisible = album.text.isNotEmpty()
-                albumTv.isVisible = album.isVisible
-                if (track.releaseDate.length > 3) {
-                    year.text = track.releaseDate.substring(0, 4)
-                }
-                genre.text = track.primaryGenreName
-                country.text = track.country
+        intent.extras?.getString(SearchActivity.EXTRAS_KEY)?.let {
+            track = Creator.bundleCodecTrack.decodeData(it)
+        }
 
+        with(binding) {
+            imageLoader.loadImage(
+                imageUrl = track.bigImg,
+                context = this.main,
+                placeholder = R.drawable.album,
+                errorPlaceholder = R.drawable.album,
+                into = poster
+            )
+
+            name.text = track.trackName
+            artist.text = track.artistName
+            duration.text = msToTime(track.trackTimeMillis)
+            album.text = track.collectionName
+            album.isVisible = album.text.isNotEmpty()
+            albumTv.isVisible = album.isVisible
+            if (track.releaseDate.length > 3) {
+                year.text = track.releaseDate.substring(0, 4)
             }
-
+            genre.text = track.primaryGenreName
+            country.text = track.country
+        }
 
         preparePlayer()
 
@@ -103,11 +98,7 @@ class PlayerActivity : AppCompatActivity() {
 
         timer = object : Runnable {
             override fun run() {
-                currentPosition =
-                    SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(mediaPlayer.currentPosition)
+                currentPosition = msToTime(mediaPlayer.currentPosition)
                 binding.durationTrack.text = currentPosition
                 mainThreadHandler.postDelayed(this, DELAY)
             }
@@ -154,7 +145,6 @@ class PlayerActivity : AppCompatActivity() {
         private const val STATE_PAUSED = 3
         private const val DELAY: Long = 500
     }
-
 }
 
 

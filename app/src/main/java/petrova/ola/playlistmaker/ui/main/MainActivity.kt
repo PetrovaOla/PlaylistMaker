@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker.ui
+package petrova.ola.playlistmaker.ui.main
 
 import android.content.Context
 import android.content.Intent
@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import petrova.ola.playlistmaker.databinding.ActivityMainBinding
+import petrova.ola.playlistmaker.ui.media.MediaActivity
+import petrova.ola.playlistmaker.ui.search.SearchActivity
+import petrova.ola.playlistmaker.ui.settings.SettingActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,11 +29,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(mediaIntent)
         }
 
-        val clickListener: View.OnClickListener = object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                val settingIntent = Intent(applicationContext, SettingActivity::class.java)
-                startActivity(settingIntent)
-            }
+        val clickListener: View.OnClickListener = View.OnClickListener {
+            val settingIntent = Intent(applicationContext, SettingActivity::class.java)
+            startActivity(settingIntent)
         }
 
        binding.settingsButton.setOnClickListener(clickListener)

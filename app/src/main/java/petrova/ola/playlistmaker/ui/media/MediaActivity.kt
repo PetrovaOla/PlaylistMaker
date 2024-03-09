@@ -1,7 +1,7 @@
-package petrova.ola.playlistmaker.ui
+package petrova.ola.playlistmaker.ui.media
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import petrova.ola.playlistmaker.R
 
 class MediaActivity : AppCompatActivity() {

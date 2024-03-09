@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker.ui
+package petrova.ola.playlistmaker.ui.settings
 
 import android.content.Context
 import android.content.Intent
@@ -9,9 +9,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 import petrova.ola.playlistmaker.R
+import petrova.ola.playlistmaker.databinding.ActivitySettingsBinding
+import petrova.ola.playlistmaker.ui.App
 import petrova.ola.playlistmaker.ui.App.Companion.APP_PREFERENCES
 import petrova.ola.playlistmaker.ui.App.Companion.NIGHT_MODE
-import petrova.ola.playlistmaker.databinding.ActivitySettingsBinding
 
 
 class SettingActivity : AppCompatActivity() {
