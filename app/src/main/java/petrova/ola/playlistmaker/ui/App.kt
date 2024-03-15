@@ -1,31 +1,20 @@
 package petrova.ola.playlistmaker.ui
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import petrova.ola.playlistmaker.creator.Creator
 
 class App : Application() {
-    var darkTheme = false
-    lateinit var appPreferences: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
-        appPreferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
-        darkTheme = appPreferences.getBoolean(NIGHT_MODE, false)
-        switchTheme(darkTheme)
+        switchTheme()
     }
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        darkTheme = darkThemeEnabled
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
+
+    private fun switchTheme() {
+        val settingInteractor = Creator.provideSettingInteractor(this)
+        if (settingInteractor.darkTheme()) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
-    companion object{
-        const val APP_PREFERENCES = "app_preferences"
-        const val NIGHT_MODE = "NIGHT_MODE"
-    }
+
 }

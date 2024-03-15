@@ -5,13 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import petrova.ola.playlistmaker.databinding.ActivityMainBinding
+import petrova.ola.playlistmaker.presentation.main.MainNavigate
+import petrova.ola.playlistmaker.presentation.main.MainViewModel
 import petrova.ola.playlistmaker.ui.media.MediaActivity
 import petrova.ola.playlistmaker.ui.search.SearchActivity
 import petrova.ola.playlistmaker.ui.settings.SettingActivity
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var viewModel: MainViewModel
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -20,21 +23,45 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        viewModel =
+            ViewModelProvider(this, MainViewModel.getViewModelFactory())[MainViewModel::class.java]
+
+        viewModel.navigate.observe(this) { navigateTo(it) }
+
+
         binding.searchButton.setOnClickListener {
-            val searchIntent = Intent(this, SearchActivity::class.java)
-            startActivity(searchIntent)
+            viewModel.openSearch()
         }
         binding.mediaLibraryButton.setOnClickListener {
-            val mediaIntent = Intent(this, MediaActivity::class.java)
-            startActivity(mediaIntent)
+            viewModel.openMediateka()
         }
 
         val clickListener: View.OnClickListener = View.OnClickListener {
-            val settingIntent = Intent(applicationContext, SettingActivity::class.java)
-            startActivity(settingIntent)
+            viewModel.openSettings()
         }
 
-       binding.settingsButton.setOnClickListener(clickListener)
+        binding.settingsButton.setOnClickListener(clickListener)
+    }
+
+    private fun navigateTo(it: MainNavigate) {
+        when (it) {
+            MainNavigate.SEARCH -> {
+                val searchIntent = Intent(this, SearchActivity::class.java)
+                startActivity(searchIntent)
+            }
+
+            MainNavigate.MEDIA -> {
+                val mediaIntent = Intent(this, MediaActivity::class.java)
+                startActivity(mediaIntent)
+            }
+
+            MainNavigate.SETTING -> {
+                val settingIntent = Intent(applicationContext, SettingActivity::class.java)
+                startActivity(settingIntent)
+            }
+
+            MainNavigate.NONE -> {}
+        }
     }
 
     companion object {

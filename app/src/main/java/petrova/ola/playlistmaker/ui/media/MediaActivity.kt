@@ -1,12 +1,31 @@
 package petrova.ola.playlistmaker.ui.media
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import petrova.ola.playlistmaker.R
+import androidx.lifecycle.ViewModelProvider
+import petrova.ola.playlistmaker.databinding.ActivityMediaBinding
+import petrova.ola.playlistmaker.presentation.media.MediaViewModel
 
 class MediaActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: MediaViewModel
+    private val binding by lazy {
+        ActivityMediaBinding.inflate(layoutInflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_media)
+        setContentView(binding.root)
+
+        viewModel = ViewModelProvider(
+            this,
+            MediaViewModel.getViewModelFactory()
+        )[MediaViewModel::class.java]
+    }
+
+    companion object {
+        fun newIntent(context: Context) = Intent(context, MediaActivity::class.java)
     }
 }

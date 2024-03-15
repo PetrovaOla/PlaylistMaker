@@ -20,7 +20,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
-import petrova.ola.playlistmaker.Creator
+import petrova.ola.playlistmaker.creator.Creator
 import petrova.ola.playlistmaker.data.repository.TracksHistoryRepositoryImplShared
 import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
 import petrova.ola.playlistmaker.domain.api.TracksInteractor
@@ -340,7 +340,7 @@ class SearchActivity : AppCompatActivity() {
         private const val NOT_INTERNET = "NOT_INTERNET"
         private const val NOT_FOUND = "NOT_FOUND"
         private const val TRACK_LIST = "TRACK_LIST"
-        const val SEARCH_HISTORY_SHARED = "search_history_shared"
+
         const val APPLICATION_SHARE_ID = "application_share_id"
         const val EXTRAS_KEY: String = "TRACK"
         private const val CLICK_DEBOUNCE_DELAY = 1000L

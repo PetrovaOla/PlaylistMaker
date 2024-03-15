@@ -2,7 +2,7 @@ package petrova.ola.playlistmaker.domain.impl
 
 import petrova.ola.playlistmaker.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.domain.api.TracksRepository
-import java.io.IOException
+import petrova.ola.playlistmaker.utils.Resource
 import java.util.concurrent.Executors
 
 class TracksInteractorImpl(
@@ -12,12 +12,18 @@ class TracksInteractorImpl(
 
     override fun searchTracks(expression: String, consumer: TracksInteractor.TracksConsumer) {
         executor.execute {
-            try {
-                val trackResponse = repository.searchTracks(expression)
-                consumer.consume(trackResponse)
-            } catch (_: IOException) {
-                consumer.onFailure()
+
+            when (val resourse = repository.searchTracks(expression)) {
+                is Resource.Success -> {
+                    consumer.consume(resourse.data, null)
+                }
+
+                is Resource.Error -> {
+                    consumer.consume(null, resourse.message)
+                }
             }
+
         }
     }
+
 }

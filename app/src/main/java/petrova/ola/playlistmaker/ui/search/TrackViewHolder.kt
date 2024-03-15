@@ -6,14 +6,12 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.ItemTrackBinding
 import petrova.ola.playlistmaker.domain.models.Track
-import java.text.SimpleDateFormat
-import java.util.Locale
+import petrova.ola.playlistmaker.utils.msToTime
 
 class TrackViewHolder(
     private val binding: ItemTrackBinding,
     val trackOnClickListener: TrackOnClickListener
 ) : RecyclerView.ViewHolder(binding.root) {
-    private val simpleDateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
     fun bind(track: Track) {
 
         val context = itemView.context
@@ -21,7 +19,7 @@ class TrackViewHolder(
             trackItemName.text = track.trackName
             trackItemArtist.text = track.artistName
             trackItemArtist.requestLayout()
-            itemTime.text = simpleDateFormat.format(track.trackTimeMillis)
+            itemTime.text = msToTime(track.trackTimeMillis)
 
             Glide // Отрисовка с Glide
                 .with(context)
