@@ -2,6 +2,7 @@ package petrova.ola.playlistmaker.domain.impl
 
 import petrova.ola.playlistmaker.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.domain.api.TracksRepository
+import petrova.ola.playlistmaker.domain.models.Track
 import petrova.ola.playlistmaker.utils.Resource
 import java.util.concurrent.Executors
 
@@ -15,15 +16,21 @@ class TracksInteractorImpl(
 
             when (val resourse = repository.searchTracks(expression)) {
                 is Resource.Success -> {
-                    consumer.consume(resourse.data, null)
+                    consumer.consume(resourse.data)
                 }
 
                 is Resource.Error -> {
-                    consumer.consume(null, resourse.message)
+                    consumer.onFailure(resourse.message)
                 }
             }
 
         }
     }
+
+    override fun getHistory() = repository.getHistory()
+
+    override fun clearHistory() = repository.clearHistory()
+
+    override fun putHistory(tracks: MutableList<Track>) = repository.putHistory(tracks)
 
 }

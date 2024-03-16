@@ -97,7 +97,7 @@
         android:id="@+id/group_not_internet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="img_placeholder_int, not_int_txt, check_connection, update_button" />
+        app:constraint_referenced_ids="img_placeholder_int, not_int_txt, error_message_tv, update_button" />
 
     <ImageView
         android:id="@+id/img_placeholder_int"
@@ -125,14 +125,13 @@
         app:layout_constraintTop_toBottomOf="@id/img_placeholder_int" />
 
     <TextView
-        android:id="@+id/check_connection"
+        android:id="@+id/error_message_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp24"
         android:layout_marginTop="@dimen/dp16"
         android:fontFamily="@font/ys_display_medium"
         android:letterSpacing="0"
-        android:text="@string/check_connection_txt"
         android:textAlignment="center"
         android:textColor="@color/placeholder_search"
         android:textFontWeight="400"
@@ -206,6 +205,6 @@
         android:text="@string/update_txt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/check_connection" />
+        app:layout_constraintTop_toBottomOf="@id/error_message_tv" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

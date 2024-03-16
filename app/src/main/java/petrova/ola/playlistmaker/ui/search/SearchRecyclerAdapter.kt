@@ -7,13 +7,9 @@ import petrova.ola.playlistmaker.databinding.ItemTrackBinding
 import petrova.ola.playlistmaker.domain.models.Track
 
 class SearchRecyclerAdapter(
-    val type: SearchListType,
-    private val tracks: List<Track>,
+    val tracks: MutableList<Track> = mutableListOf(),
     private val trackOnClickListener: TrackOnClickListener
 ) : RecyclerView.Adapter<TrackViewHolder>() {
-    enum class SearchListType {
-        HISTORY, SEARCH
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val binding = ItemTrackBinding.inflate(LayoutInflater.from(parent.context), parent, false)

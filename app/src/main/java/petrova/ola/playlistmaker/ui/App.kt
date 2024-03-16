@@ -13,7 +13,7 @@ class App : Application() {
 
     private fun switchTheme() {
         val settingInteractor = Creator.provideSettingInteractor(this)
-        if (settingInteractor.darkTheme()) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        if (settingInteractor.loadTheme()) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 

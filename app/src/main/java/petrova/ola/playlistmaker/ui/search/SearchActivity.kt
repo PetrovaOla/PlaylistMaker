@@ -1,10 +1,9 @@
 package petrova.ola.playlistmaker.ui.search
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -13,56 +12,33 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import petrova.ola.playlistmaker.creator.Creator
-import petrova.ola.playlistmaker.data.repository.TracksHistoryRepositoryImplShared
 import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
-import petrova.ola.playlistmaker.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.domain.models.Track
+import petrova.ola.playlistmaker.presentation.search.SearchScreenState
+import petrova.ola.playlistmaker.presentation.search.SearchViewModel
 import petrova.ola.playlistmaker.ui.player.PlayerActivity
-import kotlin.properties.Delegates
 
-
+@SuppressLint("NotifyDataSetChanged")
 class SearchActivity : AppCompatActivity() {
+
+    private val viewModel by viewModels<SearchViewModel> { SearchViewModel.getViewModelFactory() }
 
     private val binding by lazy {
         ActivitySearchBinding.inflate(layoutInflater)
     }
     private lateinit var inputEditText: TextInputEditText
 
-    private var trackList: MutableList<Track> = mutableListOf()
-    private var trackListHistory: MutableList<Track> = mutableListOf()
-
-    private lateinit var tracksInteractor: TracksInteractor
-
-    private var rvAdapter: SearchRecyclerAdapter = SearchRecyclerAdapter(
-        SearchRecyclerAdapter.SearchListType.SEARCH, trackList
-    ) {
-        if (clickDebounce()) {
-            appendHistory(it)
-            openPlayer(it)
-        }
+    private var rvAdapter = SearchRecyclerAdapter {
+        viewModel.processHistory(it)
+        openPlayer(it)
     }
-    private var rvAdapterHistory: SearchRecyclerAdapter = SearchRecyclerAdapter(
-        SearchRecyclerAdapter.SearchListType.HISTORY,
-        trackListHistory
-    ) {
-        if (clickDebounce()) {
-            appendHistory(it)
-            openPlayer(it)
-        }
-    }
-    private var currentAdapter: SearchRecyclerAdapter
-            by Delegates.observable(rvAdapter) { _, old, new ->
-                if (new.type != old.type) recycler.adapter = new
-            }
-
 
     private lateinit var recycler: RecyclerView
     private lateinit var groupNotFound: Group
@@ -72,31 +48,76 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistoryButton: Button
     private lateinit var progressBar: ProgressBar
 
-    private var searchQuery = SEARCH_EMPTY
-    private val token = Any()
 
-
-    private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { requestHandler(searchQuery) }
-
-    val tracksHistoryRepository by lazy {
-        TracksHistoryRepositoryImplShared(
-            getSharedPreferences(APPLICATION_SHARE_ID, MODE_PRIVATE)
-        )
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        tracksInteractor = Creator.provideTracksInteractor()
 
-        trackListHistory.addAll(tracksHistoryRepository.getHistory())
+        viewModel.getScreenStateLiveData().observe(this) { screenState ->
+            when (screenState) {
+                is SearchScreenState.Empty -> {
+                    groupNotInternet.visibility = View.GONE
+                    groupNotFound.visibility = View.GONE
+                    recycler.visibility = View.GONE
+                    progressBar.visibility = View.GONE
+                    updateButton.visibility = View.GONE
+                }
+
+                is SearchScreenState.Error -> {
+                    groupNotInternet.visibility = View.VISIBLE
+                    groupNotFound.visibility = View.GONE
+                    recycler.visibility = View.GONE
+                    progressBar.visibility = View.GONE
+                    binding.errorMessageTv.text = screenState.message
+                    updateButton.visibility = View.VISIBLE
+                }
+
+                SearchScreenState.Loading -> {
+                    groupNotInternet.visibility = View.GONE
+                    groupNotFound.visibility = View.GONE
+                    recycler.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                    updateButton.visibility = View.GONE
+                    clearHistoryButton.visibility = View.GONE
+                    historySearchTv.visibility = View.GONE
+                }
+
+                is SearchScreenState.HistoryTracks -> {
+                    groupNotInternet.visibility = View.GONE
+                    groupNotFound.visibility = View.GONE
+                    recycler.visibility = View.VISIBLE
+                    progressBar.visibility = View.GONE
+
+                    val visiblity = if (screenState.historyList.isEmpty()) View.GONE
+                    else View.VISIBLE
+                    historySearchTv.visibility = visiblity
+                    clearHistoryButton.visibility = visiblity
+
+                    rvAdapter.tracks.clear()
+                    rvAdapter.tracks.addAll(screenState.historyList)
+                    rvAdapter.notifyDataSetChanged()
+                }
+
+                is SearchScreenState.TrackList -> {
+                    groupNotInternet.visibility = View.GONE
+                    groupNotFound.visibility = View.GONE
+                    recycler.visibility = View.VISIBLE
+                    progressBar.visibility = View.GONE
+                    historySearchTv.visibility = View.GONE
+                    clearHistoryButton.visibility = View.GONE
+
+                    rvAdapter.tracks.clear()
+                    rvAdapter.tracks.addAll(screenState.resultsList)
+                    rvAdapter.notifyDataSetChanged()
+                }
+            }
+        }
 
         groupNotFound = binding.groupNotFound
         groupNotInternet = binding.groupNotInternet
-        groupNotFound.isGone = true
-        groupNotInternet.isGone = true
+        groupNotFound.visibility = View.GONE
+        groupNotInternet.visibility = View.GONE
         recycler = binding.trackListRecycler
         inputEditText = binding.inputEditText
         updateButton = binding.updateButton
@@ -107,16 +128,7 @@ class SearchActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            val historyVisible = if (
-                hasFocus &&
-                inputEditText.text!!.isEmpty() &&
-                trackListHistory.isNotEmpty()
-            ) View.VISIBLE else View.GONE
-
-            historySearchTv.visibility = historyVisible
-            clearHistoryButton.visibility = historyVisible
-            currentAdapter =
-                if (hasFocus && inputEditText.text!!.isEmpty()) rvAdapterHistory else rvAdapter
+            viewModel.changeInputFocus(hasFocus, inputEditText.text!!.isEmpty())
         }
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -124,26 +136,11 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchQuery = s?.toString().orEmpty()
-
-                val historyVisible = if (
-                    inputEditText.hasFocus() &&
-                    s?.isEmpty() == true &&
-                    trackListHistory.isNotEmpty()
-                ) View.VISIBLE else View.GONE
-                historySearchTv.visibility = historyVisible
-                clearHistoryButton.visibility = historyVisible
-
-                if (historyVisible == View.VISIBLE)
-                    recycler.visibility = View.VISIBLE
-
-                currentAdapter = if (inputEditText.hasFocus() && inputEditText.text!!.isEmpty())
-                    rvAdapterHistory
-                else rvAdapter
+                viewModel.searchDebounce(s?.toString().orEmpty())
             }
 
             override fun afterTextChanged(s: Editable?) {
-                searchDebounce()
+                viewModel.searchDebounce(s?.toString().orEmpty())
             }
         }
 
@@ -152,7 +149,7 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // ВЫПОЛНЯЙТЕ ПОИСКОВЫЙ ЗАПРОС ЗДЕСЬ
-                requestHandler(searchQuery)
+                viewModel.searchDebounce(inputEditText.toString())
                 inputEditText.clearFocus()
             }
 
@@ -160,20 +157,10 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.inputLayoutText.setEndIconOnClickListener {
-            inputEditText.setText(SEARCH_EMPTY)
-            currentAdapter = rvAdapterHistory
+            inputEditText.setText("")
 
-            val visibility = if (trackListHistory.isEmpty()) View.GONE else View.VISIBLE
-            recycler.visibility = visibility
-            historySearchTv.visibility = visibility
-            clearHistoryButton.visibility = visibility
+            viewModel.endInput()
 
-            val oldSize = trackList.size
-            trackList.clear()
-            rvAdapter.notifyItemRangeRemoved(0, oldSize)
-
-            groupNotInternet.isGone = true
-            groupNotFound.isGone = true
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
@@ -182,48 +169,14 @@ class SearchActivity : AppCompatActivity() {
 
         recycler.layoutManager = LinearLayoutManager(this)
 
-        currentAdapter = rvAdapterHistory
-
         updateButton.setOnClickListener {
-            requestHandler(searchQuery)
+            viewModel.forceResearch(viewModel.latestSearchText)
         }
-
         clearHistoryButton.setOnClickListener {
-            with(trackListHistory.size) {
-                trackListHistory.clear()
-                tracksHistoryRepository.clearHistory()
-                rvAdapterHistory.notifyItemRangeRemoved(0, this)
-            }
-            updateHistoryVisibility()
+            viewModel.clearHistory()
         }
-    }
 
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-    private fun searchDebounce() {
-        handler.removeCallbacksAndMessages(token)
-        handler.postDelayed(searchRunnable, token, SEARCH_DEBOUNCE_DELAY)
-    }
-
-    private fun updateHistoryVisibility() {
-        with(
-            if (
-                inputEditText.hasFocus() &&
-                inputEditText.text!!.isEmpty() &&
-                trackListHistory.isNotEmpty()
-            ) View.VISIBLE
-            else View.GONE
-        ) {
-            historySearchTv.visibility = this
-            clearHistoryButton.visibility = this
-        }
+        recycler.adapter = rvAdapter
     }
 
     private fun openPlayer(track: Track) {
@@ -232,119 +185,13 @@ class SearchActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun appendHistory(track: Track) {
-        when (val indexOf = trackListHistory.indexOf(track)) {
-            -1 -> {
-                trackListHistory.add(0, track)
-                rvAdapterHistory.notifyItemInserted(0)
-            }
-
-            0 -> {
-
-            }
-
-            else -> {
-                trackListHistory.removeAt(indexOf)
-                trackListHistory.add(0, track)
-                rvAdapterHistory.notifyItemMoved(indexOf, 0)
-            }
-        }
-
-        for (i in 10 until trackListHistory.size)
-            trackListHistory.removeAt(i)
-        rvAdapterHistory.notifyItemRangeRemoved(10, trackListHistory.size - 1)
-
-        updateHistoryVisibility()
-
-        tracksHistoryRepository.putHistory(trackListHistory)
-    }
-
-    val providerTracksInteractor = Creator.provideTracksInteractor()
-    private fun requestHandler(searchQuery: String) {
-        if (searchQuery.isEmpty())
-            return
-
-        recycler.isGone = true
-        progressBar.isVisible = true
-
-        providerTracksInteractor.searchTracks(
-            searchQuery,
-            object : TracksInteractor.TracksConsumer {
-                override fun consume(trackResponse: List<Track>) {
-                    mainExecutor.execute {
-                        progressBar.isGone =
-                            true   // Прячем ProgressBar после успешного выполнения запроса
-
-                        if (trackResponse.isEmpty()) {
-                            groupNotFound.isVisible = true
-                            groupNotInternet.isGone = true
-                            trackList.clear()
-                        } else {
-                            recycler.isVisible = true
-                            trackList.clear()
-                            trackList.addAll(trackResponse)
-                            groupNotFound.isGone = true
-                            groupNotInternet.isGone = true
-                        }
-                        rvAdapter.notifyDataSetChanged()
-                    }
-                }
-
-                override fun onFailure() {
-                    mainExecutor.execute {
-                        groupNotInternet.isVisible = true
-                        groupNotFound.isGone = true
-                        progressBar.isGone = true
-                        val size = trackList.size
-                        trackList.clear()
-                        rvAdapter.notifyItemRangeRemoved(0, size)
-                    }
-                }
-            })
-    }
-
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SEARCH, searchQuery)
-        outState.putInt(NOT_INTERNET, groupNotInternet.visibility)
-        outState.putInt(NOT_FOUND, groupNotFound.visibility)
-        outState.putString(TRACK_LIST, Creator.bundleCodecTrackList.encodeData(trackList))
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchQuery = savedInstanceState.getString(SEARCH, SEARCH_EMPTY)
-            ?: SEARCH_EMPTY
-        inputEditText.setText(searchQuery)
-
-        trackList.addAll(
-            Creator.bundleCodecTrackList.decodeData(
-                savedInstanceState.getString(TRACK_LIST, "[]")
-            )
-        )
-        rvAdapter.notifyDataSetChanged()
-
-        groupNotInternet.visibility = savedInstanceState.getInt(NOT_INTERNET, View.GONE)
-        groupNotFound.visibility = savedInstanceState.getInt(NOT_FOUND, View.GONE)
-    }
-
     override fun onStart() {
         super.onStart()
         inputEditText.requestFocus()
     }
 
     companion object {
-        private const val SEARCH = "SEARCH"
-        private const val SEARCH_EMPTY = ""
-        private const val NOT_INTERNET = "NOT_INTERNET"
-        private const val NOT_FOUND = "NOT_FOUND"
-        private const val TRACK_LIST = "TRACK_LIST"
-
-        const val APPLICATION_SHARE_ID = "application_share_id"
         const val EXTRAS_KEY: String = "TRACK"
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
 }

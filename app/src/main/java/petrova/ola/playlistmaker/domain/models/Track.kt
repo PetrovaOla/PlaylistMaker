@@ -18,6 +18,6 @@ data class Track(
         get() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     val date: String
         get() = releaseDate.substringBefore('-')
-    val trackTime: String
+    val trackTime: String?
         get() = msToTime(trackTimeMillis)
 }

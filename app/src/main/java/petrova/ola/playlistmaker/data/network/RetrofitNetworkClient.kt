@@ -18,7 +18,7 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
     private val apiService = retrofit.create(ApiService::class.java)
 
     override fun doRequest(dto: Any): Response {
-        if (isConnected() == false) {
+        if (!isConnected()) {
             return Response().apply { resultCode = -1 }
         }
 
