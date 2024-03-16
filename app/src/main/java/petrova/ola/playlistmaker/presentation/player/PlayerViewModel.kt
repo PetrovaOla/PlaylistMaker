@@ -13,22 +13,27 @@ import petrova.ola.playlistmaker.domain.api.PlayerInteractor
 
 class PlayerViewModel(val playerInteractor: PlayerInteractor) : ViewModel() {
 
-    private val _playerScreenState = MutableLiveData<PlayerScreenState>(PlayerScreenState.Loading)
-    val playerScreenState: LiveData<PlayerScreenState> = _playerScreenState
+    private val playerMutableScreenState = MutableLiveData<PlayerScreenState>(
+        PlayerScreenState.Loading
+    )
+    val playerScreenState: LiveData<PlayerScreenState> = playerMutableScreenState
 
     init {
-        _playerScreenState.value = PlayerScreenState.Content()
+        playerMutableScreenState.value = PlayerScreenState.Content()
     }
 
     private val token = Any()
     private val mainThreadHandler by lazy { Handler(Looper.getMainLooper()) }
     private var timer: Runnable = Runnable { timerRun() }
 
-    private var playerState = playerInteractor.playerState()
-    private var playerPos = playerInteractor.getPosition()
+    private val playerState
+        get() = playerInteractor.playerState()
+
+    private val playerPos
+        get() = playerInteractor.getPosition()
 
     private fun timerRun() {
-        _playerScreenState.value = PlayerScreenState.Content(playerState, playerPos)
+        playerMutableScreenState.value = PlayerScreenState.Content(playerState, playerPos)
         if (playerState == PlayerState.PLAY) {
             timer.let { mainThreadHandler.postDelayed(it, token, DELAY) }
         }
@@ -41,7 +46,7 @@ class PlayerViewModel(val playerInteractor: PlayerInteractor) : ViewModel() {
 
     fun pause() {
         playerInteractor.pause()
-        _playerScreenState.value = PlayerScreenState.Content(playerState, playerPos)
+        playerMutableScreenState.value = PlayerScreenState.Content(playerState, playerPos)
     }
 
     fun onClick() {

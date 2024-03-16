@@ -47,6 +47,7 @@ class PlayerActivity : AppCompatActivity() {
                         playerState = playerScreenState.playerState,
                         position = playerScreenState.playerPos
                     )
+                    println()
                 }
 
                 PlayerScreenState.Error -> {
@@ -59,9 +60,6 @@ class PlayerActivity : AppCompatActivity() {
             }
 
         }
-
-
-
 
         with(binding) {
             val imageLoader = Creator.provideImageLoader()
