@@ -19,11 +19,13 @@ class SharingInteractorImpl(
 
         intent.putExtra(Intent.EXTRA_SUBJECT, getString(context, R.string.share_subject))
         intent.putExtra(Intent.EXTRA_TEXT, shareContent)
+        val createChooser = Intent.createChooser(
+            intent,
+            getString(context, R.string.share_using)
+        )
+        createChooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(
-            Intent.createChooser(
-                intent,
-                getString(context, R.string.share_using)
-            )
+            createChooser
         )
 
 
@@ -36,7 +38,7 @@ class SharingInteractorImpl(
     override fun userAgreement() {
         val url = context.getString(R.string.url)
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //        context.startActivity(intent)
 
         if (browserIntent.resolveActivity(context.packageManager) != null) {
@@ -51,6 +53,8 @@ class SharingInteractorImpl(
         val mailSubject = context.getString(R.string.messageSubject)
         val mailBody = context.getResources().getString(R.string.message)
         val shareIntent = Intent(Intent.ACTION_SENDTO)
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
         shareIntent.data = Uri.parse(context.getString(R.string.mailto))
         shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(context.getString(R.string.email)))
         shareIntent.putExtra(Intent.EXTRA_TEXT, mailSubject)
