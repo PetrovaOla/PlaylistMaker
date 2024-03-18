@@ -21,7 +21,10 @@ class SettingActivity : AppCompatActivity() {
             this,
             SettingViewModel.getViewModelFactory()
         )[SettingViewModel::class.java]
-        viewModel.isDarkTheme.observe(this) { binding.themeSwitcher.isChecked = it }
+        viewModel.isDarkTheme.observe(this) {
+            if (binding.themeSwitcher.isChecked != it)
+                binding.themeSwitcher.isChecked = it
+        }
 
 
         binding.toolbarSetting.setNavigationOnClickListener {
