@@ -3,7 +3,7 @@ package petrova.ola.playlistmaker.player.domain
 import android.media.MediaPlayer
 import android.util.Log
 
-class PlayerInteractorImpl(url: String) : PlayerInteractor {
+class PlayerInteractorImpl(url: String?) : PlayerInteractor {
     private val mediaPlayer = MediaPlayer()
     private var playerState = PlayerState.INITIAL
 

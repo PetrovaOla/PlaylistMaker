@@ -64,7 +64,7 @@ object Creator {
         return context.getSharedPreferences(PREFERENCES, AppCompatActivity.MODE_PRIVATE)
     }
 
-    fun providePlayerInteractor(url: String): PlayerInteractor {
+    fun providePlayerInteractor(url: String?): PlayerInteractor {
         return PlayerInteractorImpl(url = url)
     }
 

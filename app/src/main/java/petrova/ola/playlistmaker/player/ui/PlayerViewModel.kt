@@ -67,7 +67,7 @@ class PlayerViewModel(val playerInteractor: PlayerInteractor) : ViewModel() {
 
     companion object {
         private const val DELAY: Long = 500
-        fun getViewModelFactory(url: String): ViewModelProvider.Factory = viewModelFactory {
+        fun getViewModelFactory(url: String?): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 PlayerViewModel(
                     playerInteractor = Creator.providePlayerInteractor(url = url)

@@ -75,8 +75,8 @@ class PlayerActivity : AppCompatActivity() {
             album.text = track.collectionName
             album.isVisible = album.text.isNotEmpty()
             albumTv.isVisible = album.isVisible
-            if (track.releaseDate.length > 3) {
-                year.text = track.releaseDate.substring(0, 4)
+            if (track.releaseDate != null && track.releaseDate!!.length > 3) {
+                year.text = track.releaseDate!!.substring(0, 4)
             }
             genre.text = track.primaryGenreName
             country.text = track.country
