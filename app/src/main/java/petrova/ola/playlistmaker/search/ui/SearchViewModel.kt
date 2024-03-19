@@ -104,9 +104,7 @@ class SearchViewModel(private val application: Application) : AndroidViewModel(a
                     handler.post {
                         if (trackResponse.isNullOrEmpty())
                             renderState(
-                                SearchScreenState.Error(
-                                    application.getString(R.string.not_found_txt)
-                                )
+                                SearchScreenState.Empty
                             )
                         else {
                             trackList.clear()

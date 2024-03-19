@@ -56,7 +56,7 @@ class SearchActivity : AppCompatActivity() {
             when (screenState) {
                 is SearchScreenState.Empty -> {
                     groupNotInternet.visibility = View.GONE
-                    groupNotFound.visibility = View.GONE
+                    groupNotFound.visibility = View.VISIBLE
                     recycler.visibility = View.GONE
                     progressBar.visibility = View.GONE
                     updateButton.visibility = View.GONE
