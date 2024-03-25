@@ -8,18 +8,15 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import petrova.ola.playlistmaker.R
-import petrova.ola.playlistmaker.creator.Creator
 import petrova.ola.playlistmaker.search.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.search.domain.model.Track
 
-class SearchViewModel(private val application: Application) : AndroidViewModel(application) {
+class SearchViewModel(
+    private val application: Application,
+    private val tracksInteractor: TracksInteractor
+) : AndroidViewModel(application) {
 
-    private val tracksInteractor = Creator.provideTracksInteractor(getApplication())
     private val handler = Handler(Looper.getMainLooper())
     var latestSearchText: String = ""
         private set
@@ -52,14 +49,6 @@ class SearchViewModel(private val application: Application) : AndroidViewModel(a
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val SEARCH_EMPTY = ""
         private const val SEARCH_REQUEST_TOKEN = "rgnferjkvnfijnsbingkjbgbosjifnvourgboiboiohsruouu"
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = this[APPLICATION_KEY] as Application
-                SearchViewModel(
-                    this[APPLICATION_KEY] as Application
-                )
-            }
-        }
     }
 
     fun getScreenStateLiveData() = searchScreenState
