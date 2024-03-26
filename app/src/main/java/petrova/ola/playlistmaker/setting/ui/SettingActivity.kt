@@ -20,6 +20,7 @@ class SettingActivity : AppCompatActivity() {
         viewModel.isDarkTheme.observe(this) {
 //            if (binding.themeSwitcher.isChecked != it)
                 binding.themeSwitcher.isChecked = it
+
         }
 
 
