@@ -4,26 +4,23 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivitySettingsBinding.inflate(layoutInflater)
     }
-    private lateinit var viewModel: SettingViewModel
+    private val viewModel by viewModel<SettingViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(
-            this,
-            SettingViewModel.getViewModelFactory()
-        )[SettingViewModel::class.java]
         viewModel.isDarkTheme.observe(this) {
-            if (binding.themeSwitcher.isChecked != it)
+//            if (binding.themeSwitcher.isChecked != it)
                 binding.themeSwitcher.isChecked = it
+
         }
 
 

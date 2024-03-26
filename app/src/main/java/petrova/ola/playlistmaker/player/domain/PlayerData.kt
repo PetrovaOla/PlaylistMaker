@@ -1,10 +1,11 @@
 package petrova.ola.playlistmaker.player.domain
 
-interface PlayerInteractor {
+interface PlayerData {
+    fun setDataSource(url: String)
     fun playerState(): PlayerState
+    fun getPosition(): Int
     fun start()
     fun pause()
-    fun getPosition(): Int
     fun destroy()
-    fun setDataSource(url: String)
+
 }
