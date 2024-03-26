@@ -1,7 +1,6 @@
 package petrova.ola.playlistmaker.creator
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
@@ -24,9 +23,7 @@ class App : Application() {
 
     private fun switchTheme() {
         val settingInteractor: SettingInteractor by inject()
-
-        if (settingInteractor.loadTheme()) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        settingInteractor.applyTheme()
     }
 
 }

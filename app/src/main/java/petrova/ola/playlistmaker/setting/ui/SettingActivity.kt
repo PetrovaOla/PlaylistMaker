@@ -18,7 +18,7 @@ class SettingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         viewModel.isDarkTheme.observe(this) {
-            if (binding.themeSwitcher.isChecked != it)
+//            if (binding.themeSwitcher.isChecked != it)
                 binding.themeSwitcher.isChecked = it
         }
 
