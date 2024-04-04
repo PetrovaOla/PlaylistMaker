@@ -5,14 +5,10 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import petrova.ola.playlistmaker.creator.Creator
 import petrova.ola.playlistmaker.player.domain.PlayerInteractor
 import petrova.ola.playlistmaker.player.domain.PlayerState
 
-class PlayerViewModel(val playerInteractor: PlayerInteractor) : ViewModel() {
+class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewModel() {
 
     private val playerMutableScreenState = MutableLiveData<PlayerScreenState>(
         PlayerScreenState.Loading
@@ -32,6 +28,10 @@ class PlayerViewModel(val playerInteractor: PlayerInteractor) : ViewModel() {
 
     private val playerPos
         get() = playerInteractor.getPosition()
+
+    fun setDataSource(url: String) {
+        playerInteractor.setDataSource(url)
+    }
 
     private fun timerRun() {
         playerMutableScreenState.value = PlayerScreenState.Content(playerState, playerPos)
@@ -67,12 +67,5 @@ class PlayerViewModel(val playerInteractor: PlayerInteractor) : ViewModel() {
 
     companion object {
         private const val DELAY: Long = 500
-        fun getViewModelFactory(url: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(
-                    playerInteractor = Creator.providePlayerInteractor(url = url)
-                )
-            }
-        }
     }
 }

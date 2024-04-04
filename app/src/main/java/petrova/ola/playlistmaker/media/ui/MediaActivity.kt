@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.databinding.ActivityMediaBinding
 
 class MediaActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: MediaViewModel
+    private val viewModel by viewModel<MediaViewModel>()
     private val binding by lazy {
         ActivityMediaBinding.inflate(layoutInflater)
     }
@@ -18,10 +18,6 @@ class MediaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(
-            this,
-            MediaViewModel.getViewModelFactory()
-        )[MediaViewModel::class.java]
     }
 
     companion object {

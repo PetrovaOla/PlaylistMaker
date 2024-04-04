@@ -9,4 +9,8 @@ class SettingInteractorImpl
     override fun saveTheme(value: Boolean) {
         return settingRepository.saveTheme(value = value)
     }
+
+    override fun applyTheme() {
+        return settingRepository.applyTheme()
+    }
 }

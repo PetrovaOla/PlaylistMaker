@@ -4,20 +4,26 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.R
-import petrova.ola.playlistmaker.creator.Creator
 import petrova.ola.playlistmaker.databinding.ActivityPlayerBinding
 import petrova.ola.playlistmaker.player.domain.PlayerState
+import petrova.ola.playlistmaker.search.data.repository.GsonBundleCodec
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.search.ui.SearchActivity
+import petrova.ola.playlistmaker.utils.ImageLoader
 import petrova.ola.playlistmaker.utils.msToTime
 
 class PlayerActivity : AppCompatActivity() {
+    private val bundleCodecTrack: GsonBundleCodec<Track> by inject()
+    private val imageLoader: ImageLoader by inject()
+
     private val binding by lazy {
         ActivityPlayerBinding.inflate(layoutInflater)
     }
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel: PlayerViewModel by viewModel()
+
     private lateinit var track: Track
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,11 +31,10 @@ class PlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         intent.extras?.getString(SearchActivity.EXTRAS_KEY)?.let {
-            track = Creator.bundleCodecTrack.decodeData(it)
+            track = bundleCodecTrack.decodeData(it)
         }
-        viewModel = ViewModelProvider(
-            this, PlayerViewModel.getViewModelFactory(track.previewUrl)
-        )[PlayerViewModel::class.java]
+
+        viewModel.setDataSource(url = track.previewUrl.toString())
 
         binding.toolbarPlayer.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -60,7 +65,6 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         with(binding) {
-            val imageLoader = Creator.provideImageLoader()
             imageLoader.loadImage(
                 imageUrl = track.bigImg,
                 context = this.main,
@@ -75,8 +79,8 @@ class PlayerActivity : AppCompatActivity() {
             album.text = track.collectionName
             album.isVisible = album.text.isNotEmpty()
             albumTv.isVisible = album.isVisible
-            if (track.releaseDate.length > 3) {
-                year.text = track.releaseDate.substring(0, 4)
+            if (track.releaseDate != null && track.releaseDate!!.length > 3) {
+                year.text = track.releaseDate!!.substring(0, 4)
             }
             genre.text = track.primaryGenreName
             country.text = track.country

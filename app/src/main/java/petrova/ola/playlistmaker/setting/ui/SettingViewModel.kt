@@ -1,15 +1,9 @@
 package petrova.ola.playlistmaker.setting.ui
 
-import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import petrova.ola.playlistmaker.creator.Creator
 import petrova.ola.playlistmaker.setting.domain.SettingInteractor
 import petrova.ola.playlistmaker.sharing.domain.SharingInteractor
 
@@ -49,15 +43,4 @@ class SettingViewModel(
         sharingInteractor.userAgreement()
     }
 
-    companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = this[APPLICATION_KEY] as Application
-                SettingViewModel(
-                    settingInteractor = Creator.provideSettingInteractor(application),
-                    sharingInteractor = Creator.provideSharingInteractor(application)
-                )
-            }
-        }
-    }
 }

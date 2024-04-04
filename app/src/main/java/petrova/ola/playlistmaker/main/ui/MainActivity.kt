@@ -5,14 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.databinding.ActivityMainBinding
 import petrova.ola.playlistmaker.media.ui.MediaActivity
 import petrova.ola.playlistmaker.search.ui.SearchActivity
 import petrova.ola.playlistmaker.setting.ui.SettingActivity
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var viewModel: MainViewModel
+
+    private val viewModel by viewModel<MainViewModel>()
+
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -21,8 +23,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        viewModel =
-            ViewModelProvider(this, MainViewModel.getViewModelFactory())[MainViewModel::class.java]
 
         viewModel.navigate.observe(this) { navigateTo(it) }
 

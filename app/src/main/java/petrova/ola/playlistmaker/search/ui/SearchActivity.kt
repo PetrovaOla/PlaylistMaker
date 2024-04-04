@@ -12,21 +12,22 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
-import petrova.ola.playlistmaker.creator.Creator
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
 import petrova.ola.playlistmaker.player.ui.PlayerActivity
+import petrova.ola.playlistmaker.search.data.repository.GsonBundleCodec
 import petrova.ola.playlistmaker.search.domain.model.Track
 
 @SuppressLint("NotifyDataSetChanged")
 class SearchActivity : AppCompatActivity() {
-
-    private val viewModel by viewModels<SearchViewModel> { SearchViewModel.getViewModelFactory() }
+    private val bundleCodecTrack: GsonBundleCodec<Track> by inject()
+    private val viewModel by viewModel<SearchViewModel>()
 
     private val binding by lazy {
         ActivitySearchBinding.inflate(layoutInflater)
@@ -179,7 +180,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openPlayer(track: Track) {
         val intent = Intent(this, PlayerActivity::class.java)
-        intent.putExtra(EXTRAS_KEY, Creator.bundleCodecTrack.encodeData(track))
+        intent.putExtra(EXTRAS_KEY, bundleCodecTrack.encodeData(track))
         startActivity(intent)
     }
 

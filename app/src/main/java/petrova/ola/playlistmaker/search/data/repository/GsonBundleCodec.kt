@@ -1,11 +1,10 @@
 package petrova.ola.playlistmaker.search.data.repository
 
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import petrova.ola.playlistmaker.search.data.BundleCodec
 
 class GsonBundleCodec<T>(
-    private val type: TypeToken<T>
+    private val type: Class<T>
 ) : BundleCodec<T> {
     private val gson = Gson()
 
