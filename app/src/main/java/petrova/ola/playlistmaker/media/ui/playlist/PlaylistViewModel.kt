@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker.media.ui
+package petrova.ola.playlistmaker.media.ui.playlist
 
 import androidx.lifecycle.ViewModel
 

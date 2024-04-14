@@ -12,7 +12,10 @@ import petrova.ola.playlistmaker.databinding.FragmentFavoritesBinding
 class FavoritesFragment : Fragment() {
 
     private val favoritesViewModel: FavoritesViewModel by viewModel()
-    private lateinit var binding: FragmentFavoritesBinding
+
+    private var _binding: FragmentFavoritesBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -22,15 +25,17 @@ class FavoritesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     companion object {
+        fun newInstance() = FavoritesFragment()
 
-        fun newInstance() = FavoritesFragment().apply {
 
-        }
     }
 }

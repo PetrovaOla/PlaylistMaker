@@ -25,7 +25,7 @@ class MediaActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        val trackId = intent.getStringExtra("id") ?: ""
+        val trackId = intent.getStringExtra(ARGS_TRACK_ID) ?: ARGS_EMPTY
         binding.viewPager.adapter = MediaViewPagerAdapter(
             supportFragmentManager,
             lifecycle, trackId
@@ -48,6 +48,8 @@ class MediaActivity : AppCompatActivity() {
 
 
     companion object {
+        private const val ARGS_TRACK_ID = "track_id"
+        private const val ARGS_EMPTY = ""
         fun newIntent(context: Context) = Intent(context, MediaActivity::class.java)
     }
 }

@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import petrova.ola.playlistmaker.media.ui.favorites.FavoritesFragment
+import petrova.ola.playlistmaker.media.ui.playlist.PlaylistFragment
 
 class MediaViewPagerAdapter(
     fragmentManager: FragmentManager,

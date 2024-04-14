@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker.media.ui
+package petrova.ola.playlistmaker.media.ui.playlist
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,13 +15,19 @@ class PlaylistFragment : Fragment() {
     private val playlistViewModel: PlaylistViewModel by viewModel {
         parametersOf(requireArguments().getString(TRACK_ID))
     }
-    private lateinit var binding: FragmentPlaylistBinding
+    private var _binding: FragmentPlaylistBinding? = null
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
