@@ -93,4 +93,10 @@
 
        <item name="trackTintMode">src_in</item>
    </style>
+
+    <style name="tabLayout">
+        <item name="android:background">@color/YPBlack</item>
+        <item name="tabIndicatorColor">@color/white</item>
+        <item name="tabTextColor">@color/white</item>
+    </style>
 </resources>

@@ -45,7 +45,7 @@
         </activity>
         <activity
             android:name=".setting.ui.SettingActivity"
-            android:configChanges="uiMode"
+            android:launchMode="singleTop"
             android:exported="false" />
         <activity
             android:name=".media.ui.MediaActivity"

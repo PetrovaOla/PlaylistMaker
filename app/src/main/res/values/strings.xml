@@ -37,4 +37,11 @@
     <string name="duration">Длительность</string>
     <string name="time">00:00</string>
     <string name="unknown_error">Unknown error\n</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="favorites">Избранные треки</string>
+    <string name="playlist">Плейлисты</string>
+    <string name="not_found_media">Ваша медиатека пуста</string>
+    <string name="not_found_playlist">Вы не создали \nни одного плейлиста</string>
+    <string name="new_playlist">Новый плейлист</string>
 </resources>
