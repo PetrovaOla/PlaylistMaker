@@ -5,14 +5,13 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".media.ui.MediaActivity">
+    tools:context=".media.ui.MediaFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarMedia"
         style="@style/ToolbarSettingStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/arrow_back"
         app:title="@string/medialibrary"
         app:titleTextAppearance="@style/ToolbarTextAppearance" />
 

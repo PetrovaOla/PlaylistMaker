@@ -11,7 +11,7 @@ import petrova.ola.playlistmaker.databinding.ActivityPlayerBinding
 import petrova.ola.playlistmaker.player.domain.PlayerState
 import petrova.ola.playlistmaker.search.data.repository.GsonBundleCodec
 import petrova.ola.playlistmaker.search.domain.model.Track
-import petrova.ola.playlistmaker.search.ui.SearchActivity
+import petrova.ola.playlistmaker.search.ui.SearchFragment
 import petrova.ola.playlistmaker.utils.ImageLoader
 import petrova.ola.playlistmaker.utils.msToTime
 
@@ -19,18 +19,20 @@ class PlayerActivity : AppCompatActivity() {
     private val bundleCodecTrack: GsonBundleCodec<Track> by inject()
     private val imageLoader: ImageLoader by inject()
 
-    private val binding by lazy {
-        ActivityPlayerBinding.inflate(layoutInflater)
-    }
+
+    private var _binding: ActivityPlayerBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: PlayerViewModel by viewModel()
 
     private lateinit var track: Track
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        _binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        intent.extras?.getString(SearchActivity.EXTRAS_KEY)?.let {
+        intent.extras?.getString(SearchFragment.EXTRAS_KEY)?.let {
             track = bundleCodecTrack.decodeData(it)
         }
 
@@ -131,8 +133,13 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.pause()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
     companion object {
-        private const val TAG = "Player Activity"
+        private const val TAG = "Player Fragment"
     }
 }
 

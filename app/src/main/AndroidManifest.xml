@@ -32,11 +32,9 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".player.ui.PlayerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".main.ui.MainActivity"
-            android:exported="true">
+            android:name=".root.ui.RootActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,14 +42,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".setting.ui.SettingActivity"
-            android:launchMode="singleTop"
-            android:exported="false" />
-        <activity
-            android:name=".media.ui.MediaActivity"
-            android:exported="false" />
-        <activity
-            android:name=".search.ui.SearchActivity"
+            android:name=".player.ui.PlayerActivity"
             android:exported="false" />
     </application>
 

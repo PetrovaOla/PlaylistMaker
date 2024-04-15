@@ -10,7 +10,7 @@ import petrova.ola.playlistmaker.media.ui.playlist.PlaylistFragment
 class MediaViewPagerAdapter(
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle,
-    private val trackId: String
+//    private val trackId: String
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun getItemCount(): Int {
         return 2
@@ -24,7 +24,7 @@ class MediaViewPagerAdapter(
             }
 
             else -> {
-                PlaylistFragment.newInstance(trackId)
+                PlaylistFragment.newInstance()
             }
 
         }

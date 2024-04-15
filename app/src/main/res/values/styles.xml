@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="ToolbarTextAppearance">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/sp22</item>
@@ -36,8 +37,9 @@
         <item name="iconGravity">textStart</item>
 
     </style>
+
     <style name="Button_update" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-<!--        <item name="android:foreground">?attr/selectableItemBackground</item>-->
+        <!--        <item name="android:foreground">?attr/selectableItemBackground</item>-->
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
 
@@ -55,6 +57,7 @@
 
 
     </style>
+
     <style name="setting_text">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">0dp</item>
@@ -97,28 +100,49 @@
 
 
     </style>
+
     <style name="image_button_setting">
         <item name="backgroundTint">@color/white</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-   <style name="MySwitch" parent="Widget.AppCompat.CompoundButton.Switch">
-       <item name="android:fontFamily">@font/ys_display_regular</item>
-       <item name="android:textSize">16sp</item>
-       <item name="android:textFontWeight">400</item>
-       <item name="textAllCaps">false</item>
-       <item name="android:paddingVertical">@dimen/dp20</item>
-       <item name="layout_constraintHorizontal_bias">0</item>
 
-       <item name="thumbTint">@color/switch_circle</item>
-       <item name="trackTint">@color/switch_stick</item>
-       <item name="trackTintMode">src_in</item>
-</style>
+    <style name="MySwitch" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:paddingVertical">@dimen/dp20</item>
+        <item name="layout_constraintHorizontal_bias">0</item>
+
+        <item name="thumbTint">@color/switch_circle</item>
+        <item name="trackTint">@color/switch_stick</item>
+        <item name="trackTintMode">src_in</item>
+    </style>
 
     <style name="tabLayout">
         <item name="android:background">@color/white</item>
         <item name="tabIndicatorColor">@color/YPBlack</item>
         <item name="tabTextColor">@color/YPBlack</item>
+    </style>
+
+    <style name="bottom_navigation" parent="Widget.MaterialComponents.BottomNavigationView">
+
+        <item name="itemBackground">@color/bottom_navigation_background</item>
+        <item name="elevation">5dp</item>
+
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/sp12</item>
+        <item name="itemTextAppearanceActive">@color/bottom_navigation_active</item>
+        <item name="itemTextAppearanceInactive">@color/bottom_navigation_inactive</item>
+
+        <item name="itemRippleColor">@android:color/transparent</item>
+
+
+        <item name="itemIconTint">@color/navigation_color</item>
+        <item name="itemTextColor">@color/navigation_color</item>
+
+
     </style>
 
 

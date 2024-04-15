@@ -6,32 +6,34 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import petrova.ola.playlistmaker.databinding.ActivitySearchBinding
+import petrova.ola.playlistmaker.databinding.FragmentSearchBinding
 import petrova.ola.playlistmaker.player.ui.PlayerActivity
 import petrova.ola.playlistmaker.search.data.repository.GsonBundleCodec
 import petrova.ola.playlistmaker.search.domain.model.Track
 
 @SuppressLint("NotifyDataSetChanged")
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
     private val bundleCodecTrack: GsonBundleCodec<Track> by inject()
     private val viewModel by viewModel<SearchViewModel>()
 
-    private val binding by lazy {
-        ActivitySearchBinding.inflate(layoutInflater)
-    }
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var inputEditText: TextInputEditText
 
     private var rvAdapter = SearchRecyclerAdapter {
@@ -47,13 +49,19 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistoryButton: Button
     private lateinit var progressBar: ProgressBar
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
 
-        viewModel.getScreenStateLiveData().observe(this) { screenState ->
+        viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
             when (screenState) {
                 is SearchScreenState.Empty -> {
                     groupNotInternet.visibility = View.GONE
@@ -123,9 +131,7 @@ class SearchActivity : AppCompatActivity() {
         clearHistoryButton = binding.clearHistoryBtn
         historySearchTv = binding.historySearchTv
         progressBar = binding.progressBar
-        binding.toolbarSearch.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
+
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             viewModel.changeInputFocus(hasFocus, inputEditText.text!!.isEmpty())
         }
@@ -156,17 +162,17 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.inputLayoutText.setEndIconOnClickListener {
-            inputEditText.setText("")
+            inputEditText.setText(EMPTY)
 
             viewModel.endInput()
 
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
             inputEditText.clearFocus()
         }
 
-        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.layoutManager = LinearLayoutManager(requireContext())
 
         updateButton.setOnClickListener {
             viewModel.forceResearch(viewModel.latestSearchText)
@@ -179,7 +185,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun openPlayer(track: Track) {
-        val intent = Intent(this, PlayerActivity::class.java)
+        val intent = Intent(requireContext(), PlayerActivity::class.java)
         intent.putExtra(EXTRAS_KEY, bundleCodecTrack.encodeData(track))
         startActivity(intent)
     }
@@ -189,8 +195,14 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.requestFocus()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     companion object {
         const val EXTRAS_KEY: String = "TRACK"
+        private const val EMPTY = ""
     }
 
 }
