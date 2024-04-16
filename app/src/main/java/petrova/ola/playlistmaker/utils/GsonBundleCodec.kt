@@ -1,4 +1,4 @@
-package petrova.ola.playlistmaker.search.data.repository
+package petrova.ola.playlistmaker.utils
 
 import com.google.gson.Gson
 import petrova.ola.playlistmaker.search.data.BundleCodec

@@ -23,8 +23,8 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.databinding.FragmentSearchBinding
 import petrova.ola.playlistmaker.player.ui.PlayerActivity
-import petrova.ola.playlistmaker.search.data.repository.GsonBundleCodec
 import petrova.ola.playlistmaker.search.domain.model.Track
+import petrova.ola.playlistmaker.utils.GsonBundleCodec
 
 @SuppressLint("NotifyDataSetChanged")
 class SearchFragment : Fragment() {

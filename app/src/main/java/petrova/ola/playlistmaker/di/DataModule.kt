@@ -11,10 +11,10 @@ import petrova.ola.playlistmaker.player.domain.PlayerData
 import petrova.ola.playlistmaker.search.data.NetworkClient
 import petrova.ola.playlistmaker.search.data.network.ApiService
 import petrova.ola.playlistmaker.search.data.network.RetrofitNetworkClient
-import petrova.ola.playlistmaker.search.data.repository.GsonBundleCodec
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.sharing.data.LocalStorage
 import petrova.ola.playlistmaker.utils.GlideImageLoader
+import petrova.ola.playlistmaker.utils.GsonBundleCodec
 import petrova.ola.playlistmaker.utils.ImageLoader
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
