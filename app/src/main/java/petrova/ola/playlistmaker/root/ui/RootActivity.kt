@@ -26,7 +26,13 @@ class RootActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.searchFragment,
+                R.id.settingFragment,
+                R.id.mediaFragment
+            )
+        )
         findViewById<Toolbar>(R.id.toolbar)
             .setupWithNavController(navController, appBarConfiguration)
 
