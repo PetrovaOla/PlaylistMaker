@@ -46,4 +46,5 @@
     <string name="new_playlist">Новый плейлист</string>
     <string name="name_song">Название композиции</string>
     <string name="name_person">Имя исполнителя</string>
+    <string name="title">Title</string>
 </resources>

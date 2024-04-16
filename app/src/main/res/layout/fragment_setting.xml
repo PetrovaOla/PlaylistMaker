@@ -4,14 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarSetting"
-        style="@style/ToolbarSettingStyle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/settings"
-        app:titleTextAppearance="@style/ToolbarTextAppearance" />
-
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/themeSwitcher"
         android:layout_width="0dp"
@@ -22,7 +14,7 @@
         android:textColor="@color/text_switch"
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/toolbarSetting" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView

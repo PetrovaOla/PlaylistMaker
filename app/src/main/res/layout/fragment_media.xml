@@ -7,15 +7,8 @@
     android:orientation="vertical"
     tools:context=".media.ui.MediaFragment">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarMedia"
-        style="@style/ToolbarSettingStyle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/medialibrary"
-        app:titleTextAppearance="@style/ToolbarTextAppearance" />
 
-    <com.google.android.material.tabs.TabLayout
+<com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         style="@style/tabLayout"
         android:layout_width="match_parent"

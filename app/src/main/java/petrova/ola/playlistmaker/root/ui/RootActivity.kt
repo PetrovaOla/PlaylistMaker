@@ -2,7 +2,9 @@ package petrova.ola.playlistmaker.root.ui;
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.ActivityRootBinding
@@ -23,6 +25,11 @@ class RootActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
+
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        findViewById<Toolbar>(R.id.toolbar)
+            .setupWithNavController(navController, appBarConfiguration)
+
 
 //        navController.addOnDestinationChangedListener { _, destination, _ ->
 //            when (destination.id) {
