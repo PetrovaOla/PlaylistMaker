@@ -56,7 +56,7 @@
             app:layout_constraintEnd_toEndOf="@id/guideline2"
             app:layout_constraintStart_toStartOf="@id/guideline"
             app:layout_constraintTop_toBottomOf="@id/poster"
-            tools:text="Название композиции" />
+            tools:text="@string/name_song" />
 
         <TextView
             android:id="@+id/artist"
@@ -69,7 +69,7 @@
             app:layout_constraintEnd_toEndOf="@id/guideline2"
             app:layout_constraintStart_toStartOf="@id/guideline"
             app:layout_constraintTop_toBottomOf="@id/name"
-            tools:text="Имя исполнителя" />
+            tools:text="@string/name_person" />
 
         <ImageView
             android:id="@+id/button_add"
@@ -146,6 +146,7 @@
             app:barrierDirection="right"
             app:constraint_referenced_ids="duration, album,genre,year,country" />
 
+
         <TextView
             android:id="@+id/duration_tv"
             style="@style/player_text_details_tv"
@@ -194,6 +195,7 @@
             style="@style/player_text_details"
             android:layout_marginTop="@dimen/dp20"
             app:layout_constraintEnd_toEndOf="@id/guideline3"
+            app:layout_constraintStart_toStartOf="@id/guideline5"
             app:layout_constraintTop_toBottomOf="@id/duration_track"
             tools:text="@string/duration" />
 
@@ -202,6 +204,7 @@
             style="@style/player_text_details"
             app:layout_constraintEnd_toEndOf="@id/guideline3"
             app:layout_constraintTop_toBottomOf="@id/duration"
+            app:layout_constraintStart_toStartOf="@id/guideline5"
             tools:text="@string/album" />
 
         <TextView
@@ -209,6 +212,7 @@
             style="@style/player_text_details"
             app:layout_constraintEnd_toEndOf="@id/guideline3"
             app:layout_constraintTop_toBottomOf="@id/album"
+            app:layout_constraintStart_toStartOf="@id/guideline5"
             tools:text="@string/year" />
 
         <TextView
@@ -216,6 +220,7 @@
             style="@style/player_text_details"
             app:layout_constraintEnd_toEndOf="@id/guideline3"
             app:layout_constraintTop_toBottomOf="@id/year"
+            app:layout_constraintStart_toStartOf="@id/guideline5"
             tools:text="@string/genre" />
 
         <TextView
@@ -225,6 +230,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/guideline3"
             app:layout_constraintTop_toBottomOf="@id/genre"
+            app:layout_constraintStart_toStartOf="@id/guideline5"
             tools:text="@string/country" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

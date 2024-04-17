@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_navigation_graph"
+    app:startDestination="@id/mediaFragment">
+
+    <fragment
+        android:id="@+id/mediaFragment"
+        android:name="petrova.ola.playlistmaker.media.ui.MediaFragment"
+        android:label="@string/medialibrary"
+        tools:layout="@layout/fragment_media" />
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="petrova.ola.playlistmaker.search.ui.SearchFragment"
+        android:label="@string/search"
+        tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="petrova.ola.playlistmaker.setting.ui.SettingFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_setting" />
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="petrova.ola.playlistmaker.player.ui.PlayerActivity"
+        android:label=""
+        tools:layout="@layout/activity_player" />
+</navigation>

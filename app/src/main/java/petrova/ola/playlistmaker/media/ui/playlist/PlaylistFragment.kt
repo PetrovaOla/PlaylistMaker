@@ -33,10 +33,11 @@ class PlaylistFragment : Fragment() {
     companion object {
         private const val TRACK_ID = "track_id"
 
-        fun newInstance(trackId: String) = PlaylistFragment().apply {
-            arguments = Bundle().apply {
-                putString(TRACK_ID, trackId)
-            }
-        }
+        /* fun newInstance(trackId: String) = PlaylistFragment().apply {
+             arguments = Bundle().apply {
+                 putString(TRACK_ID, trackId)
+             }
+         }*/
+        fun newInstance() = PlaylistFragment()
     }
 }
