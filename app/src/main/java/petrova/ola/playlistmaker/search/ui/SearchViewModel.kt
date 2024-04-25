@@ -9,11 +9,10 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.search.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.search.domain.model.Track
+import petrova.ola.playlistmaker.utils.debounce
 
 class SearchViewModel(
     private val application: Application,
@@ -53,7 +52,6 @@ class SearchViewModel(
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val SEARCH_EMPTY = ""
-        private const val SEARCH_REQUEST_TOKEN = "rgnferjkvnfijnsbingkjbgbosjifnvourgboiboiohsruouu"
     }
 
     fun getScreenStateLiveData() = searchScreenState
@@ -66,7 +64,7 @@ class SearchViewModel(
         renderState(SearchScreenState.Empty)
     }
 
-    fun searchDebounce(changedText: String) {
+    /*fun searchDebounce(changedText: String) {
         if (latestSearchText == changedText) {
             return
         }
@@ -78,6 +76,20 @@ class SearchViewModel(
             forceResearch(changedText)
         }
 
+    }*/
+    private val trackSearchDebounce = debounce<String>(
+        delayMillis = SEARCH_DEBOUNCE_DELAY,
+        coroutineScope = viewModelScope,
+        useLastParam = true
+    ) { changedText ->
+        forceResearch(changedText)
+    }
+
+    fun searchDebounce(changedText: String) {
+        if (latestSearchText != changedText) {
+            latestSearchText = changedText
+            trackSearchDebounce(changedText)
+        }
     }
 
     fun forceResearch(searchQuery: String) {
