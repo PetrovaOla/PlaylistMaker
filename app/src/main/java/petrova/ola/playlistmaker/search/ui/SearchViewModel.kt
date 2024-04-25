@@ -3,11 +3,14 @@ package petrova.ola.playlistmaker.search.ui
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.search.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.search.domain.model.Track
@@ -18,8 +21,10 @@ class SearchViewModel(
 ) : AndroidViewModel(application) {
 
     private val handler = Handler(Looper.getMainLooper())
-    var latestSearchText: String = ""
+    var latestSearchText: String? = null
         private set
+    private var searchJob: Job? = null
+
     private val historyTrackList: ArrayList<Track> by lazy {
         ArrayList(tracksInteractor.getHistory())
     }
@@ -66,17 +71,13 @@ class SearchViewModel(
             return
         }
 
-        this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        latestSearchText = changedText
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            forceResearch(changedText)
+        }
 
-        val searchRunnable = Runnable { forceResearch(changedText) }
-
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
     }
 
     fun forceResearch(searchQuery: String) {

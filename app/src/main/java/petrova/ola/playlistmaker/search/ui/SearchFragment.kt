@@ -175,7 +175,7 @@ class SearchFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
         updateButton.setOnClickListener {
-            viewModel.forceResearch(viewModel.latestSearchText)
+            viewModel.latestSearchText?.let { text -> viewModel.forceResearch(text) }
         }
         clearHistoryButton.setOnClickListener {
             viewModel.clearHistory()
