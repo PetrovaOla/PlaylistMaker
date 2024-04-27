@@ -1,7 +1,10 @@
 package petrova.ola.playlistmaker.player.ui
 
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import org.koin.android.ext.android.inject
@@ -11,12 +14,10 @@ import petrova.ola.playlistmaker.databinding.ActivityPlayerBinding
 import petrova.ola.playlistmaker.player.domain.PlayerState
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.search.ui.SearchFragment
-import petrova.ola.playlistmaker.utils.GsonBundleCodec
 import petrova.ola.playlistmaker.utils.ImageLoader
 import petrova.ola.playlistmaker.utils.msToTime
 
 class PlayerActivity : AppCompatActivity() {
-    private val bundleCodecTrack: GsonBundleCodec<Track> by inject()
     private val imageLoader: ImageLoader by inject()
 
 
@@ -27,14 +28,21 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var track: Track
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        intent.extras?.getString(SearchFragment.EXTRAS_KEY)?.let {
-            track = bundleCodecTrack.decodeData(it)
+        track = when {
+            SDK_INT >= Build.VERSION_CODES.TIRAMISU -> intent.getParcelableExtra(
+                SearchFragment.EXTRAS_KEY,
+                Track::class.java
+            )!!
+
+            else -> intent.getParcelableExtra(SearchFragment.EXTRAS_KEY)!!
         }
+
 
         viewModel.setDataSource(url = track.previewUrl.toString())
 

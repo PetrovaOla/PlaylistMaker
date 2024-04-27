@@ -1,14 +1,12 @@
 package petrova.ola.playlistmaker.search.ui
 
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.search.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.search.domain.model.Track
@@ -19,10 +17,9 @@ class SearchViewModel(
     private val tracksInteractor: TracksInteractor
 ) : AndroidViewModel(application) {
 
-    private val handler = Handler(Looper.getMainLooper())
     var latestSearchText: String? = null
         private set
-    private var searchJob: Job? = null
+//    private var searchJob: Job? = null
 
     private val historyTrackList: ArrayList<Track> by lazy {
         ArrayList(tracksInteractor.getHistory())
@@ -96,48 +93,42 @@ class SearchViewModel(
         if (searchQuery.isEmpty()) {
             renderState(SearchScreenState.HistoryTracks(historyTrackList))
             return
+        } else {
+            renderState(SearchScreenState.Loading)
+            viewModelScope.launch {
+                tracksInteractor
+                    .searchTracks(searchQuery)
+                    .collect { result ->
+                        processResult(result.first, result.second)
+                    }
+            }
         }
-        renderState(SearchScreenState.Loading)
 
-        tracksInteractor.searchTracks(
-            searchQuery,
-            object : TracksInteractor.TracksConsumer {
-                override fun consume(trackResponse: List<Track>?) {
-                    handler.post {
-                        if (trackResponse.isNullOrEmpty())
-                            renderState(
-                                SearchScreenState.Empty
-                            )
-                        else {
-                            trackList.clear()
-                            trackList.addAll(ArrayList(trackResponse))
-                            renderState(
-                                SearchScreenState.TrackList(
-                                    trackResponse
-                                )
-                            )
-                        }
-                    }
-                }
+    }
 
-                override fun onFailure(errorMessage: String?) {
-                    handler.post {
-                        if (errorMessage == null) {
-                            renderState(
-                                SearchScreenState.Error(
-                                    application.getString(R.string.unknown_error)
-                                )
-                            )
-                        } else {
-                            renderState(
-                                SearchScreenState.Error(
-                                    application.getString(R.string.check_connection_txt)
-                                )
-                            )
-                        }
-                    }
-                }
-            })
+    private fun processResult(searchTrack: List<Track>?, errorMessage: String?) {
+
+        if (searchTrack != null) {
+            trackList.addAll(searchTrack)
+        }
+
+        when {
+            errorMessage != null -> {
+                renderState(SearchScreenState.Error(message = application.getString(R.string.check_connection_txt)))
+            }
+
+            trackList.isEmpty() -> {
+                renderState(SearchScreenState.Empty)
+            }
+
+            else -> {
+                renderState(
+                    SearchScreenState.TrackList(
+                        resultsList = searchTrack!!
+                    )
+                )
+            }
+        }
     }
 
     fun processHistory(track: Track) {

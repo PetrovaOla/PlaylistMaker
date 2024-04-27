@@ -145,5 +145,10 @@
 
     </style>
 
+    <style name="button_player">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="layout_constraintDimensionRatio">H,1:1</item>
+    </style>
 
 </resources>

@@ -1,10 +1,12 @@
 package petrova.ola.playlistmaker.player.ui
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import petrova.ola.playlistmaker.player.domain.PlayerInteractor
 import petrova.ola.playlistmaker.player.domain.PlayerState
 
@@ -19,9 +21,7 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
         playerMutableScreenState.value = PlayerScreenState.Content()
     }
 
-    private val token = Any()
-    private val mainThreadHandler by lazy { Handler(Looper.getMainLooper()) }
-    private var timer: Runnable = Runnable { timerRun() }
+    private var timerJob: Job? = null
 
     private val playerState
         get() = playerInteractor.playerState()
@@ -34,20 +34,34 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
     }
 
     private fun timerRun() {
-        playerMutableScreenState.value = PlayerScreenState.Content(playerState, playerPos)
-        if (playerState == PlayerState.PLAY) {
-            timer.let { mainThreadHandler.postDelayed(it, token, DELAY) }
+
+        var timerJob: Job? = null
+        timerJob = viewModelScope.launch {
+            playerMutableScreenState.value = PlayerScreenState.Content(playerState, playerPos)
+
+            while ((playerState == PlayerState.PLAY)) {
+                playerMutableScreenState.postValue(
+                    PlayerScreenState.Content(
+                        playerState,
+                        playerPos
+                    )
+                )
+                delay(DELAY)
+            }
+            timerJob?.cancel()
         }
+
     }
 
     private fun play() {
         playerInteractor.start()
-        mainThreadHandler.post(timer)
+        timerRun()
     }
 
     fun pause() {
         playerInteractor.pause()
         playerMutableScreenState.value = PlayerScreenState.Content(playerState, playerPos)
+        timerJob?.cancel()
     }
 
     fun onClick() {
@@ -61,7 +75,6 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
 
     override fun onCleared() {
         super.onCleared()
-        mainThreadHandler.removeCallbacksAndMessages(token)
         playerInteractor.destroy()
     }
 

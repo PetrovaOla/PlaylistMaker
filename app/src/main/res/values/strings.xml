@@ -47,4 +47,7 @@
     <string name="name_song">Название композиции</string>
     <string name="name_person">Имя исполнителя</string>
     <string name="title">Title</string>
+    <string name="play_pause">play_pause</string>
+    <string name="add">add</string>
+    <string name="like">like</string>
 </resources>
