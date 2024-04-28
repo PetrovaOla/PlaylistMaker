@@ -14,7 +14,7 @@ class RetrofitNetworkClient(
     private val context: Context
 ) : NetworkClient {
 
-    override suspend fun doRequestSuspend(dto: Any): Response {
+    override suspend fun doRequestSuspend(dto: NetworkRequest): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = -1 }
         }

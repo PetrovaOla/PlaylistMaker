@@ -21,7 +21,7 @@
         android:id="@+id/shareTv"
         style="@style/setting_text"
         android:text="@string/share"
-        app:layout_constraintEnd_toStartOf="@id/shareButton"
+        app:layout_constraintEnd_toEndOf="@id/guideline1"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/themeSwitcher" />
 
@@ -39,7 +39,7 @@
         style="@style/setting_text"
         android:text="@string/support"
         android:textAppearance="@style/setting_text"
-        app:layout_constraintEnd_toStartOf="@id/supportButton"
+        app:layout_constraintEnd_toEndOf="@id/guideline1"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/shareTv" />
 
@@ -56,7 +56,7 @@
         android:id="@+id/user_agreementTv"
         style="@style/setting_text"
         android:text="@string/user_agreement"
-        app:layout_constraintEnd_toStartOf="@id/user_agreementButton"
+        app:layout_constraintEnd_toEndOf="@id/guideline1"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/supportTv" />
 
@@ -75,6 +75,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="60dp" />
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
         android:layout_width="wrap_content"

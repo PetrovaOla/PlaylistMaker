@@ -1,21 +1,18 @@
 package petrova.ola.playlistmaker.search.ui
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.search.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.utils.debounce
 
 class SearchViewModel(
-    private val application: Application,
     private val tracksInteractor: TracksInteractor
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     var latestSearchText: String? = null
         private set
@@ -114,7 +111,7 @@ class SearchViewModel(
 
         when {
             errorMessage != null -> {
-                renderState(SearchScreenState.Error(message = application.getString(R.string.check_connection_txt)))
+                renderState(SearchScreenState.Error(message = errorMessage))
             }
 
             trackList.isEmpty() -> {

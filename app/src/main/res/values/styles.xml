@@ -59,8 +59,8 @@
     </style>
 
     <style name="setting_text">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/black</item>
@@ -68,6 +68,9 @@
         <item name="textAllCaps">false</item>
         <item name="android:paddingVertical">@dimen/dp20</item>
         <item name="layout_constraintHorizontal_bias">0</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+
     </style>
 
     <style name="player_text">

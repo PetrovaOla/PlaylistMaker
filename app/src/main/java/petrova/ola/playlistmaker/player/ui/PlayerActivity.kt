@@ -35,15 +35,13 @@ class PlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         track = when {
-            SDK_INT >= Build.VERSION_CODES.TIRAMISU -> intent.getParcelableExtra(
+            SDK_INT >= Build.VERSION_CODES.TIRAMISU -> intent.getSerializableExtra(
                 SearchFragment.EXTRAS_KEY,
                 Track::class.java
             )!!
 
-            else -> intent.getParcelableExtra(SearchFragment.EXTRAS_KEY)!!
+            else -> intent.getSerializableExtra(SearchFragment.EXTRAS_KEY) as Track
         }
-
-
         viewModel.setDataSource(url = track.previewUrl.toString())
 
         binding.toolbarPlayer.setNavigationOnClickListener {
