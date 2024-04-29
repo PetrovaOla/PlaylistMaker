@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import petrova.ola.playlistmaker.search.domain.model.Track
 
 interface TracksInteractor {
-    fun searchTracks(expression: String): Flow<Pair<List<Track>?, String?>>
+    fun searchTracks(expression: String): Flow<Pair<List<Track>?, Int?>>
 
     fun getHistory(): List<Track>
     fun clearHistory()

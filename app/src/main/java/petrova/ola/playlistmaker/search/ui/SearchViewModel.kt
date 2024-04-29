@@ -55,7 +55,7 @@ class SearchViewModel(
     }
 
     fun endInput() {
-        renderState(SearchScreenState.Empty)
+        renderState(SearchScreenState.HistoryTracks(historyTrackList))
     }
 
     /*fun searchDebounce(changedText: String) {
@@ -96,37 +96,35 @@ class SearchViewModel(
                 tracksInteractor
                     .searchTracks(searchQuery)
                     .collect { result ->
-                        processResult(result.first, result.second)
+                        trackList.clear()
+                        if (result.first != null) {
+                            trackList.addAll(result.first!!)
+                        }
+
+                        when {
+                            trackList.isNotEmpty() -> {
+                                renderState(SearchScreenState.TrackList(trackList))
+                            }
+
+                            result.second == 2 -> {
+                                renderState(SearchScreenState.Empty)
+                            }
+
+                            result.second == 1 -> {
+                                renderState(SearchScreenState.Error())
+                            }
+
+                            else -> {
+                                renderState(SearchScreenState.Error())
+                            }
+
+                        }
                     }
             }
         }
 
     }
 
-    private fun processResult(searchTrack: List<Track>?, errorMessage: String?) {
-
-        if (searchTrack != null) {
-            trackList.addAll(searchTrack)
-        }
-
-        when {
-            errorMessage != null -> {
-                renderState(SearchScreenState.Error(message = errorMessage))
-            }
-
-            trackList.isEmpty() -> {
-                renderState(SearchScreenState.Empty)
-            }
-
-            else -> {
-                renderState(
-                    SearchScreenState.TrackList(
-                        resultsList = searchTrack!!
-                    )
-                )
-            }
-        }
-    }
 
     fun processHistory(track: Track) {
         when (val indexOf = historyTrackList.indexOf(track)) {
@@ -164,6 +162,7 @@ class SearchViewModel(
             renderState(SearchScreenState.Empty)
         }
     }
+
 
     fun clearHistory() {
         historyTrackList.clear()

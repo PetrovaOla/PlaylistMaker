@@ -61,6 +61,16 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        groupNotFound = binding.groupNotFound
+        groupNotInternet = binding.groupNotInternet
+        groupNotFound.visibility = View.GONE
+        groupNotInternet.visibility = View.GONE
+        recycler = binding.trackListRecycler
+        inputEditText = binding.inputEditText
+        updateButton = binding.updateButton
+        clearHistoryButton = binding.clearHistoryBtn
+        historySearchTv = binding.historySearchTv
+        progressBar = binding.progressBar
 
         rvAdapter = SearchRecyclerAdapter {
             (activity as RootActivity).animateBottomNavigationView(View.GONE)
@@ -93,6 +103,8 @@ class SearchFragment : Fragment() {
                     progressBar.visibility = View.GONE
                     binding.errorMessageTv.text = screenState.message
                     updateButton.visibility = View.VISIBLE
+                    clearHistoryButton.visibility = View.GONE
+                    historySearchTv.visibility = View.GONE
                 }
 
                 is SearchScreenState.Loading -> {
@@ -136,19 +148,11 @@ class SearchFragment : Fragment() {
             }
         }
 
-        groupNotFound = binding.groupNotFound
-        groupNotInternet = binding.groupNotInternet
-        groupNotFound.visibility = View.GONE
-        groupNotInternet.visibility = View.GONE
-        recycler = binding.trackListRecycler
-        inputEditText = binding.inputEditText
-        updateButton = binding.updateButton
-        clearHistoryButton = binding.clearHistoryBtn
-        historySearchTv = binding.historySearchTv
-        progressBar = binding.progressBar
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             viewModel.changeInputFocus(hasFocus, inputEditText.text!!.isEmpty())
+
+
         }
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -166,6 +170,7 @@ class SearchFragment : Fragment() {
 
 
         inputEditText.addTextChangedListener(textWatcher)
+
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // ВЫПОЛНЯЙТЕ ПОИСКОВЫЙ ЗАПРОС ЗДЕСЬ
@@ -181,10 +186,9 @@ class SearchFragment : Fragment() {
 
             viewModel.endInput()
 
-            val inputMethodManager =
-                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            val inputMethodManager = requireContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
-            inputEditText.clearFocus()
         }
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
@@ -222,7 +226,7 @@ class SearchFragment : Fragment() {
     companion object {
         const val EXTRAS_KEY: String = "TRACK"
         private const val EMPTY = ""
-        private const val CLICK_DEBOUNCE_DELAY = 100L
+        private const val CLICK_DEBOUNCE_DELAY = 200L
     }
 
 }

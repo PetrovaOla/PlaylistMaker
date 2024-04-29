@@ -19,29 +19,34 @@ class TracksRepositoryImpl(
         val response = networkClient.doRequestSuspend(TrackSearchRequest(expression))
         when (response.resultCode) {
             -1 -> {
-                emit(Resource.Error("Проверьте подключение к интернету"))
+                emit(Resource.Error(ERROR_CONNECT))
             }
 
             200 -> {
 
                 val stored = localStorage.getHistory()
-                with(response as TrackSearchResponse) {
-                    val data = results.map {
-                        Track(
-                            trackId = it.trackId,
-                            trackName = it.trackName,
-                            artistName = it.artistName,
-                            trackTimeMillis = it.trackTimeMillis,
-                            artworkUrl100 = it.artworkUrl100,
-                            collectionName = it.collectionName,
-                            releaseDate = it.releaseDate,
-                            primaryGenreName = it.primaryGenreName,
-                            country = it.country,
-                            previewUrl = it.previewUrl
-                        )
-                    }
-                    emit(Resource.Success(data))
+                if ((response as TrackSearchResponse).results.isEmpty()) {
+                    emit(Resource.Error(ERROR_EMPTY))
+                } else {
+                    val data = Resource.Success(
+                        response.results.map {
+                            Track(
+                                trackId = it.trackId,
+                                trackName = it.trackName,
+                                artistName = it.artistName,
+                                trackTimeMillis = it.trackTimeMillis,
+                                artworkUrl100 = it.artworkUrl100,
+                                collectionName = it.collectionName,
+                                releaseDate = it.releaseDate,
+                                primaryGenreName = it.primaryGenreName,
+                                country = it.country,
+                                previewUrl = it.previewUrl
+                            )
+                        }
+                    )
+                    emit(data)
                 }
+
             }
 
             else -> {
@@ -49,8 +54,7 @@ class TracksRepositoryImpl(
                     "TrackListLoader",
                     "Failed load track list (http code ${response.resultCode})"
                 )
-//                throw IOException("Failed load track list (http code ${response.resultCode})")
-                emit(Resource.Error("Ошибка сервера"))
+                emit(Resource.Error(ERROR_SERVER))
 
             }
 
@@ -76,5 +80,11 @@ class TracksRepositoryImpl(
 
     override fun clearHistory() {
         localStorage.clearHistory()
+    }
+
+    companion object {
+        const val ERROR_SERVER = 0
+        const val ERROR_CONNECT = 1
+        const val ERROR_EMPTY = 2
     }
 }
