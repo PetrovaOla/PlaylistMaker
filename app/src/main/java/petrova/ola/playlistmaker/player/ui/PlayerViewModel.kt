@@ -34,10 +34,7 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
     }
 
     private fun timerRun() {
-
-        var timerJob: Job? = null
         timerJob = viewModelScope.launch {
-            playerMutableScreenState.value = PlayerScreenState.Content(playerState, playerPos)
 
             while ((playerState == PlayerState.PLAY)) {
                 playerMutableScreenState.postValue(
@@ -49,6 +46,7 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
                 delay(DELAY)
             }
             timerJob?.cancel()
+            playerMutableScreenState.postValue(PlayerScreenState.Content(playerState, playerPos))
         }
 
     }
@@ -71,7 +69,6 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
             play()
         }
     }
-
 
     override fun onCleared() {
         super.onCleared()

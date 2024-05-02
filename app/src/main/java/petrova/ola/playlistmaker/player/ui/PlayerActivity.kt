@@ -61,13 +61,18 @@ class PlayerActivity : AppCompatActivity() {
                     println()
                 }
 
-                PlayerScreenState.Error -> {
+                is PlayerScreenState.Error -> {
                     Log.d(TAG, "PlayerScreenState.ERROR")
                 }
 
-                PlayerScreenState.Loading -> {
+                is PlayerScreenState.Loading -> {
                     Log.d(TAG, "PlayerScreenState.Loading")
                 }
+
+                else -> {
+                    Log.d(TAG, "Player Else")
+                }
+
             }
 
         }

@@ -138,14 +138,9 @@
         <item name="android:textSize">@dimen/sp12</item>
         <item name="itemTextAppearanceActive">@color/bottom_navigation_active</item>
         <item name="itemTextAppearanceInactive">@color/bottom_navigation_inactive</item>
-
         <item name="itemRippleColor">@android:color/transparent</item>
-
-
         <item name="itemIconTint">@color/navigation_color</item>
         <item name="itemTextColor">@color/navigation_color</item>
-
-
     </style>
 
     <style name="button_player">

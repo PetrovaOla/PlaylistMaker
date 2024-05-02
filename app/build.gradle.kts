@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -45,18 +46,27 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
-    implementation(libs.glide)
     implementation(libs.androidx.activity)
     annotationProcessor(libs.compiler)
+
+//    работа с сетью
     implementation (libs.gson)
     implementation (libs.squareup.retrofit)
     implementation (libs.converter.gson)
     implementation (libs.squareup.retrofit)
+    implementation(libs.glide)
+
+//    test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+//
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.fragment.ktx)
+
+//    di
     implementation(libs.koin.android)
 
     //delegate adapter
@@ -66,6 +76,14 @@ dependencies {
     //navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.androidx.fragment.ktx)
+
+//   корутины
     implementation(libs.kotlinx.coroutines.android)
+
+//    room
+    implementation(libs.androidx.room.runtime) // библиотека Room
+    kapt(libs.androidx.room.compiler) // Kotlin-кодогенератор
+
+
+    implementation(libs.androidx.room.ktx) // поддержка корутин
 }
