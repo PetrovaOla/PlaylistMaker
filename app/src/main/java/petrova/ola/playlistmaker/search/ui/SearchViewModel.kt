@@ -159,7 +159,7 @@ class SearchViewModel(
             else
                 renderState(SearchScreenState.TrackList(trackList))
         } else {
-            renderState(SearchScreenState.Empty)
+//            renderState(SearchScreenState.Empty)
         }
     }
 
