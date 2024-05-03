@@ -173,8 +173,7 @@ class SearchFragment : Fragment() {
 
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // ВЫПОЛНЯЙТЕ ПОИСКОВЫЙ ЗАПРОС ЗДЕСЬ
-                viewModel.searchDebounce(inputEditText.toString())
+                viewModel.searchDebounce(inputEditText.text.toString())
                 inputEditText.clearFocus()
             }
 
