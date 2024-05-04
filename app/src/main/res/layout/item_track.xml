@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/track_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_weight="1"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    app:flow_verticalAlign="center">
 
     <ImageView
         android:id="@+id/image_track"
@@ -17,61 +19,60 @@
         android:layout_marginVertical="@dimen/dp8"
         android:layout_marginStart="@dimen/dp14"
         android:contentDescription="@string/track_name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:background="@color/YPBlue" />
 
-    <TextView
-        android:id="@+id/track_item_name"
-        android:layout_width="@dimen/_0dp"
+    <LinearLayout
+        android:id="@+id/aaa"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp8"
-        android:layout_marginTop="@dimen/dp14"
-        android:layout_marginEnd="@dimen/dp8"
-        android:ellipsize="end"
-        android:fontFamily="@font/ys_display_regular"
-        android:maxLines="1"
-        android:textColor="@color/item_text_color"
-        android:textSize="@dimen/sp16"
-        app:layout_constraintEnd_toStartOf="@id/arrow"
-        app:layout_constraintStart_toEndOf="@+id/image_track"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/track_name" />
+        android:layout_marginVertical="@dimen/dp12"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/track_item_artist"
-        android:layout_width="@dimen/_0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp8"
-        android:ellipsize="end"
-        android:fontFamily="@font/ys_display_regular"
-        android:maxLength="40"
-        android:textColor="@color/item_band_text_color"
-        android:textSize="@dimen/sp11"
-        app:layout_constraintStart_toEndOf="@+id/image_track"
-        app:layout_constraintTop_toBottomOf="@+id/track_item_name"
-        tools:text="@string/track_artist" />
+        <TextView
+            android:id="@+id/track_item_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/ys_display_regular"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textColor="@color/item_text_color"
+            android:textSize="@dimen/sp16"
+            tools:text="@string/track_name" />
 
-    <ImageView
-        android:id="@+id/point"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic"
-        app:layout_constraintBottom_toBottomOf="@id/track_item_artist"
-        app:layout_constraintEnd_toStartOf="@id/item_time"
-        app:layout_constraintStart_toEndOf="@id/track_item_artist" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
 
-    <TextView
-        android:id="@+id/item_time"
-        android:layout_width="@dimen/_0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/ys_display_regular"
-        android:textColor="@color/item_band_text_color"
-        android:textSize="@dimen/sp11"
-        app:layout_constraintStart_toEndOf="@+id/point"
-        app:layout_constraintTop_toBottomOf="@id/track_item_name"
-        tools:text="@string/track_time" />
+            <TextView
+                android:id="@+id/track_item_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/ys_display_regular"
+                android:maxLines="1"
+                android:textColor="@color/item_band_text_color"
+                android:textSize="@dimen/sp11"
+                app:drawableEndCompat="@drawable/ic"
+                tools:text="@string/track_artist" />
+
+            <TextView
+                android:id="@+id/item_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:fontFamily="@font/ys_display_regular"
+                android:textColor="@color/item_band_text_color"
+                android:textSize="@dimen/sp11"
+                tools:text="@string/track_time" />
+        </LinearLayout>
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/arrow"
@@ -83,4 +84,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

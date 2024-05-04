@@ -1,6 +1,7 @@
 package petrova.ola.playlistmaker.root.ui;
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
@@ -48,6 +49,15 @@ class RootActivity : AppCompatActivity() {
 //            }
 //        }
 
+    }
+
+    fun animateBottomNavigationView(visibility: Int) {
+        binding.bottomNavigationView.visibility = visibility
+    }
+
+    override fun onResume() {
+        animateBottomNavigationView(View.VISIBLE)
+        super.onResume()
     }
 
     override fun onDestroy() {

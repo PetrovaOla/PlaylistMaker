@@ -1,6 +1,7 @@
 package petrova.ola.playlistmaker.search.domain.model
 
 import petrova.ola.playlistmaker.utils.msToTime
+import java.io.Serializable
 
 data class Track(
     val trackId: Int,
@@ -13,7 +14,7 @@ data class Track(
     val primaryGenreName: String,//Жанр трека
     val country: String, //Страна исполнителя
     val previewUrl: String?,  //Ссылка на трек
-) {
+) : Serializable {
     val bigImg: String
         get() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     val date: String

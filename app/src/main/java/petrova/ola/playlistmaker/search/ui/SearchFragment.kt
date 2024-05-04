@@ -16,19 +16,19 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.databinding.FragmentSearchBinding
 import petrova.ola.playlistmaker.player.ui.PlayerActivity
+import petrova.ola.playlistmaker.root.ui.RootActivity
 import petrova.ola.playlistmaker.search.domain.model.Track
-import petrova.ola.playlistmaker.utils.GsonBundleCodec
+import petrova.ola.playlistmaker.utils.debounce
 
 @SuppressLint("NotifyDataSetChanged")
 class SearchFragment : Fragment() {
-    private val bundleCodecTrack: GsonBundleCodec<Track> by inject()
     private val viewModel by viewModel<SearchViewModel>()
 
     private var _binding: FragmentSearchBinding? = null
@@ -36,10 +36,11 @@ class SearchFragment : Fragment() {
 
     private lateinit var inputEditText: TextInputEditText
 
-    private var rvAdapter = SearchRecyclerAdapter {
-        viewModel.processHistory(it)
-        openPlayer(it)
-    }
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
+
+    private var rvAdapter: SearchRecyclerAdapter? = null
+
+    private var textWatcher: TextWatcher? = null
 
     private lateinit var recycler: RecyclerView
     private lateinit var groupNotFound: Group
@@ -60,6 +61,30 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        groupNotFound = binding.groupNotFound
+        groupNotInternet = binding.groupNotInternet
+        groupNotFound.visibility = View.GONE
+        groupNotInternet.visibility = View.GONE
+        recycler = binding.trackListRecycler
+        inputEditText = binding.inputEditText
+        updateButton = binding.updateButton
+        clearHistoryButton = binding.clearHistoryBtn
+        historySearchTv = binding.historySearchTv
+        progressBar = binding.progressBar
+
+        rvAdapter = SearchRecyclerAdapter {
+            (activity as RootActivity).animateBottomNavigationView(View.GONE)
+            onTrackClickDebounce(it)
+            viewModel.processHistory(it)
+        }
+        onTrackClickDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) {
+            openPlayer(it)
+        }
+
 
         viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
             when (screenState) {
@@ -78,9 +103,11 @@ class SearchFragment : Fragment() {
                     progressBar.visibility = View.GONE
                     binding.errorMessageTv.text = screenState.message
                     updateButton.visibility = View.VISIBLE
+                    clearHistoryButton.visibility = View.GONE
+                    historySearchTv.visibility = View.GONE
                 }
 
-                SearchScreenState.Loading -> {
+                is SearchScreenState.Loading -> {
                     groupNotInternet.visibility = View.GONE
                     groupNotFound.visibility = View.GONE
                     recycler.visibility = View.GONE
@@ -101,9 +128,9 @@ class SearchFragment : Fragment() {
                     historySearchTv.visibility = visiblity
                     clearHistoryButton.visibility = visiblity
 
-                    rvAdapter.tracks.clear()
-                    rvAdapter.tracks.addAll(screenState.historyList)
-                    rvAdapter.notifyDataSetChanged()
+                    rvAdapter!!.tracks.clear()
+                    rvAdapter!!.tracks.addAll(screenState.historyList)
+                    rvAdapter!!.notifyDataSetChanged()
                 }
 
                 is SearchScreenState.TrackList -> {
@@ -114,28 +141,20 @@ class SearchFragment : Fragment() {
                     historySearchTv.visibility = View.GONE
                     clearHistoryButton.visibility = View.GONE
 
-                    rvAdapter.tracks.clear()
-                    rvAdapter.tracks.addAll(screenState.resultsList)
-                    rvAdapter.notifyDataSetChanged()
+                    rvAdapter!!.tracks.clear()
+                    rvAdapter!!.tracks.addAll(screenState.resultsList)
+                    rvAdapter!!.notifyDataSetChanged()
                 }
             }
         }
 
-        groupNotFound = binding.groupNotFound
-        groupNotInternet = binding.groupNotInternet
-        groupNotFound.visibility = View.GONE
-        groupNotInternet.visibility = View.GONE
-        recycler = binding.trackListRecycler
-        inputEditText = binding.inputEditText
-        updateButton = binding.updateButton
-        clearHistoryButton = binding.clearHistoryBtn
-        historySearchTv = binding.historySearchTv
-        progressBar = binding.progressBar
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             viewModel.changeInputFocus(hasFocus, inputEditText.text!!.isEmpty())
+
+
         }
-        val textWatcher = object : TextWatcher {
+        textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 groupNotFound.visibility = View.GONE
             }
@@ -151,10 +170,10 @@ class SearchFragment : Fragment() {
 
 
         inputEditText.addTextChangedListener(textWatcher)
+
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // ВЫПОЛНЯЙТЕ ПОИСКОВЫЙ ЗАПРОС ЗДЕСЬ
-                viewModel.searchDebounce(inputEditText.toString())
+                viewModel.searchDebounce(inputEditText.text.toString())
                 inputEditText.clearFocus()
             }
 
@@ -166,16 +185,15 @@ class SearchFragment : Fragment() {
 
             viewModel.endInput()
 
-            val inputMethodManager =
-                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            val inputMethodManager = requireContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
-            inputEditText.clearFocus()
         }
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
         updateButton.setOnClickListener {
-            viewModel.forceResearch(viewModel.latestSearchText)
+            viewModel.latestSearchText?.let { text -> viewModel.forceResearch(text) }
         }
         clearHistoryButton.setOnClickListener {
             viewModel.clearHistory()
@@ -186,8 +204,9 @@ class SearchFragment : Fragment() {
 
     private fun openPlayer(track: Track) {
         val intent = Intent(requireContext(), PlayerActivity::class.java)
-        intent.putExtra(EXTRAS_KEY, bundleCodecTrack.encodeData(track))
+        intent.putExtra(EXTRAS_KEY, track)
         startActivity(intent)
+
     }
 
     override fun onStart() {
@@ -198,11 +217,15 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        rvAdapter = null
+        recycler.adapter = null
+        textWatcher?.let { inputEditText.removeTextChangedListener(it) }
     }
 
     companion object {
         const val EXTRAS_KEY: String = "TRACK"
         private const val EMPTY = ""
+        private const val CLICK_DEBOUNCE_DELAY = 200L
     }
 
 }

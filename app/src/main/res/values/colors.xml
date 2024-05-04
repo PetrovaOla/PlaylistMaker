@@ -9,6 +9,7 @@
     <color name="YGrey"> #AEAFB4</color>
     <color name="YLightGray"> #E6E8EB</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="app_back">#FFFFFFFF</color>
 
     <color name="switch_circle">#AEAFB4</color>
     <color name="switch_stick">#E6E8EB</color>

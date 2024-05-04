@@ -1,5 +1,6 @@
 package petrova.ola.playlistmaker.di
 
+
 import org.koin.dsl.module
 import petrova.ola.playlistmaker.player.domain.PlayerInteractor
 import petrova.ola.playlistmaker.player.domain.PlayerInteractorImpl
