@@ -3,7 +3,9 @@ package petrova.ola.playlistmaker.di
 
 import org.koin.dsl.module
 import petrova.ola.playlistmaker.player.domain.PlayerInteractor
-import petrova.ola.playlistmaker.player.domain.PlayerInteractorImpl
+import petrova.ola.playlistmaker.player.domain.db.FavouritesInteractor
+import petrova.ola.playlistmaker.player.domain.impl.FavouritesInteractorImpl
+import petrova.ola.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import petrova.ola.playlistmaker.search.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.search.domain.impl.TracksInteractorImpl
 import petrova.ola.playlistmaker.setting.domain.SettingInteractor
@@ -27,6 +29,10 @@ val interactorModule = module {
 
     factory<SharingInteractor> {
         SharingInteractorImpl(get())
+    }
+
+    single<FavouritesInteractor> {
+        FavouritesInteractorImpl(get())
     }
 
 }

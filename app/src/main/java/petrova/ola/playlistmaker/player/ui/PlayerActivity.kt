@@ -7,6 +7,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.R
@@ -20,6 +23,7 @@ import petrova.ola.playlistmaker.utils.msToTime
 class PlayerActivity : AppCompatActivity() {
     private val imageLoader: ImageLoader by inject()
 
+    private var isClickAllowed = true
 
     private var _binding: ActivityPlayerBinding? = null
     private val binding get() = _binding!!
@@ -42,13 +46,28 @@ class PlayerActivity : AppCompatActivity() {
 
             else -> intent.getSerializableExtra(SearchFragment.EXTRAS_KEY) as Track
         }
-        viewModel.setDataSource(url = track.previewUrl.toString())
+        viewModel.setTrack(track)
 
         binding.toolbarPlayer.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
         binding.play.setOnClickListener {
-            viewModel.onClick()
+            viewModel.onPlayClick()
+        }
+        viewModel.observeIsFavorite().observe(this) {isFavorite->
+            if (isFavorite == true) {
+                binding.buttonLike.setImageResource(R.drawable.button_like)
+
+            } else {
+                binding.buttonLike.setImageResource(R.drawable.button_not_like)
+
+            }
+        }
+
+        binding.buttonLike.setOnClickListener {
+            if (debounceClick()) {
+                viewModel.onFavoriteClicked()
+            }
         }
 
         viewModel.playerScreenState.observe(this) { playerScreenState ->
@@ -89,7 +108,7 @@ class PlayerActivity : AppCompatActivity() {
             name.text = track.trackName
             artist.text = track.artistName
             duration.text = msToTime(track.trackTimeMillis)
-            album.text = track.collectionName
+            album.text = track.collectionName ?: ""
             album.isVisible = album.text.isNotEmpty()
             albumTv.isVisible = album.isVisible
             if (track.releaseDate != null && track.releaseDate!!.length > 3) {
@@ -99,6 +118,19 @@ class PlayerActivity : AppCompatActivity() {
             country.text = track.country
         }
 
+    }
+
+    private fun debounceClick(): Boolean {
+
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
     }
 
     private fun settingPlayer(playerState: PlayerState, position: Int) {
@@ -151,6 +183,7 @@ class PlayerActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "Player Fragment"
+        private const val CLICK_DEBOUNCE_DELAY = 200L
     }
 }
 

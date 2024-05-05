@@ -4,21 +4,38 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import petrova.ola.playlistmaker.player.domain.PlayerInteractor
 import petrova.ola.playlistmaker.player.domain.PlayerState
+import petrova.ola.playlistmaker.player.domain.db.FavouritesInteractor
+import petrova.ola.playlistmaker.search.domain.model.Track
 
-class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewModel() {
+class PlayerViewModel(
+    private val playerInteractor: PlayerInteractor,
+    private val favouritesInteractor: FavouritesInteractor,
+) : ViewModel() {
+
+    private lateinit var track: Track
+    fun setTrack(track: Track) {
+        this.track = track
+        setDataSource(track.previewUrl.toString())
+    }
+
 
     private val playerMutableScreenState = MutableLiveData<PlayerScreenState>(
         PlayerScreenState.Loading
     )
     val playerScreenState: LiveData<PlayerScreenState> = playerMutableScreenState
 
+    private val favoriteLiveData by lazy { MutableLiveData(track.isFavorite) }
+    fun observeIsFavorite(): LiveData<Boolean> = favoriteLiveData
+
     init {
         playerMutableScreenState.value = PlayerScreenState.Content()
+        validateIsFavorite()
     }
 
     private var timerJob: Job? = null
@@ -29,7 +46,8 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
     private val playerPos
         get() = playerInteractor.getPosition()
 
-    fun setDataSource(url: String) {
+
+    private fun setDataSource(url: String) {
         playerInteractor.setDataSource(url)
     }
 
@@ -62,7 +80,7 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
         timerJob?.cancel()
     }
 
-    fun onClick() {
+    fun onPlayClick() {
         if (playerInteractor.playerState() == PlayerState.PLAY) {
             pause()
         } else {
@@ -73,6 +91,35 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
     override fun onCleared() {
         super.onCleared()
         playerInteractor.destroy()
+    }
+
+    fun onFavoriteClicked() {
+        viewModelScope.launch {
+            if (track.isFavorite) {
+                launch(Dispatchers.IO) {
+                    favouritesInteractor.deleteFavoritesTrack(track)
+                }
+                track.isFavorite = false
+            } else {
+                favouritesInteractor.insertFavoritesTrack(track)
+                track.isFavorite = true
+            }
+            favoriteLiveData.postValue(track.isFavorite)
+        }
+    }
+
+    private fun validateIsFavorite() {
+        viewModelScope.launch {
+            favouritesInteractor.getFavoritesTrack().collect { favoritesTracks ->
+                favoritesTracks.forEach { favoriteTrack ->
+                    if (track.trackId == favoriteTrack.trackId) {
+                        track.isFavorite = true
+                        track.trackId = favoriteTrack.trackId
+                    }
+                }
+            }
+            favoriteLiveData.postValue(track.isFavorite)
+        }
     }
 
     companion object {

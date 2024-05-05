@@ -2,11 +2,13 @@ package petrova.ola.playlistmaker.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import petrova.ola.playlistmaker.player.data.PlayerDataImpl
+import petrova.ola.playlistmaker.player.data.db.entity.AppDatabase
 import petrova.ola.playlistmaker.player.domain.PlayerData
 import petrova.ola.playlistmaker.search.data.NetworkClient
 import petrova.ola.playlistmaker.search.data.network.ApiService
@@ -73,5 +75,8 @@ val dataModule = module {
     single<ImageLoader> {
         GlideImageLoader()
     }
+
+    single { Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+        .build() }
 
 }

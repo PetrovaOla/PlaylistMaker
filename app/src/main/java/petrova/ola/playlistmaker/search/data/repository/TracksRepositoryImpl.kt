@@ -3,6 +3,8 @@ package petrova.ola.playlistmaker.search.data.repository
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import petrova.ola.playlistmaker.player.data.converters.DbConvertor
+import petrova.ola.playlistmaker.player.data.db.entity.AppDatabase
 import petrova.ola.playlistmaker.search.data.NetworkClient
 import petrova.ola.playlistmaker.search.data.Resource
 import petrova.ola.playlistmaker.search.data.dto.TrackSearchRequest
@@ -13,7 +15,9 @@ import petrova.ola.playlistmaker.sharing.data.LocalStorage
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val localStorage: LocalStorage
+    private val localStorage: LocalStorage,
+    private val appDatabase: AppDatabase,
+    private val dbConvertor: DbConvertor,
 ) : TracksRepository {
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequestSuspend(TrackSearchRequest(expression))
@@ -25,6 +29,7 @@ class TracksRepositoryImpl(
             200 -> {
 
                 val stored = localStorage.getHistory()
+                val tracksIdFavourites = appDatabase.trackDao().getTracksIdToFavourites()
                 if ((response as TrackSearchResponse).results.isEmpty()) {
                     emit(Resource.Error(ERROR_EMPTY))
                 } else {
@@ -44,6 +49,7 @@ class TracksRepositoryImpl(
                             )
                         }
                     )
+                    verifyTrack(data.data, tracksIdFavourites)
                     emit(data)
                 }
 
@@ -60,6 +66,20 @@ class TracksRepositoryImpl(
 
         }
 
+    }
+
+    private fun verifyTrack(
+        tracks: List<Track>?,
+        tracksIdFavourites: List<Int>
+    ) {
+        tracksIdFavourites.forEach { tracksIdFavourites ->
+            tracks?.forEach { track ->
+                if (tracksIdFavourites == track.trackId) {
+                    track.isFavorite = true
+
+                }
+            }
+        }
     }
 
 //    override fun addTrackToFavorites(track: Track) {
