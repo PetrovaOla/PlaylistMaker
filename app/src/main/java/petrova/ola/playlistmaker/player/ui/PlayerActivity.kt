@@ -12,6 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.ActivityPlayerBinding
 import petrova.ola.playlistmaker.player.domain.PlayerState
@@ -25,28 +26,30 @@ class PlayerActivity : AppCompatActivity() {
 
     private var isClickAllowed = true
 
-    private var _binding: ActivityPlayerBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityPlayerBinding
 
-    private val viewModel: PlayerViewModel by viewModel()
+    private val viewModel: PlayerViewModel by viewModel{
+        parametersOf(track)
+    }
 
     private lateinit var track: Track
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityPlayerBinding.inflate(layoutInflater)
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         track = when {
             SDK_INT >= Build.VERSION_CODES.TIRAMISU -> intent.getSerializableExtra(
                 SearchFragment.EXTRAS_KEY,
                 Track::class.java
-            )!!
+            ) as Track
 
             else -> intent.getSerializableExtra(SearchFragment.EXTRAS_KEY) as Track
         }
-        viewModel.setTrack(track)
+
+        viewModel.setDataSource(url = track.previewUrl.toString())
 
         binding.toolbarPlayer.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -54,7 +57,7 @@ class PlayerActivity : AppCompatActivity() {
         binding.play.setOnClickListener {
             viewModel.onPlayClick()
         }
-        viewModel.observeIsFavorite().observe(this) {isFavorite->
+        viewModel.observeIsFavorite().observe(this) { isFavorite ->
             if (isFavorite == true) {
                 binding.buttonLike.setImageResource(R.drawable.button_like)
 
@@ -174,11 +177,6 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         viewModel.pause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     companion object {

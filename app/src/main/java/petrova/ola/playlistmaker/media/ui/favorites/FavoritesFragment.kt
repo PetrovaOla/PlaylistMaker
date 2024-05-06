@@ -111,10 +111,6 @@ class FavoritesFragment : Fragment() {
         val intent = Intent(requireContext(), PlayerActivity::class.java)
         intent.putExtra(EXTRAS_KEY, track)
         startActivity(intent)
-        /* findNavController().navigate(
-                            R.id.action_libraryFragment_to_audioPlayerActivity,
-                            AudioPlayerActivity.createArgs(it)
-                        )*/
     }
 
 

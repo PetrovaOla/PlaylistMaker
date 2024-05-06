@@ -14,18 +14,12 @@ import petrova.ola.playlistmaker.player.domain.db.FavouritesInteractor
 import petrova.ola.playlistmaker.search.domain.model.Track
 
 class PlayerViewModel(
+    private val track: Track,
     private val playerInteractor: PlayerInteractor,
     private val favouritesInteractor: FavouritesInteractor,
 ) : ViewModel() {
 
-    private lateinit var track: Track
-    fun setTrack(track: Track) {
-        this.track = track
-        setDataSource(track.previewUrl.toString())
-    }
-
-
-    private val playerMutableScreenState = MutableLiveData<PlayerScreenState>(
+   private val playerMutableScreenState = MutableLiveData<PlayerScreenState>(
         PlayerScreenState.Loading
     )
     val playerScreenState: LiveData<PlayerScreenState> = playerMutableScreenState
@@ -47,7 +41,7 @@ class PlayerViewModel(
         get() = playerInteractor.getPosition()
 
 
-    private fun setDataSource(url: String) {
+    fun setDataSource(url: String) {
         playerInteractor.setDataSource(url)
     }
 

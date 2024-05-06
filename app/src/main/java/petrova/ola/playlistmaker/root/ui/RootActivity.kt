@@ -12,14 +12,13 @@ import petrova.ola.playlistmaker.databinding.ActivityRootBinding
 
 class RootActivity : AppCompatActivity() {
 
-    private var _binding: ActivityRootBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityRootBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Привязываем вёрстку к экрану
-        _binding = ActivityRootBinding.inflate(layoutInflater)
+        binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val navHostFragment =
@@ -60,8 +59,4 @@ class RootActivity : AppCompatActivity() {
         super.onResume()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
 }

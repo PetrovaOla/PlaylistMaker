@@ -6,5 +6,5 @@ import petrova.ola.playlistmaker.search.domain.model.Track
 interface FavouritesInteractor {
     suspend fun insertFavoritesTrack(track: Track)
     suspend fun deleteFavoritesTrack(track: Track)
-    suspend fun getFavoritesTrack(): Flow<List<Track>>
+    fun getFavoritesTrack(): Flow<List<Track>>
 }

@@ -45,7 +45,8 @@ class TracksRepositoryImpl(
                                 releaseDate = it.releaseDate,
                                 primaryGenreName = it.primaryGenreName,
                                 country = it.country,
-                                previewUrl = it.previewUrl
+                                previewUrl = it.previewUrl,
+                                isFavorite = it.isFavorite
                             )
                         }
                     )
@@ -81,14 +82,6 @@ class TracksRepositoryImpl(
             }
         }
     }
-
-//    override fun addTrackToFavorites(track: Track) {
-//        localStorage.addToFavorites(track.trackId.toString())
-//    }
-//
-//    override fun removeTrackFromFavorites(track: Track) {
-//        localStorage.removeFromFavorites(track.trackId.toString())
-//    }
 
     override fun putHistory(tracks: MutableList<Track>) {
         localStorage.putHistory(tracks)

@@ -9,5 +9,5 @@ interface FavouritesTrackRepository {
 // удаление трека из избранного
     suspend fun deleteFavoritesTrack(track: Track)
 // получения списка со всеми треками, добавленными в избранное
-    suspend fun getFavoritesTrack(): Flow<List<Track>>
+    fun getFavoritesTrack(): Flow<List<Track>>
 }
