@@ -6,7 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".media.ui.favorites.FavoritesFragment">
 
-
+    <ProgressBar
+        android:id="@+id/progressBar_media"
+        android:layout_width="@dimen/dp44"
+        android:layout_height="@dimen/dp44"
+        android:layout_gravity="center"
+        android:layout_marginTop="148dp"
+        android:indeterminateTint="@color/YPBlue"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group_not_found_media"
         android:layout_width="match_parent"
@@ -38,5 +49,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img_placeholder" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/track_list_favorites"
+        android:layout_width="@dimen/_0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp16"
+        tools:listitem="@layout/item_track"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

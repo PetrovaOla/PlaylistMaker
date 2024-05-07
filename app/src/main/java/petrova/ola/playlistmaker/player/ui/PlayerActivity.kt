@@ -7,8 +7,12 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.ActivityPlayerBinding
 import petrova.ola.playlistmaker.player.domain.PlayerState
@@ -20,35 +24,53 @@ import petrova.ola.playlistmaker.utils.msToTime
 class PlayerActivity : AppCompatActivity() {
     private val imageLoader: ImageLoader by inject()
 
+    private var isClickAllowed = true
 
-    private var _binding: ActivityPlayerBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityPlayerBinding
 
-    private val viewModel: PlayerViewModel by viewModel()
+    private val viewModel: PlayerViewModel by viewModel{
+        parametersOf(track)
+    }
 
     private lateinit var track: Track
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityPlayerBinding.inflate(layoutInflater)
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         track = when {
             SDK_INT >= Build.VERSION_CODES.TIRAMISU -> intent.getSerializableExtra(
                 SearchFragment.EXTRAS_KEY,
                 Track::class.java
-            )!!
+            ) as Track
 
             else -> intent.getSerializableExtra(SearchFragment.EXTRAS_KEY) as Track
         }
+
         viewModel.setDataSource(url = track.previewUrl.toString())
 
         binding.toolbarPlayer.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
         binding.play.setOnClickListener {
-            viewModel.onClick()
+            viewModel.onPlayClick()
+        }
+        viewModel.observeIsFavorite().observe(this) { isFavorite ->
+            if (isFavorite == true) {
+                binding.buttonLike.setImageResource(R.drawable.button_like)
+
+            } else {
+                binding.buttonLike.setImageResource(R.drawable.button_not_like)
+
+            }
+        }
+
+        binding.buttonLike.setOnClickListener {
+            if (debounceClick()) {
+                viewModel.onFavoriteClicked()
+            }
         }
 
         viewModel.playerScreenState.observe(this) { playerScreenState ->
@@ -89,7 +111,7 @@ class PlayerActivity : AppCompatActivity() {
             name.text = track.trackName
             artist.text = track.artistName
             duration.text = msToTime(track.trackTimeMillis)
-            album.text = track.collectionName
+            album.text = track.collectionName ?: ""
             album.isVisible = album.text.isNotEmpty()
             albumTv.isVisible = album.isVisible
             if (track.releaseDate != null && track.releaseDate!!.length > 3) {
@@ -99,6 +121,19 @@ class PlayerActivity : AppCompatActivity() {
             country.text = track.country
         }
 
+    }
+
+    private fun debounceClick(): Boolean {
+
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
     }
 
     private fun settingPlayer(playerState: PlayerState, position: Int) {
@@ -144,13 +179,9 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.pause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-
     companion object {
         private const val TAG = "Player Fragment"
+        private const val CLICK_DEBOUNCE_DELAY = 200L
     }
 }
 

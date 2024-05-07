@@ -1,4 +1,8 @@
-package petrova.ola.playlistmaker.player.domain
+package petrova.ola.playlistmaker.player.domain.impl
+
+import petrova.ola.playlistmaker.player.domain.PlayerData
+import petrova.ola.playlistmaker.player.domain.PlayerInteractor
+import petrova.ola.playlistmaker.player.domain.PlayerState
 
 class PlayerInteractorImpl(private val mediaPlayer: PlayerData) : PlayerInteractor {
 
