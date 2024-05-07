@@ -50,4 +50,7 @@
     <string name="play_pause">play_pause</string>
     <string name="add">add</string>
     <string name="like">like</string>
+    <string name="name">Название</string>
+    <string name="description">Описание</string>
+    <string name="Create">Создать</string>
 </resources>

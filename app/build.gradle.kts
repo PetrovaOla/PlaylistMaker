@@ -84,6 +84,8 @@ dependencies {
     implementation(libs.androidx.room.runtime) // библиотека Room
     kapt(libs.androidx.room.compiler) // Kotlin-кодогенератор
 
+//permission
+    implementation (libs.com.markodevcic.peko)
 
     implementation(libs.androidx.room.ktx) // поддержка корутин
 }

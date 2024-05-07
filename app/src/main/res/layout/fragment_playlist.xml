@@ -6,12 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".media.ui.playlist.PlaylistFragment">
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/group_not_found_media"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="create_btn, not_found_txt, img_placeholder" />
-
     <Button
         android:id="@+id/create_btn"
         style="@style/Button_update"
@@ -24,8 +18,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_not_found_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="not_found_playlist_txt, img_placeholder_playlist" />
+
     <ImageView
-        android:id="@+id/img_placeholder"
+        android:id="@+id/img_placeholder_playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="102dp"
@@ -36,7 +36,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/not_found_txt"
+        android:id="@+id/not_found_playlist_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp16"
@@ -48,7 +48,19 @@
         android:textSize="19sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/img_placeholder" />
+        app:layout_constraintTop_toBottomOf="@id/img_placeholder_playlist" />
 
+    <androidx.recyclerview.widget.RecyclerView
 
+        android:id="@+id/playlist_rv"
+        android:layout_width="@dimen/_0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp16"
+        tools:listitem="@layout/item_playlist"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

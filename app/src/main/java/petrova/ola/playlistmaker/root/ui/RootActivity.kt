@@ -30,7 +30,8 @@ class RootActivity : AppCompatActivity() {
             setOf(
                 R.id.searchFragment,
                 R.id.settingFragment,
-                R.id.mediaFragment
+                R.id.mediaFragment,
+                R.id.newPlayListFragment
             )
         )
         findViewById<Toolbar>(R.id.toolbar)
