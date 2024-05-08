@@ -8,7 +8,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import petrova.ola.playlistmaker.player.data.PlayerDataImpl
-import petrova.ola.playlistmaker.player.data.db.entity.AppDatabase
+import petrova.ola.playlistmaker.root.db.AppDatabase
 import petrova.ola.playlistmaker.player.domain.PlayerData
 import petrova.ola.playlistmaker.search.data.NetworkClient
 import petrova.ola.playlistmaker.search.data.network.ApiService

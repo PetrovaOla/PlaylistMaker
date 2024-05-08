@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import petrova.ola.playlistmaker.player.domain.PlayerInteractor
 import petrova.ola.playlistmaker.player.domain.PlayerState
-import petrova.ola.playlistmaker.player.domain.db.FavouritesInteractor
+import petrova.ola.playlistmaker.media.favorite.domain.db.FavouritesInteractor
 import petrova.ola.playlistmaker.search.domain.model.Track
 
 class PlayerViewModel(
