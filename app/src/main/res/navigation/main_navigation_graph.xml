@@ -33,20 +33,7 @@
     <fragment
         android:id="@+id/newPlayListFragment"
         android:name="petrova.ola.playlistmaker.media.ui.new_playlist.NewPlayListFragment"
-        android:label="fragment_new_play_list"
+        android:label="@string/new_list"
         tools:layout="@layout/fragment_new_play_list" />
-    <fragment
-        android:id="@+id/favoritesFragment"
-        android:name="petrova.ola.playlistmaker.media.ui.favorites.FavoritesFragment"
-        android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" />
-    <fragment
-        android:id="@+id/playlistFragment"
-        android:name="petrova.ola.playlistmaker.media.ui.playlist.PlaylistFragment"
-        android:label="fragment_playlist"
-        tools:layout="@layout/fragment_playlist" >
-        <action
-            android:id="@+id/action_playlistFragment_to_newPlayListFragment"
-            app:destination="@id/newPlayListFragment" />
-    </fragment>
+
 </navigation>

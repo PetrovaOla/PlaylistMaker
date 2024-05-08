@@ -35,7 +35,8 @@ class RootActivity : AppCompatActivity() {
             )
         )
         findViewById<Toolbar>(R.id.toolbar)
-            .setupWithNavController(navController, appBarConfiguration)
+            .setupWithNavController(navController, appBarConfiguration,)
+
 
 
 //        navController.addOnDestinationChangedListener { _, destination, _ ->

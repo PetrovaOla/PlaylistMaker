@@ -81,7 +81,8 @@
             android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/create_playlist"
         android:layout_width="@dimen/_0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp16"

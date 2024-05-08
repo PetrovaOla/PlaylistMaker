@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -34,6 +33,8 @@ class PlaylistFragment : Fragment() {
     private lateinit var createButton: Button
     private lateinit var groupNotFound: Group
     private lateinit var rv: RecyclerView
+
+    private val playLists = ArrayList<Playlist>()
 
     private lateinit var onClickDebounce: (Playlist) -> Unit
 
@@ -67,7 +68,7 @@ class PlaylistFragment : Fragment() {
         rv.adapter = rvAdapter
 
         binding.createBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_playlistFragment_to_newPlayListFragment)
+            findNavController().navigate(R.id.action_mediaFragment_to_newPlayListFragment)
         }
 
     }
@@ -87,12 +88,6 @@ class PlaylistFragment : Fragment() {
     companion object {
         private const val TRACK_ID = "track_id"
         private const val CLICK_DEBOUNCE_DELAY = 200L
-
-        /* fun newInstance(trackId: String) = PlaylistFragment().apply {
-             arguments = Bundle().apply {
-                 putString(TRACK_ID, trackId)
-             }
-         }*/
         fun newInstance() = PlaylistFragment()
     }
 }
