@@ -10,28 +10,33 @@ import petrova.ola.playlistmaker.search.domain.model.Track
 
 class PlaylistInteractImpl(private val repository: PlaylistRepository) : PlaylistInteractor {
 
-    override suspend fun addTrack(track: Track, playlist: Playlist) {
-        repository.addTrack(track = track, playlist = playlist)
+    override suspend fun addTrack(track: Track, playlistId: Long): Boolean {
+        return repository.addTrack(track, playlistId)
     }
 
-    override suspend fun addPlaylist(playList: Playlist) {
-        repository.addPlaylist(playList)
+    override suspend fun createPlaylist(playList: Playlist) {
+        repository.createPlaylist(playList)
+    }
+
+    override suspend fun deleteTrack(playlistId: Long, track: Track) {
+        repository.deleteTrack(playlistId, track)
     }
 
     override suspend fun deletePlaylist(playlist: Playlist) {
         repository.deletePlaylist(playlist)
     }
 
-    override fun getPlaylist(): Flow<List<Playlist>> = flow {
+    override fun getTracks(playlistId: Long): Flow<List<Track>> = flow {
+        repository.getTracks(playlistId)
+    }
+
+    override fun getPlaylists(): Flow<List<Playlist>> = flow {
         repository.getPlaylist()
     }
 
-    override suspend fun updatePlayLists() {
-        repository.updatePlaylist()
-    }
 
-    override suspend fun saveFile(uri: Uri): Uri {
-        return repository.saveFile(uri)
+    override suspend fun saveFile(uri: String, playlistId: Long): Uri {
+        return repository.saveFile(uri, playlistId)
     }
 
     override suspend fun loadFile() {

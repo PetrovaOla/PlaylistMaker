@@ -7,17 +7,21 @@ import petrova.ola.playlistmaker.search.domain.model.Track
 
 interface PlaylistInteractor {
 
-    suspend fun addTrack(track: Track, playlist: Playlist)
+    suspend fun addTrack(track: Track, playlistId: Long):Boolean
 
-    suspend fun addPlaylist(playList: Playlist)
+    suspend fun createPlaylist(playList: Playlist)
+
+    suspend fun deleteTrack(playlistId: Long, track: Track)
 
     suspend fun deletePlaylist(playlist: Playlist)
 
-    fun getPlaylist():  Flow<List<Playlist>>
+    fun getTracks(playlistId: Long): Flow<List<Track>>
 
-    suspend fun updatePlayLists()
+    fun getPlaylists():  Flow<List<Playlist>>
 
-    suspend fun saveFile(uri: Uri): Uri
+    suspend fun saveFile(uri: String, playlistId: Long): Uri
+
     suspend fun loadFile()
+
     suspend fun deleteFile(uri: Uri)
 }

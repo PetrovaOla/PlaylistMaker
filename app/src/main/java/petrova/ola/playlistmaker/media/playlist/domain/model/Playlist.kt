@@ -1,12 +1,10 @@
 package petrova.ola.playlistmaker.media.playlist.domain.model
 
-import android.net.Uri
-
 data class Playlist(
-    val id: Int,
+    var id: Long,
     val name: String,
     val description: String?,
-    val list: TrackList,
+    val list: String,
     var count: Int = 0,
-    val img: Uri?,
+    var img: String?,
 )

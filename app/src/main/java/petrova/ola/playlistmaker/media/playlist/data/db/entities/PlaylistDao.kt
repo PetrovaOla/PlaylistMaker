@@ -15,16 +15,22 @@ interface PlaylistDao {
     suspend fun getAll(): List<PlaylistEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addPl(playlist: PlaylistEntity)
+    suspend fun createPl(playlist: PlaylistEntity):Long
 
     @Update(entity = PlaylistEntity::class)
     suspend fun updatePl(playList: PlaylistEntity)
 
-    @Insert(entity = Track::class, onConflict = OnConflictStrategy.REPLACE)
+    @Query("UPDATE playlist_table SET list =:tracks, count=:count WHERE id=:playlistId")
+    suspend fun updateTracks(playlistId: Long, tracks: String, count: Int)
+
+    @Insert(entity = Track::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun addTrackToPl(track: Track)
 
+    @Query("SELECT list FROM playlist_table WHERE id=:playlistId")
+    suspend fun getTracks(playlistId: Long): List<String>
+
     @Delete(entity = PlaylistEntity::class)
-    fun deletePl(playList: PlaylistEntity)
+    suspend fun deletePl(playList: PlaylistEntity)
 
     @Delete(entity = Track::class)
     fun deleteTrackFromPl(track: Track)
