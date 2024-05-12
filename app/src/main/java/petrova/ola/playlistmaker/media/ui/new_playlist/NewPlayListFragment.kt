@@ -1,5 +1,6 @@
 package petrova.ola.playlistmaker.media.ui.new_playlist
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -22,6 +24,8 @@ import com.google.android.material.textfield.TextInputEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentNewPlayListBinding
+import petrova.ola.playlistmaker.media.playlist.ui.PlaylistFragment.Companion.PLAYLIST_CREATED
+import petrova.ola.playlistmaker.media.playlist.ui.PlaylistFragment.Companion.PLAYLIST_NAME
 
 
 class NewPlayListFragment : Fragment() {
@@ -87,11 +91,6 @@ class NewPlayListFragment : Fragment() {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-
-
-
-
-
         textWatcherName = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -104,15 +103,16 @@ class NewPlayListFragment : Fragment() {
                     name = s.toString()
                     binding.createPlaylist.isEnabled = true
 
-//                    binding.inputLayoutName.setBoxStrokeColorStateList(
-//                        requireContext().getColorStateList(R.color.red)
-//                    )
-//                    binding.inputLayoutName.setBoxStrokeColorStateList(requireContext().getColorStateList(R.color.YPBlue))
                 }
 
             }
 
             override fun afterTextChanged(s: Editable?) {
+                if (s.toString().isNotEmpty()) {
+                    binding.inputLayoutName.setBoxStrokeColorStateList(
+                        requireContext().getColorStateList(R.color.YPBlue)
+                    )
+                }
             }
         }
         inputName.addTextChangedListener(textWatcherName)
@@ -141,7 +141,18 @@ class NewPlayListFragment : Fragment() {
         createBtn.setOnClickListener {
             viewModel.createPlaylist(name = name, description = description, image = img)
             findNavController().navigateUp()
+
+            requireActivity().supportFragmentManager.setFragmentResult(
+                PLAYLIST_CREATED,
+                bundleOf(PLAYLIST_NAME to name)
+            )
         }
+
+
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
@@ -149,8 +160,8 @@ class NewPlayListFragment : Fragment() {
                     backPressed()
                 }
             })
-
     }
+
 
     private fun backPressed() {
         if (name.isNotEmpty() || description.isNotEmpty() || img.isNotEmpty()) {
@@ -171,8 +182,8 @@ class NewPlayListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-//        textWatcherName?.let { inputName.removeTextChangedListener(it) }
-//        textWatcherDescription?.let { inputDescription.removeTextChangedListener(it) }
+        textWatcherName?.let { inputName.removeTextChangedListener(it) }
+        textWatcherDescription?.let { inputDescription.removeTextChangedListener(it) }
     }
 
     companion object {

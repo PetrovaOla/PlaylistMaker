@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -28,11 +29,12 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
 
-    private val viewModel: PlayerViewModel by viewModel{
+    private val viewModel: PlayerViewModel by viewModel {
         parametersOf(track)
     }
 
     private lateinit var track: Track
+
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +55,18 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.toolbarPlayer.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
+        }
+
+        val bottomSheetContainer = binding.playlistsBottomSheet
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+
+        binding.buttonAdd.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
         }
         binding.play.setOnClickListener {
             viewModel.onPlayClick()

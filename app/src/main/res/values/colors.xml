@@ -33,4 +33,5 @@
     <color name="bottom_navigation_inactive">#1A1B22</color>
     <color name="bottom_navigation_background">#FFFFFFFF</color>
     <color name="hint_color_playlist">#AEAFB4</color>
+    <color name="playlist_count">#AEAFB4</color>
 </resources>
