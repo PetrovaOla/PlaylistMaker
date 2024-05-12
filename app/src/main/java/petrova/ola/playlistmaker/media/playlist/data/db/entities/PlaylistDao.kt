@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import petrova.ola.playlistmaker.search.domain.model.Track
+import petrova.ola.playlistmaker.player.data.db.entity.TrackEntity
 
 @Dao
 interface PlaylistDao {
@@ -23,8 +23,8 @@ interface PlaylistDao {
     @Query("UPDATE playlist_table SET list =:tracks, count=:count WHERE id=:playlistId")
     suspend fun updateTracks(playlistId: Long, tracks: String, count: Int)
 
-    @Insert(entity = Track::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addTrackToPl(track: Track)
+    @Insert(entity = TrackEntity::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addTrackToPl(track: TrackEntity)
 
     @Query("SELECT list FROM playlist_table WHERE id=:playlistId")
     suspend fun getTracks(playlistId: Long): List<String>
@@ -32,6 +32,6 @@ interface PlaylistDao {
     @Delete(entity = PlaylistEntity::class)
     suspend fun deletePl(playList: PlaylistEntity)
 
-    @Delete(entity = Track::class)
-    fun deleteTrackFromPl(track: Track)
+    @Delete(entity = TrackEntity::class)
+    fun deleteTrackFromPl(track: TrackEntity)
 }

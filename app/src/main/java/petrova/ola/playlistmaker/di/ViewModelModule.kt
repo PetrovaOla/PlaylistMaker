@@ -5,6 +5,7 @@ import org.koin.dsl.module
 import petrova.ola.playlistmaker.media.ui.media.MediaViewModel
 import petrova.ola.playlistmaker.media.favorite.ui.FavoritesViewModel
 import petrova.ola.playlistmaker.media.playlist.ui.PlaylistViewModel
+import petrova.ola.playlistmaker.media.ui.new_playlist.NewPlaylistViewModel
 import petrova.ola.playlistmaker.player.ui.PlayerViewModel
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.search.ui.SearchViewModel
@@ -39,5 +40,8 @@ val viewModelModule = module {
         FavoritesViewModel(get())
     }
 
+    viewModel {
+        NewPlaylistViewModel(get())
+    }
 
 }

@@ -9,6 +9,10 @@
     <color name="YGrey"> #AEAFB4</color>
     <color name="YLightGray"> #E6E8EB</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#00FF00</color>
+    <color name="yellow">#FFFF00</color>
+
     <color name="app_back">#FFFFFFFF</color>
 
     <color name="switch_circle">#AEAFB4</color>
@@ -28,5 +32,5 @@
     <color name="bottom_navigation_active">#3772E7</color>
     <color name="bottom_navigation_inactive">#1A1B22</color>
     <color name="bottom_navigation_background">#FFFFFFFF</color>
-
+    <color name="hint_color_playlist">#AEAFB4</color>
 </resources>

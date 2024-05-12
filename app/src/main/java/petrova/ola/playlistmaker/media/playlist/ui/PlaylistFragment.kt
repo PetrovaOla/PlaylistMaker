@@ -5,36 +5,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.constraintlayout.widget.Group
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentPlaylistBinding
 import petrova.ola.playlistmaker.media.playlist.domain.model.Playlist
-import petrova.ola.playlistmaker.root.ui.RootActivity
 import petrova.ola.playlistmaker.utils.debounce
 
 
 class PlaylistFragment : Fragment() {
 
-    private val playlistViewModel: PlaylistViewModel by viewModel {
-        parametersOf(requireArguments().getString(TRACK_ID))
-    }
+    private val viewModel: PlaylistViewModel by viewModel()
     private var _binding: FragmentPlaylistBinding? = null
     private val binding get() = _binding!!
 
     private var rvAdapter: PlaylistAdapter? = null
 
     private lateinit var createButton: Button
-    private lateinit var groupNotFound: Group
-    private lateinit var rv: RecyclerView
+    private lateinit var groupNotFound: LinearLayout
+    private lateinit var recycler: RecyclerView
 
-    private val playLists = ArrayList<Playlist>()
 
     private lateinit var onClickDebounce: (Playlist) -> Unit
 
@@ -43,6 +39,13 @@ class PlaylistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            PLAYLIST_CREATED, viewLifecycleOwner
+        ) { _, bundle ->
+            bundle.getString(PLAYLIST_NAME)?.let { showToast(it) }
+        }
+
         return binding.root
     }
 
@@ -51,12 +54,26 @@ class PlaylistFragment : Fragment() {
 
         groupNotFound = binding.groupNotFoundPlaylist
         createButton = binding.createBtn
-        rv = binding.playlistRv
+        recycler = binding.playlistRv
+        groupNotFound.visibility = View.GONE
 
-        rvAdapter = PlaylistAdapter (playLists){
-            (activity as RootActivity).animateBottomNavigationView(View.GONE)
+        viewModel.loadPlaylist()
+
+        rvAdapter = PlaylistAdapter {
             onClickDebounce(it)
         }
+
+        recycler.layoutManager = GridLayoutManager(requireContext(), 2)
+        recycler.adapter = rvAdapter
+
+        viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
+            when (screenState) {
+                is PlaylistState.Content -> showContent(screenState)
+                is PlaylistState.Empty -> showEmpty()
+            }
+        }
+
+
         onClickDebounce = debounce<Playlist>(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
@@ -64,8 +81,7 @@ class PlaylistFragment : Fragment() {
         ) {
             openPlaylist(it)
         }
-        rv.layoutManager = GridLayoutManager(requireContext(),2,)
-        rv.adapter = rvAdapter
+
 
         binding.createBtn.setOnClickListener {
             findNavController().navigate(R.id.action_mediaFragment_to_newPlayListFragment)
@@ -73,20 +89,47 @@ class PlaylistFragment : Fragment() {
 
     }
 
+    private fun showEmpty() {
+        groupNotFound.visibility = View.VISIBLE
+        recycler.visibility = View.GONE
+    }
+
+    private fun showContent(screenState: PlaylistState.Content) {
+        rvAdapter!!.playlists.clear()
+        rvAdapter!!.playlists.addAll(screenState.playlists)
+        rvAdapter!!.notifyDataSetChanged()
+        groupNotFound.visibility = View.GONE
+        recycler.visibility = View.VISIBLE
+    }
+
 
     private fun openPlaylist(playlist: Playlist) {
 
+    }
+
+    private fun showToast(playlistName: String) {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.playlist_show, playlistName),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadPlaylist()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
         rvAdapter = null
-        rv.adapter = null
+        recycler.adapter = null
     }
 
     companion object {
-        private const val TRACK_ID = "track_id"
+        const val PLAYLIST_CREATED = "playlist_created"
+        const val PLAYLIST_NAME = "playlist_name"
         private const val CLICK_DEBOUNCE_DELAY = 200L
         fun newInstance() = PlaylistFragment()
     }

@@ -2,7 +2,6 @@ package petrova.ola.playlistmaker.media.playlist.domain.impl
 
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import petrova.ola.playlistmaker.media.playlist.domain.db.PlaylistInteractor
 import petrova.ola.playlistmaker.media.playlist.domain.db.PlaylistRepository
 import petrova.ola.playlistmaker.media.playlist.domain.model.Playlist
@@ -26,24 +25,24 @@ class PlaylistInteractImpl(private val repository: PlaylistRepository) : Playlis
         repository.deletePlaylist(playlist)
     }
 
-    override fun getTracks(playlistId: Long): Flow<List<Track>> = flow {
-        repository.getTracks(playlistId)
+    override fun getTracks(playlistId: Long): Flow<List<Track>> {
+        return repository.getTracks(playlistId)
     }
 
-    override fun getPlaylists(): Flow<List<Playlist>> = flow {
-        repository.getPlaylist()
+    override fun getPlaylists(): Flow<List<Playlist>> {
+        return repository.getPlaylist()
     }
 
 
-    override suspend fun saveFile(uri: String, playlistId: Long): Uri {
-        return repository.saveFile(uri, playlistId)
-    }
-
-    override suspend fun loadFile() {
-        repository.loadFile()
+    override suspend fun saveFile(uri: String): Uri {
+        return repository.saveFile(uri)
     }
 
     override suspend fun deleteFile(uri: Uri) {
         repository.deleteFile(uri)
+    }
+
+    override suspend fun updatePlaylists() {
+        return repository.updatePlaylists()
     }
 }

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".media.playlist.ui.PlaylistFragment">
+    tools:context=".media.playlist.ui.PlaylistFragment"
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/create_btn"
@@ -13,54 +14,49 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp24"
         android:padding="@dimen/_6dp"
+        android:layout_gravity="center_horizontal"
         android:text="@string/new_playlist"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.Group
+       />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlist_rv"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp16"
+        android:layout_marginHorizontal="@dimen/dp8"
+        android:visibility="gone"
+        tools:listitem="@layout/item_playlist"
+        tools:visibility="visible" />
+    <LinearLayout
         android:id="@+id/group_not_found_playlist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="not_found_playlist_txt, img_placeholder_playlist" />
-
-    <ImageView
-        android:id="@+id/img_placeholder_playlist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="102dp"
-        android:contentDescription="@string/not_found_media"
-        android:src="@drawable/not_found"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/not_found_playlist_txt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp16"
-        android:fontFamily="@font/ys_display_medium"
-        android:text="@string/not_found_playlist"
-        android:textAlignment="center"
-        android:textColor="@color/placeholder_search"
-        android:textFontWeight="400"
-        android:textSize="19sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/img_placeholder_playlist" />
-
-    <androidx.recyclerview.widget.RecyclerView
-
-        android:id="@+id/playlist_rv"
-        android:layout_width="@dimen/_0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp16"
-        tools:listitem="@layout/item_playlist"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
         android:visibility="gone"
         tools:visibility="visible"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        >
+        <ImageView
+            android:id="@+id/img_placeholder_playlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_56dp"
+            android:contentDescription="@string/not_found_media"
+            android:src="@drawable/not_found"
+            />
+
+        <TextView
+            android:id="@+id/not_found_playlist_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp16"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/not_found_playlist"
+            android:textAlignment="center"
+            android:textColor="@color/placeholder_search"
+            android:textFontWeight="400"
+            android:textSize="19sp"
+             />
+    </LinearLayout>
+</LinearLayout>

@@ -76,7 +76,9 @@ val dataModule = module {
         GlideImageLoader()
     }
 
-    single { Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
-        .build() }
+    single<AppDatabase> {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+        .build()
+    }
 
 }

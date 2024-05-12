@@ -22,15 +22,15 @@ interface PlaylistRepository {
     // получения списков плейлистов
     fun getPlaylist(): Flow<List<Playlist>>
 
-    // получения списков плейлистов
+        // получения списков плейлистов
     fun getTracks(playlistId: Long): Flow<List<Track>>
 
 
-    suspend fun saveFile(uri: String, playlistId: Long): Uri
+    suspend fun saveFile(inputFile: String): Uri
 
-    suspend fun loadFile()
 
     suspend fun deleteFile(uri: Uri)
-}
 
+    suspend fun updatePlaylists() {}
+}
 

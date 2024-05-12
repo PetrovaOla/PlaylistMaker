@@ -40,6 +40,9 @@ android {
     }
 }
 
+
+val roomVersion = "2.6.1"
+
 dependencies {
 
     implementation(libs.core.ktx)
@@ -50,10 +53,10 @@ dependencies {
     annotationProcessor(libs.compiler)
 
 //    работа с сетью
-    implementation (libs.gson)
-    implementation (libs.squareup.retrofit)
-    implementation (libs.converter.gson)
-    implementation (libs.squareup.retrofit)
+    implementation(libs.gson)
+    implementation(libs.squareup.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.squareup.retrofit)
     implementation(libs.glide)
 
 //    test
@@ -85,7 +88,7 @@ dependencies {
     kapt(libs.androidx.room.compiler) // Kotlin-кодогенератор
 
 //permission
-    implementation (libs.com.markodevcic.peko)
+    implementation(libs.com.markodevcic.peko)
 
     implementation(libs.androidx.room.ktx) // поддержка корутин
 }

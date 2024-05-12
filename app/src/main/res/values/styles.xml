@@ -153,11 +153,14 @@
         <item name="android:layout_width">@dimen/_0dp</item>
         <item name="android:layout_height">wrap_content</item>
 
-        <item name="android:textColorHint">"@color/hint_color_search"</item>
+        <item name="android:textColorHint">"@color/YPBlue"</item>
+        <item name="hintTextColor">@color/YPBlue</item>
+
         <item name="android:textCursorDrawable">"@drawable/cursor"</item>
         <item name="cursorColor">@color/cursor</item>
-       <item name="boxStrokeColor">@color/YGrey</item>
-        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxStrokeColor">@color/selector_input</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxStrokeWidth">1dp</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/dp8</item>
         <item name="boxCornerRadiusBottomStart">@dimen/dp8</item>
         <item name="boxCornerRadiusTopEnd">@dimen/dp8</item>
@@ -165,13 +168,11 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/ys_text_regular</item>
         <item name="android:imeOptions">actionDone</item>
-        <item name="android:inputType">text</item>
-        <item name="android:maxLines">1</item>
+        <item name="counterMaxLength">20</item>
+
         <item name="android:padding">@dimen/dp8</item>
         <item name="android:textSize">@dimen/sp16</item>
-
-
-
-
     </style>
+
+
 </resources>
