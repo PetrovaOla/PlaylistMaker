@@ -9,8 +9,8 @@ import petrova.ola.playlistmaker.search.domain.model.Track
 
 class PlaylistInteractImpl(private val repository: PlaylistRepository) : PlaylistInteractor {
 
-    override suspend fun addTrack(track: Track, playlistId: Long): Boolean {
-        return repository.addTrack(track, playlistId)
+    override suspend fun addTrack(track: Track, playlist: Playlist):Boolean {
+        return repository.addTrack(track, playlist)
     }
 
     override suspend fun createPlaylist(playList: Playlist) {
@@ -25,9 +25,10 @@ class PlaylistInteractImpl(private val repository: PlaylistRepository) : Playlis
         repository.deletePlaylist(playlist)
     }
 
-    override fun getTracks(playlistId: Long): Flow<List<Track>> {
-        return repository.getTracks(playlistId)
-    }
+//    override fun getTracks(playlistId: Long): Flow<List<Track>> {
+//    override fun getTracks(playlistId: Long): Flow<List<Long>> {
+//        return repository.getTracks(playlistId)
+//    }
 
     override fun getPlaylists(): Flow<List<Playlist>> {
         return repository.getPlaylist()
@@ -40,9 +41,5 @@ class PlaylistInteractImpl(private val repository: PlaylistRepository) : Playlis
 
     override suspend fun deleteFile(uri: Uri) {
         repository.deleteFile(uri)
-    }
-
-    override suspend fun updatePlaylists() {
-        return repository.updatePlaylists()
     }
 }

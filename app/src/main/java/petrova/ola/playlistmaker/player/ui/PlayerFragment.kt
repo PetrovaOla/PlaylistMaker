@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
@@ -48,6 +49,7 @@ class PlayerFragment : Fragment() {
     private lateinit var track: Track
 
     private lateinit var appBar: Toolbar
+    private lateinit var bottomNavView: BottomNavigationView
 
     private var rvAdapter: BottomSheetAdapter? = null
     private lateinit var recycler: RecyclerView
@@ -74,6 +76,9 @@ class PlayerFragment : Fragment() {
         appBar = requireActivity().findViewById(R.id.toolbar)
         appBar.setNavigationIcon(R.drawable.arrow_back)
         appBar.setNavigationOnClickListener { findNavController().navigateUp() }
+
+        bottomNavView = requireActivity().findViewById(R.id.bottomNavigationView)
+        bottomNavView.isVisible = false
 
         recycler = binding.rvPlaylist
 
@@ -106,11 +111,22 @@ class PlayerFragment : Fragment() {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             viewModel.loadPlaylists()
         }
-        viewModel.getResultLiveData().observe(viewLifecycleOwner) {
-                (text,isSuccess) ->
-            if (isSuccess)
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            showToast(text)
+
+        viewModel.getResultLiveData().observe(viewLifecycleOwner) { (playlistName, isSuccess) ->
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            val view: CoordinatorLayout? = activity?.findViewById(R.id.main)
+
+            Snackbar.make(
+                view!!,
+                getString(
+                    when(isSuccess) {
+                        true -> R.string.add_track_to_playlist
+                        false -> R.string.track_added_playlist
+                    },
+                    playlistName
+                ),
+                Snackbar.LENGTH_SHORT
+            ).show()
         }
 
         bottomSheetBehavior.addBottomSheetCallback(object :
@@ -136,9 +152,9 @@ class PlayerFragment : Fragment() {
         }
 
 
-        rvAdapter = BottomSheetAdapter {
+        rvAdapter = BottomSheetAdapter { it ->
 //            if (debounceClick()) {
-            viewModel.addPlaylist(it)
+            viewModel.addTrackPlaylist(playlist = it, track = track)
 //            }
         }
         recycler.adapter = rvAdapter
@@ -218,6 +234,7 @@ class PlayerFragment : Fragment() {
         when (state) {
             is PlaylistState.Empty -> showEmpty()
             is PlaylistState.Content -> showContent(state.playlists)
+            else -> {}
         }
     }
 

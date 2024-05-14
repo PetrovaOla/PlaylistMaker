@@ -9,7 +9,6 @@ import android.os.Environment
 import android.util.Log
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,7 +16,6 @@ import kotlinx.coroutines.withContext
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.media.playlist.data.db.converters.DbConvertorPlaylist
 import petrova.ola.playlistmaker.media.playlist.data.db.entities.PlaylistDao
-import petrova.ola.playlistmaker.media.playlist.data.db.entities.PlaylistEntity
 import petrova.ola.playlistmaker.media.playlist.domain.db.PlaylistRepository
 import petrova.ola.playlistmaker.media.playlist.domain.model.Playlist
 import petrova.ola.playlistmaker.search.domain.model.Track
@@ -31,74 +29,47 @@ class PlaylistRepositoryImpl(
     private val playlistDao: PlaylistDao,
     private val dbConvertor: DbConvertorPlaylist,
 ) : PlaylistRepository {
-    private val gson = Gson()
-    private val playListStorage = ArrayList<Playlist>()
 
-    // TODO:  
-    override suspend fun addTrack(track: Track, playlistId: Long): Boolean {
-        var isInsert = false
-
-        getTracks(playlistId)
-            .collect { trackList ->
-                if (!trackList.contains(track)) {
-                    val newList = mutableListOf<Track>()
-                    newList.addAll(trackList)
-                    newList.add(track)
-                    val trackListGson = gson.toJson(newList)
-                    playlistDao.updateTracks(playlistId, trackListGson, newList.size)
-                    isInsert = true
-                }
-            }
-
-        return isInsert
-
-
-    }
-
-    override suspend fun createPlaylist(playlist: Playlist) {
-        playlistDao.createPl(dbConvertor.mapToEntity(playlist))
-        updatePlaylists()
-    }
-
-    override suspend fun updatePlaylists() {
-        getPlaylist().collect { result ->
-            playListStorage.clear()
-            playListStorage.addAll(result)
+    override suspend fun addTrack(track: Track, playlist: Playlist): Boolean {
+        return if (playlistDao.containsTrack(playlist.id, track.trackId.toLong())) {
+            false
+        } else {
+            playlistDao.addTrack(playlist.id, track.trackId.toLong())
+            true
         }
     }
 
+    override suspend fun createPlaylist(playlist: Playlist) {
+        playlistDao.createPlaylist(
+            dbConvertor.mapToEntity(playlist)
+        )
+    }
 
     override suspend fun deleteTrack(playlistId: Long, track: Track) {
-        getTracks(playlistId)
-            .collect { tracks ->
-                val newList = mutableListOf<Track>()
-                newList.addAll(tracks)
-                newList.remove(track)
-                val trackListGson = Gson().toJson(newList)
-                playlistDao.updateTracks(playlistId, trackListGson, newList.size)
-            }
+        playlistDao.deleteTrack(
+            playlistId, track.trackId.toLong()
+        )
     }
 
     override suspend fun deletePlaylist(playlist: Playlist) {
-        playlistDao.deletePl(dbConvertor.mapToEntity(playlist))
+        playlistDao.deletePlaylist(dbConvertor.mapToEntity(playlist))
     }
 
-    override fun getTracks(playlistId: Long): Flow<List<Track>> = flow {
-        val trackList = playlistDao.getTracks(playlistId)
-        emit(trackList.map {
-            gson.fromJson(it, Track::class.java)
-        })
+    override fun getTracks(playlistId: Long): Flow<List<Long>> = flow {
+        emit(
+            playlistDao.getTracks(playlistId).first().tracks.map {
+                it.trackId
+            }
+        )
     }
-
 
     override fun getPlaylist(): Flow<List<Playlist>> = flow {
-        val playLists = playlistDao.getAll().reversed()
-        emit(convertFromPlaylistEntity(playLists))
-    }
-
-
-    private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
-        return playlists.map { playlist -> dbConvertor.mapToModel(playlist) }
+        emit(
+            playlistDao
+                .getPlaylistsWithTracks()
+                .reversed()
+                .map { dbConvertor.mapToModel(it) }
+        )
     }
 
     private fun getAppSpecificAlbumStorageDir(context: Context, albumName: String): File {

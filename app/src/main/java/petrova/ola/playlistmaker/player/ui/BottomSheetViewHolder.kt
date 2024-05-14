@@ -17,7 +17,7 @@ class BottomSheetViewHolder(
 
         with(binding) {
             nameBs.text = list.name
-            countBs.text = getCount(list.count)
+            countBs.text = getCount(list.trackIds.size)
             Glide // Отрисовка с Glide
                 .with(imageBs)
                 .load(list.img)

@@ -17,7 +17,7 @@ class PlaylistViewHolder(
 
         with(binding) {
             namePl.text = list.name
-            count.text = getCount(list.count)
+            count.text = getCount(list.trackIds.size)
             Glide // Отрисовка с Glide
                 .with(imagePl)
                 .load(list.img)

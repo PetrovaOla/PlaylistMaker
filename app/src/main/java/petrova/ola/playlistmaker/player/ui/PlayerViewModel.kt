@@ -117,14 +117,12 @@ class PlayerViewModel(
         }
     }
 
-    fun addPlaylist(playlist: Playlist) {
+    fun addTrackPlaylist(playlist: Playlist, track: Track) {
         viewModelScope.launch {
-            if (playlistsInteractor.addTrack(playlistId = playlist.id, track = track))
-                mutableResult.postValue(Pair("Добавлено в плейлист ${playlist.name}", true))
+            if (playlistsInteractor.addTrack(playlist = playlist, track = track))
+                mutableResult.postValue(Pair(playlist.name, true))
             else
-                mutableResult.postValue(
-                    Pair("Трек уже добавлен в плейлист ${playlist.name}", false)
-                )
+                mutableResult.postValue(Pair(playlist.name, false))
         }
     }
 
