@@ -1,6 +1,5 @@
 package petrova.ola.playlistmaker.media.ui.new_playlist
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
@@ -151,25 +149,12 @@ class NewPlayListFragment : Fragment() {
 
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    backPressed()
-                }
-            })
-    }
-
-
     private fun backPressed() {
         if (name.isNotEmpty() || description.isNotEmpty() || img.isNotEmpty()) {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.playlist_title))
                 .setMessage(getString(R.string.playlist_message))
                 .setNegativeButton(getString(R.string.playlist_negative)) { _, _ ->
-
                 }
                 .setPositiveButton(getString(R.string.playlist_positive)) { _, _ ->
                     findNavController().navigateUp()

@@ -2,7 +2,6 @@ package petrova.ola.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,12 +16,13 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentSearchBinding
-import petrova.ola.playlistmaker.player.ui.PlayerActivity
 import petrova.ola.playlistmaker.root.ui.RootActivity
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.utils.debounce
@@ -203,10 +203,12 @@ class SearchFragment : Fragment() {
     }
 
     private fun openPlayer(track: Track) {
-        val intent = Intent(requireContext(), PlayerActivity::class.java)
-        intent.putExtra(EXTRAS_KEY, track)
-        startActivity(intent)
-
+        val args = Bundle()
+        args.putSerializable(EXTRAS_KEY, track)
+        findNavController().navigate(
+            R.id.action_searchFragment_to_playerFragment,
+            args
+        )
     }
 
     override fun onStart() {

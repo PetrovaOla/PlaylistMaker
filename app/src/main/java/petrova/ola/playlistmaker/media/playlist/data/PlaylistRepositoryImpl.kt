@@ -34,6 +34,7 @@ class PlaylistRepositoryImpl(
     private val gson = Gson()
     private val playListStorage = ArrayList<Playlist>()
 
+    // TODO:  
     override suspend fun addTrack(track: Track, playlistId: Long): Boolean {
         var isInsert = false
 
@@ -50,6 +51,8 @@ class PlaylistRepositoryImpl(
             }
 
         return isInsert
+
+
     }
 
     override suspend fun createPlaylist(playlist: Playlist) {
@@ -88,9 +91,8 @@ class PlaylistRepositoryImpl(
     }
 
 
-
     override fun getPlaylist(): Flow<List<Playlist>> = flow {
-        val playLists= playlistDao.getAll()
+        val playLists = playlistDao.getAll().reversed()
         emit(convertFromPlaylistEntity(playLists))
     }
 

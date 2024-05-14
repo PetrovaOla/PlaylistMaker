@@ -1,6 +1,5 @@
 package petrova.ola.playlistmaker.media.favorite.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,11 +7,12 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentFavoritesBinding
-import petrova.ola.playlistmaker.player.ui.PlayerActivity
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.search.ui.SearchFragment.Companion.EXTRAS_KEY
 import petrova.ola.playlistmaker.search.ui.SearchRecyclerAdapter
@@ -108,9 +108,13 @@ class FavoritesFragment : Fragment() {
 
 
     private fun openPlayer(track: Track) {
-        val intent = Intent(requireContext(), PlayerActivity::class.java)
-        intent.putExtra(EXTRAS_KEY, track)
-        startActivity(intent)
+        val args = Bundle()
+        args.putSerializable(EXTRAS_KEY, track)
+        findNavController().navigate(
+            R.id.action_mediaFragment_to_playerFragment,
+            args
+        )
+
     }
 
 

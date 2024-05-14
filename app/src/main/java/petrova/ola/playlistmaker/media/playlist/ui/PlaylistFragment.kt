@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentPlaylistBinding
@@ -108,11 +108,13 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun showToast(playlistName: String) {
-        Toast.makeText(
-            requireContext(),
+        val view: LinearLayout? = activity?.findViewById(R.id.media_root)
+        val snackbar = Snackbar.make(
+            view!!,
             getString(R.string.playlist_show, playlistName),
-            Toast.LENGTH_SHORT
-        ).show()
+            Snackbar.LENGTH_SHORT
+        )
+        snackbar.show()
     }
 
     override fun onResume() {

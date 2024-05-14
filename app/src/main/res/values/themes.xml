@@ -15,8 +15,9 @@
         <item name="android:statusBarColor">?attr/colorPrimary</item>
 
         <!-- Customize your theme here. -->
-
-    </style>
+            <item name="snackbarStyle">@style/Snackbar</item>
+            <item name="snackbarTextViewStyle">@style/SnackbarTV</item>
+        </style>
 
 
 </resources>

@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="Snackbar" parent="Widget.MaterialComponents.Snackbar">
+        <item name="android:backgroundTint">@color/bottom_navigation_inactive</item>
+        <item name="elevation">0dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.None</item>
+    </style>
+
+    <style name="SnackbarTV" parent="Widget.MaterialComponents.Snackbar.TextView">
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/bottom_navigation_background</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/sp14</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textAllCaps">false</item>
+
+    </style>
+
     <style name="ToolbarTextAppearance">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/sp22</item>
