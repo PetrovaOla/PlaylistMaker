@@ -137,10 +137,12 @@ class PlayerFragment : Fragment() {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         binding.overlay.visibility = View.GONE
+                        appBar.setBackgroundColor(resources.getColor(R.color.bottom_navigation_background))
                     }
 
                     else -> {
                         binding.overlay.visibility = View.VISIBLE
+                        appBar.setBackgroundColor(resources.getColor(R.color.overlay))
                     }
                 }
             }
