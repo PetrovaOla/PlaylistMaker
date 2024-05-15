@@ -183,28 +183,7 @@ class PlayerFragment : Fragment() {
             }
         }
         viewModel.playerScreenState.observe(viewLifecycleOwner) { playerScreenState ->
-            when (playerScreenState) {
-                is PlayerScreenState.Content -> {
-                    settingPlayer(
-                        playerState = playerScreenState.playerState,
-                        position = playerScreenState.playerPos
-                    )
-                    println()
-                }
-
-                is PlayerScreenState.Error -> {
-                    Log.d(TAG, "PlayerScreenState.ERROR")
-                }
-
-                is PlayerScreenState.Loading -> {
-                    Log.d(TAG, "PlayerScreenState.Loading")
-                }
-
-                else -> {
-                    Log.d(TAG, "Player Else")
-                }
-
-            }
+            renderPlayer(playerScreenState)
 
         }
 
@@ -230,6 +209,31 @@ class PlayerFragment : Fragment() {
             country.text = track.country
         }
 
+    }
+
+    private fun renderPlayer(playerScreenState: PlayerScreenState?) {
+        when (playerScreenState) {
+            is PlayerScreenState.Content -> {
+                settingPlayer(
+                    playerState = playerScreenState.playerState,
+                    position = playerScreenState.playerPos
+                )
+                println()
+            }
+
+            is PlayerScreenState.Error -> {
+                Log.d(TAG, "PlayerScreenState.ERROR")
+            }
+
+            is PlayerScreenState.Loading -> {
+                Log.d(TAG, "PlayerScreenState.Loading")
+            }
+
+            else -> {
+                Log.d(TAG, "Player Else")
+            }
+
+        }
     }
 
     private fun renderPlaylist(state: PlaylistState) {
