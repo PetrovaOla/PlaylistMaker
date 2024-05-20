@@ -20,4 +20,6 @@
     <dimen name="dp26">26dp</dimen>
     <dimen name="dp44">44dp</dimen>
     <dimen name="_6dp">6dp</dimen>
+    <dimen name="_56dp">56dp</dimen>
+    <dimen name="_22dp">22dp</dimen>
 </resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+    state_focused - в фокусе или нет
+    state_window_focused - имеет ли фокус родительское окно
+    state_enabled - доступен или нет
+    state_checkable - может ли быть отмечен или нет
+    state_checked - отмечен или нет
+    state_selected - выделен или нет
+    state_activated - активирован или нет
+    state_pressed - нажат или не нажат
+    state_hovered - находится ли курсор над компонентом или нет (API 11 и выше)-->
+    <item android:color="@color/YPBlue" android:state_focused="true"/>
+    <item android:color="@color/YGrey"/>
+</selector>

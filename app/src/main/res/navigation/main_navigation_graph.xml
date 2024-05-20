@@ -7,23 +7,44 @@
 
     <fragment
         android:id="@+id/mediaFragment"
-        android:name="petrova.ola.playlistmaker.media.ui.MediaFragment"
+        android:name="petrova.ola.playlistmaker.media.ui.media.MediaFragment"
         android:label="@string/medialibrary"
-        tools:layout="@layout/fragment_media" />
+        tools:layout="@layout/fragment_media" >
+        <action
+            android:id="@+id/action_mediaFragment_to_newPlayListFragment"
+            app:destination="@id/newPlayListFragment" />
+        <action
+            android:id="@+id/action_mediaFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/searchFragment"
         android:name="petrova.ola.playlistmaker.search.ui.SearchFragment"
         android:label="@string/search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="petrova.ola.playlistmaker.setting.ui.SettingFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_setting" />
-    <activity
-        android:id="@+id/playerActivity"
-        android:name="petrova.ola.playlistmaker.player.ui.PlayerActivity"
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="petrova.ola.playlistmaker.player.ui.PlayerFragment"
         android:label=""
-        tools:layout="@layout/activity_player" />
+        tools:layout="@layout/fragment_player" >
+        <action
+            android:id="@+id/action_playerFragment_to_newPlayListFragment"
+            app:destination="@id/newPlayListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newPlayListFragment"
+        android:name="petrova.ola.playlistmaker.media.ui.new_playlist.NewPlayListFragment"
+        android:label="@string/new_playlist"
+        tools:layout="@layout/fragment_new_play_list" />
+
 </navigation>

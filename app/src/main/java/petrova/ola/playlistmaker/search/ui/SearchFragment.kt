@@ -2,7 +2,6 @@ package petrova.ola.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,12 +16,13 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentSearchBinding
-import petrova.ola.playlistmaker.player.ui.PlayerActivity
 import petrova.ola.playlistmaker.root.ui.RootActivity
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.utils.debounce
@@ -88,63 +88,11 @@ class SearchFragment : Fragment() {
 
         viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
             when (screenState) {
-                is SearchScreenState.Empty -> {
-                    groupNotInternet.visibility = View.GONE
-                    groupNotFound.visibility = View.VISIBLE
-                    recycler.visibility = View.GONE
-                    progressBar.visibility = View.GONE
-                    updateButton.visibility = View.GONE
-                }
-
-                is SearchScreenState.Error -> {
-                    groupNotInternet.visibility = View.VISIBLE
-                    groupNotFound.visibility = View.GONE
-                    recycler.visibility = View.GONE
-                    progressBar.visibility = View.GONE
-                    binding.errorMessageTv.text = screenState.message
-                    updateButton.visibility = View.VISIBLE
-                    clearHistoryButton.visibility = View.GONE
-                    historySearchTv.visibility = View.GONE
-                }
-
-                is SearchScreenState.Loading -> {
-                    groupNotInternet.visibility = View.GONE
-                    groupNotFound.visibility = View.GONE
-                    recycler.visibility = View.GONE
-                    progressBar.visibility = View.VISIBLE
-                    updateButton.visibility = View.GONE
-                    clearHistoryButton.visibility = View.GONE
-                    historySearchTv.visibility = View.GONE
-                }
-
-                is SearchScreenState.HistoryTracks -> {
-                    groupNotInternet.visibility = View.GONE
-                    groupNotFound.visibility = View.GONE
-                    recycler.visibility = View.VISIBLE
-                    progressBar.visibility = View.GONE
-
-                    val visiblity = if (screenState.historyList.isEmpty()) View.GONE
-                    else View.VISIBLE
-                    historySearchTv.visibility = visiblity
-                    clearHistoryButton.visibility = visiblity
-
-                    rvAdapter!!.tracks.clear()
-                    rvAdapter!!.tracks.addAll(screenState.historyList)
-                    rvAdapter!!.notifyDataSetChanged()
-                }
-
-                is SearchScreenState.TrackList -> {
-                    groupNotInternet.visibility = View.GONE
-                    groupNotFound.visibility = View.GONE
-                    recycler.visibility = View.VISIBLE
-                    progressBar.visibility = View.GONE
-                    historySearchTv.visibility = View.GONE
-                    clearHistoryButton.visibility = View.GONE
-
-                    rvAdapter!!.tracks.clear()
-                    rvAdapter!!.tracks.addAll(screenState.resultsList)
-                    rvAdapter!!.notifyDataSetChanged()
-                }
+                is SearchScreenState.Empty -> showEmpty()
+                is SearchScreenState.Error -> showError(screenState)
+                is SearchScreenState.Loading -> showLoading()
+                is SearchScreenState.HistoryTracks -> showHistoryTracks(screenState)
+                is SearchScreenState.TrackList -> showSearchTracks(screenState)
             }
         }
 
@@ -202,11 +150,71 @@ class SearchFragment : Fragment() {
         recycler.adapter = rvAdapter
     }
 
-    private fun openPlayer(track: Track) {
-        val intent = Intent(requireContext(), PlayerActivity::class.java)
-        intent.putExtra(EXTRAS_KEY, track)
-        startActivity(intent)
+    private fun showSearchTracks(screenState: SearchScreenState.TrackList) {
+        groupNotInternet.visibility = View.GONE
+        groupNotFound.visibility = View.GONE
+        recycler.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
+        historySearchTv.visibility = View.GONE
+        clearHistoryButton.visibility = View.GONE
 
+        rvAdapter!!.tracks.clear()
+        rvAdapter!!.tracks.addAll(screenState.resultsList)
+        rvAdapter!!.notifyDataSetChanged()
+    }
+
+    private fun showHistoryTracks(screenState: SearchScreenState.HistoryTracks) {
+        groupNotInternet.visibility = View.GONE
+        groupNotFound.visibility = View.GONE
+        recycler.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
+
+        val visiblity = if (screenState.historyList.isEmpty()) View.GONE
+        else View.VISIBLE
+        historySearchTv.visibility = visiblity
+        clearHistoryButton.visibility = visiblity
+
+        rvAdapter!!.tracks.clear()
+        rvAdapter!!.tracks.addAll(screenState.historyList)
+        rvAdapter!!.notifyDataSetChanged()
+    }
+
+    private fun showLoading() {
+        groupNotInternet.visibility = View.GONE
+        groupNotFound.visibility = View.GONE
+        recycler.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
+        updateButton.visibility = View.GONE
+        clearHistoryButton.visibility = View.GONE
+        historySearchTv.visibility = View.GONE
+    }
+
+    private fun showError(screenState: SearchScreenState.Error) {
+        groupNotInternet.visibility = View.VISIBLE
+        groupNotFound.visibility = View.GONE
+        recycler.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        binding.errorMessageTv.text = screenState.message
+        updateButton.visibility = View.VISIBLE
+        clearHistoryButton.visibility = View.GONE
+        historySearchTv.visibility = View.GONE
+    }
+
+    private fun showEmpty() {
+        groupNotInternet.visibility = View.GONE
+        groupNotFound.visibility = View.VISIBLE
+        recycler.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        updateButton.visibility = View.GONE
+    }
+
+    private fun openPlayer(track: Track) {
+        val args = Bundle()
+        args.putSerializable(EXTRAS_KEY, track)
+        findNavController().navigate(
+            R.id.action_searchFragment_to_playerFragment,
+            args
+        )
     }
 
     override fun onStart() {

@@ -3,8 +3,8 @@ package petrova.ola.playlistmaker.search.data.repository
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import petrova.ola.playlistmaker.player.data.converters.DbConvertor
-import petrova.ola.playlistmaker.player.data.db.entity.AppDatabase
+import petrova.ola.playlistmaker.player.data.db.converters.DbConvertorPlayer
+import petrova.ola.playlistmaker.root.db.AppDatabase
 import petrova.ola.playlistmaker.search.data.NetworkClient
 import petrova.ola.playlistmaker.search.data.Resource
 import petrova.ola.playlistmaker.search.data.dto.TrackSearchRequest
@@ -17,7 +17,7 @@ class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
     private val localStorage: LocalStorage,
     private val appDatabase: AppDatabase,
-    private val dbConvertor: DbConvertor,
+    private val dbConvertorPlayer: DbConvertorPlayer,
 ) : TracksRepository {
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequestSuspend(TrackSearchRequest(expression))

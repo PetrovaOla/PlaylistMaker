@@ -30,11 +30,13 @@ class RootActivity : AppCompatActivity() {
             setOf(
                 R.id.searchFragment,
                 R.id.settingFragment,
-                R.id.mediaFragment
+                R.id.mediaFragment,
+                R.id.newPlayListFragment
             )
         )
         findViewById<Toolbar>(R.id.toolbar)
-            .setupWithNavController(navController, appBarConfiguration)
+            .setupWithNavController(navController, appBarConfiguration,)
+
 
 
 //        navController.addOnDestinationChangedListener { _, destination, _ ->

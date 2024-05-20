@@ -10,16 +10,20 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import petrova.ola.playlistmaker.player.domain.PlayerInteractor
 import petrova.ola.playlistmaker.player.domain.PlayerState
-import petrova.ola.playlistmaker.player.domain.db.FavouritesInteractor
+import petrova.ola.playlistmaker.media.favorite.domain.db.FavouritesInteractor
+import petrova.ola.playlistmaker.media.playlist.domain.db.PlaylistInteractor
+import petrova.ola.playlistmaker.media.playlist.domain.model.Playlist
+import petrova.ola.playlistmaker.media.playlist.ui.PlaylistState
 import petrova.ola.playlistmaker.search.domain.model.Track
 
 class PlayerViewModel(
     private val track: Track,
     private val playerInteractor: PlayerInteractor,
     private val favouritesInteractor: FavouritesInteractor,
+    private val playlistsInteractor: PlaylistInteractor
 ) : ViewModel() {
 
-   private val playerMutableScreenState = MutableLiveData<PlayerScreenState>(
+    private val playerMutableScreenState = MutableLiveData<PlayerScreenState>(
         PlayerScreenState.Loading
     )
     val playerScreenState: LiveData<PlayerScreenState> = playerMutableScreenState
@@ -27,9 +31,20 @@ class PlayerViewModel(
     private val favoriteLiveData by lazy { MutableLiveData(track.isFavorite) }
     fun observeIsFavorite(): LiveData<Boolean> = favoriteLiveData
 
+    private val stateMutableLiveDataPlaylist = MutableLiveData<PlaylistState>()
+    private val playlistsScreenState: LiveData<PlaylistState> = stateMutableLiveDataPlaylist
+    fun getScreenStateLiveData() = playlistsScreenState
+
+    private val mutableResult = MutableLiveData<Pair<String, Boolean>>()
+    private val result: LiveData<Pair<String, Boolean>> = mutableResult
+    fun getResultLiveData() = result
+
     init {
-        playerMutableScreenState.value = PlayerScreenState.Content()
-        validateIsFavorite()
+        viewModelScope.launch {
+            playerMutableScreenState.value = PlayerScreenState.Content()
+            validateIsFavorite()
+            loadPlaylists()
+        }
     }
 
     private var timerJob: Job? = null
@@ -100,6 +115,33 @@ class PlayerViewModel(
             }
             favoriteLiveData.postValue(track.isFavorite)
         }
+    }
+
+    fun addTrackPlaylist(playlist: Playlist, track: Track) {
+        viewModelScope.launch {
+            if (playlistsInteractor.addTrack(playlist = playlist, track = track))
+                mutableResult.postValue(Pair(playlist.name, true))
+            else
+                mutableResult.postValue(Pair(playlist.name, false))
+        }
+    }
+
+    fun loadPlaylists() {
+        viewModelScope.launch {
+            playlistsInteractor
+                .getPlaylists()
+                .collect {
+                    if (it.isNotEmpty())
+                        renderState(PlaylistState.Content(it))
+                    else
+                        renderState(PlaylistState.Empty)
+                }
+
+        }
+    }
+
+    private fun renderState(state: PlaylistState) {
+        stateMutableLiveDataPlaylist.postValue(state)
     }
 
     private fun validateIsFavorite() {

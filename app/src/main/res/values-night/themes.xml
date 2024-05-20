@@ -4,7 +4,6 @@
         <!-- Customize your dark theme here. -->
          <item name="colorPrimary">@color/YPBlack</item>
         <item name="colorPrimaryVariant">@color/white</item>
-
         <item name="colorSecondary">@color/white</item>
 
     </style>

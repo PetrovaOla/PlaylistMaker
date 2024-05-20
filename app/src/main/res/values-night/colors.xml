@@ -16,4 +16,5 @@
     <color name="bottom_navigation_inactive">#FFFFFF</color>
     <color name="bottom_navigation_background">#1A1B22</color>
     <color name="app_back">#1A1B22</color>
+    <color name="playlist_count">#FFFFFF</color>
 </resources>
