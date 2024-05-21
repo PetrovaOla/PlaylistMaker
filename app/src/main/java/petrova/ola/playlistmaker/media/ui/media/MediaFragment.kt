@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -17,7 +18,7 @@ class MediaFragment : Fragment() {
     private val viewModel by viewModel<MediaViewModel>()
 
     private lateinit var tabMediator: TabLayoutMediator
-
+    private lateinit var appBar: Toolbar
     private var _binding: FragmentMediaBinding? = null
     private val binding get() = _binding!!
 
@@ -40,6 +41,8 @@ class MediaFragment : Fragment() {
         )
         bottomNavView = requireActivity().findViewById(R.id.bottomNavigationView)
         bottomNavView.isVisible = true
+        appBar = requireActivity().findViewById(R.id.toolbar)
+        appBar.isVisible = true
 
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {

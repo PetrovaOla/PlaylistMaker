@@ -58,9 +58,11 @@ class PlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         appBar = requireActivity().findViewById(R.id.toolbar)
-        appBar.setNavigationIcon(R.drawable.arrow_back)
-        appBar.setBackgroundColor(resources.getColor(R.color.YLightGray))
-        appBar.setNavigationOnClickListener { findNavController().navigateUp() }
+        appBar.isVisible = false
+
+        binding.backPl.setOnClickListener {
+            findNavController().navigateUp()
+        }
 
         bottomNavView = requireActivity().findViewById(R.id.bottomNavigationView)
         bottomNavView.isVisible = false
@@ -80,21 +82,6 @@ class PlaylistFragment : Fragment() {
             parametersOf(playlist)
         }
         recycler = binding.rvPl
-
-        viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
-            when (screenState) {
-                is PlaylistState.Content -> {
-                    rvAdapter?.let {
-                        it.tracks.clear()
-                        it.tracks.addAll(screenState.tracks)
-                        it.notifyDataSetChanged()
-                    }
-                    showContent(screenState)
-                }
-
-                is PlaylistState.Empty -> showEmpty()
-            }
-        }
 
         val bottomSheetContainer = binding.bottomsheetPl
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
@@ -146,7 +133,6 @@ class PlaylistFragment : Fragment() {
 
 //            удалить трек
         onLongClick = { track ->
-
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.delete_track_title))
                 .setMessage(getString(R.string.delete_track))
@@ -155,11 +141,8 @@ class PlaylistFragment : Fragment() {
                 .setPositiveButton(getString(R.string.ok)) { _, _ ->
                     viewModel.deleteTrack(track)
                     viewModel.trackTime()
-                    viewModel.trackCount()
-
                 }
                 .show()
-
         }
 
         onClickDebounce = debounce(
@@ -179,17 +162,16 @@ class PlaylistFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = rvAdapter
 
-
-// TODO: при удалении не обновляются время и кол-во треков
-
         with(binding) {
-            imageLoader.loadImage(
-                imageUrl = playlist.bigImg,
-                context = this.root,
-                placeholder = R.drawable.album,
-                errorPlaceholder = R.drawable.album,
-                into = placeholderPl
-            )
+            playlist.img?.let {
+                imageLoader.loadImage(
+                    imageUrl = it,
+                    context = this.root,
+                    placeholder = R.drawable.album,
+                    errorPlaceholder = R.drawable.album,
+                    into = placeholderPl
+                )
+            }
 
             namePl.text = playlist.name
             descriptionPl.text = playlist.description
@@ -199,16 +181,31 @@ class PlaylistFragment : Fragment() {
             }
             durationPl.text = resources.getText(R.string.loading)
 
-            viewModel.countLiveData.observe(viewLifecycleOwner) { count ->
+            viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
+                val newCount = when (screenState) {
+                    is PlaylistState.Content -> {
+                        rvAdapter?.let {
+                            it.tracks.clear()
+                            it.tracks.addAll(screenState.tracks)
+                            it.notifyDataSetChanged()
+                        }
+                        showContent(screenState)
+                        screenState.tracks.size
+                    }
+
+                    is PlaylistState.Empty -> {
+                        showEmpty()
+                        0
+                    }
+                }
                 countPl.text = binding.root.resources.getQuantityString(
                     R.plurals.track_plurals,
-                    count,
-                    count
+                    newCount,
+                    newCount
                 )
             }
 
         }
-        viewModel.trackCount()
         viewModel.trackTime()
         binding.sharePl.setOnClickListener {
         }

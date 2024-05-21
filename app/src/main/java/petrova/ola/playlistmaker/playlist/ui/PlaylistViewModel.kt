@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -26,9 +25,6 @@ class PlaylistViewModel(
 
     private val timeMutableLiveData = MutableLiveData<Int>()
     val timeLiveData: LiveData<Int> = timeMutableLiveData
-
-    private val countMutableLiveData = MutableLiveData<Int>()
-    val countLiveData: LiveData<Int> = countMutableLiveData
 
     init {
         loadTracks()
@@ -67,14 +63,6 @@ class PlaylistViewModel(
                         0
                 }.first()
             timeMutableLiveData.postValue(result)
-        }
-
-    }
-
-    fun trackCount() {
-        viewModelScope.launch {
-            val result = databaseInteractor.getTracks(playlist.id).count()
-            countMutableLiveData.postValue(result)
         }
 
     }

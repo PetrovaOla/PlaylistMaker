@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -53,7 +54,7 @@ class SearchFragment : Fragment() {
     private lateinit var historySearchTv: TextView
     private lateinit var clearHistoryButton: Button
     private lateinit var progressBar: ProgressBar
-
+    private lateinit var appBar: Toolbar
     private lateinit var bottomNavView: BottomNavigationView
 
     override fun onCreateView(
@@ -80,6 +81,9 @@ class SearchFragment : Fragment() {
 
         bottomNavView = requireActivity().findViewById(R.id.bottomNavigationView)
         bottomNavView.isVisible = true
+
+        appBar = requireActivity().findViewById(R.id.toolbar)
+        appBar.isVisible = true
 
         rvAdapter = SearchRecyclerAdapter {
             (activity as RootActivity).animateBottomNavigationView(View.GONE)

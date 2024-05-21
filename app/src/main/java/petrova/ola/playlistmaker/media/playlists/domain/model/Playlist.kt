@@ -9,6 +9,5 @@ data class Playlist(
     var img: String?,
     val trackIds: List<Long>
 ): Serializable{
-    val bigImg: String
-        get() = img?.replaceAfterLast('/', "512x512bb.jpg").toString()
+
 }

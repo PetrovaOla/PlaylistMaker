@@ -32,7 +32,6 @@ class RootActivity : AppCompatActivity() {
                 R.id.settingFragment,
                 R.id.mediaFragment,
                 R.id.newPlayListFragment,
-                R.id.playlistFragment
             )
         )
         findViewById<Toolbar>(R.id.toolbar)

@@ -23,7 +23,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
+        <ImageView
+            android:id="@+id/back_pl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:clickable="true"
+            android:src="@drawable/arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="@dimen/dp16"
+            android:layout_marginTop="@dimen/dp16"
+            />
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_left"
             android:layout_width="wrap_content"
@@ -117,7 +128,6 @@
         android:layout_height="match_parent"
         android:background="@drawable/sheet"
         android:orientation="vertical"
-        android:visibility="gone"
         app:behavior_hideable="false"
         app:behavior_peekHeight="240dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
