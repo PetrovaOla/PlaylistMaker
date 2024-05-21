@@ -14,16 +14,20 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentSearchBinding
 import petrova.ola.playlistmaker.root.ui.RootActivity
+import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.CLICK_DEBOUNCE_DELAY
+import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.EXTRAS_KEY
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.utils.debounce
 
@@ -50,6 +54,8 @@ class SearchFragment : Fragment() {
     private lateinit var clearHistoryButton: Button
     private lateinit var progressBar: ProgressBar
 
+    private lateinit var bottomNavView: BottomNavigationView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -72,6 +78,9 @@ class SearchFragment : Fragment() {
         historySearchTv = binding.historySearchTv
         progressBar = binding.progressBar
 
+        bottomNavView = requireActivity().findViewById(R.id.bottomNavigationView)
+        bottomNavView.isVisible = true
+
         rvAdapter = SearchRecyclerAdapter {
             (activity as RootActivity).animateBottomNavigationView(View.GONE)
             onTrackClickDebounce(it)
@@ -93,6 +102,7 @@ class SearchFragment : Fragment() {
                 is SearchScreenState.Loading -> showLoading()
                 is SearchScreenState.HistoryTracks -> showHistoryTracks(screenState)
                 is SearchScreenState.TrackList -> showSearchTracks(screenState)
+            else->{}
             }
         }
 
@@ -231,9 +241,8 @@ class SearchFragment : Fragment() {
     }
 
     companion object {
-        const val EXTRAS_KEY: String = "TRACK"
+
         private const val EMPTY = ""
-        private const val CLICK_DEBOUNCE_DELAY = 200L
     }
 
 }

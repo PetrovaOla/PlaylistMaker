@@ -20,7 +20,7 @@ class TracksRepositoryImpl(
     private val dbConvertorPlayer: DbConvertorPlayer,
 ) : TracksRepository {
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
-        val response = networkClient.doRequestSuspend(TrackSearchRequest(expression))
+        val response = networkClient.searchTrack(TrackSearchRequest(expression))
         when (response.resultCode) {
             -1 -> {
                 emit(Resource.Error(ERROR_CONNECT))

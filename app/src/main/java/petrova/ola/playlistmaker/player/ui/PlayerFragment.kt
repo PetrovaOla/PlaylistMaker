@@ -25,11 +25,13 @@ import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentPlayerBinding
-import petrova.ola.playlistmaker.media.playlist.domain.model.Playlist
-import petrova.ola.playlistmaker.media.playlist.ui.PlaylistFragment.Companion.PLAYLIST_CREATED
-import petrova.ola.playlistmaker.media.playlist.ui.PlaylistFragment.Companion.PLAYLIST_NAME
-import petrova.ola.playlistmaker.media.playlist.ui.PlaylistState
+import petrova.ola.playlistmaker.media.playlists.domain.model.Playlist
+import petrova.ola.playlistmaker.media.playlists.ui.PlaylistsFragment.Companion.PLAYLIST_CREATED
+import petrova.ola.playlistmaker.media.playlists.ui.PlaylistsFragment.Companion.PLAYLIST_NAME
+import petrova.ola.playlistmaker.media.playlists.ui.PlaylistsState
 import petrova.ola.playlistmaker.player.domain.PlayerState
+import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.CLICK_DEBOUNCE_DELAY
+import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.EXTRAS_KEY
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.search.ui.SearchFragment
 import petrova.ola.playlistmaker.utils.ImageLoader
@@ -85,12 +87,12 @@ class PlayerFragment : Fragment() {
         track = when {
             SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
                 arguments?.getSerializable(
-                    SearchFragment.EXTRAS_KEY,
+                    EXTRAS_KEY,
                     Track::class.java
                 ) as Track
 
             else ->
-                arguments?.getSerializable(SearchFragment.EXTRAS_KEY) as Track
+                arguments?.getSerializable(EXTRAS_KEY) as Track
         }
 
 
@@ -168,7 +170,7 @@ class PlayerFragment : Fragment() {
             viewModel.onPlayClick()
         }
         viewModel.observeIsFavorite().observe(viewLifecycleOwner) { isFavorite ->
-            if (isFavorite == true) {
+            if (isFavorite) {
                 binding.buttonLike.setImageResource(R.drawable.button_like)
 
             } else {
@@ -236,11 +238,10 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun renderPlaylist(state: PlaylistState) {
+    private fun renderPlaylist(state: PlaylistsState) {
         when (state) {
-            is PlaylistState.Empty -> showEmpty()
-            is PlaylistState.Content -> showContent(state.playlists)
-            else -> {}
+            is PlaylistsState.Empty -> showEmpty()
+            is PlaylistsState.Content -> showContent(state.playlists)
         }
     }
 
@@ -338,7 +339,6 @@ class PlayerFragment : Fragment() {
 
     companion object {
         private const val TAG = "Player Fragment"
-        private const val CLICK_DEBOUNCE_DELAY = 200L
     }
 }
 

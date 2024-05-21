@@ -1,8 +1,6 @@
 package petrova.ola.playlistmaker.media.ui.new_playlist
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -21,14 +20,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.R
-import petrova.ola.playlistmaker.databinding.FragmentNewPlayListBinding
-import petrova.ola.playlistmaker.media.playlist.ui.PlaylistFragment.Companion.PLAYLIST_CREATED
-import petrova.ola.playlistmaker.media.playlist.ui.PlaylistFragment.Companion.PLAYLIST_NAME
+import petrova.ola.playlistmaker.databinding.FragmentNewPlaylistBinding
+import petrova.ola.playlistmaker.media.playlists.ui.PlaylistsFragment.Companion.PLAYLIST_CREATED
+import petrova.ola.playlistmaker.media.playlists.ui.PlaylistsFragment.Companion.PLAYLIST_NAME
 
 
 class NewPlayListFragment : Fragment() {
 
-    private var _binding: FragmentNewPlayListBinding? = null
+    private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: NewPlaylistViewModel by viewModel()
@@ -44,15 +43,11 @@ class NewPlayListFragment : Fragment() {
     private var description: String = EMPTY
     private var img: String = EMPTY
 
-    private var textWatcherName: TextWatcher? = null
-    private var textWatcherDescription: TextWatcher? = null
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNewPlayListBinding.inflate(inflater, container, false)
+        _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -89,12 +84,9 @@ class NewPlayListFragment : Fragment() {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        textWatcherName = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
+        inputName.addTextChangedListener(
+            onTextChanged = { s: CharSequence?, start: Int, before: Int, count: Int ->
                 if (s.isNullOrBlank()) {
                     binding.createPlaylist.isEnabled = false
                 } else {
@@ -102,24 +94,18 @@ class NewPlayListFragment : Fragment() {
                     binding.createPlaylist.isEnabled = true
 
                 }
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                if (s.toString().isNotEmpty()) {
+            },
+            afterTextChanged = { editable ->
+                if (editable.toString().isNotEmpty()) {
                     binding.inputLayoutName.setBoxStrokeColorStateList(
                         requireContext().getColorStateList(R.color.YPBlue)
                     )
                 }
             }
-        }
-        inputName.addTextChangedListener(textWatcherName)
+        )
 
-        textWatcherDescription = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        inputDescription.addTextChangedListener(
+            onTextChanged = { s: CharSequence?, start: Int, before: Int, count: Int ->
                 if (s.isNullOrBlank()) {
                 } else {
                     description = s.toString()
@@ -130,11 +116,7 @@ class NewPlayListFragment : Fragment() {
                     )
                 }
             }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-        }
-        inputDescription.addTextChangedListener(textWatcherDescription)
+        )
 
         createBtn.setOnClickListener {
             viewModel.createPlaylist(name = name, description = description, image = img)
@@ -167,8 +149,6 @@ class NewPlayListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        textWatcherName?.let { inputName.removeTextChangedListener(it) }
-        textWatcherDescription?.let { inputDescription.removeTextChangedListener(it) }
     }
 
     companion object {

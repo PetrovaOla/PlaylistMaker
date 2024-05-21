@@ -11,16 +11,16 @@ import kotlinx.coroutines.launch
 import petrova.ola.playlistmaker.player.domain.PlayerInteractor
 import petrova.ola.playlistmaker.player.domain.PlayerState
 import petrova.ola.playlistmaker.media.favorite.domain.db.FavouritesInteractor
-import petrova.ola.playlistmaker.media.playlist.domain.db.PlaylistInteractor
-import petrova.ola.playlistmaker.media.playlist.domain.model.Playlist
-import petrova.ola.playlistmaker.media.playlist.ui.PlaylistState
+import petrova.ola.playlistmaker.media.playlists.domain.db.PlaylistsInteractor
+import petrova.ola.playlistmaker.media.playlists.domain.model.Playlist
+import petrova.ola.playlistmaker.media.playlists.ui.PlaylistsState
 import petrova.ola.playlistmaker.search.domain.model.Track
 
 class PlayerViewModel(
     private val track: Track,
     private val playerInteractor: PlayerInteractor,
     private val favouritesInteractor: FavouritesInteractor,
-    private val playlistsInteractor: PlaylistInteractor
+    private val playlistsInteractor: PlaylistsInteractor
 ) : ViewModel() {
 
     private val playerMutableScreenState = MutableLiveData<PlayerScreenState>(
@@ -31,8 +31,8 @@ class PlayerViewModel(
     private val favoriteLiveData by lazy { MutableLiveData(track.isFavorite) }
     fun observeIsFavorite(): LiveData<Boolean> = favoriteLiveData
 
-    private val stateMutableLiveDataPlaylist = MutableLiveData<PlaylistState>()
-    private val playlistsScreenState: LiveData<PlaylistState> = stateMutableLiveDataPlaylist
+    private val stateMutableLiveDataPlaylist = MutableLiveData<PlaylistsState>()
+    private val playlistsScreenState: LiveData<PlaylistsState> = stateMutableLiveDataPlaylist
     fun getScreenStateLiveData() = playlistsScreenState
 
     private val mutableResult = MutableLiveData<Pair<String, Boolean>>()
@@ -132,15 +132,15 @@ class PlayerViewModel(
                 .getPlaylists()
                 .collect {
                     if (it.isNotEmpty())
-                        renderState(PlaylistState.Content(it))
+                        renderState(PlaylistsState.Content(it))
                     else
-                        renderState(PlaylistState.Empty)
+                        renderState(PlaylistsState.Empty)
                 }
 
         }
     }
 
-    private fun renderState(state: PlaylistState) {
+    private fun renderState(state: PlaylistsState) {
         stateMutableLiveDataPlaylist.postValue(state)
     }
 
