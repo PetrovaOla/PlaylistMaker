@@ -3,9 +3,15 @@ package petrova.ola.playlistmaker.playlist.ui
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -46,6 +52,9 @@ class PlaylistFragment : Fragment() {
     private lateinit var appBar: Toolbar
     private lateinit var bottomNavView: BottomNavigationView
 
+    private var moreBottomSheetBehavior = BottomSheetBehavior<LinearLayout>()
+    private var playlistBottomSheetBehavior = BottomSheetBehavior<LinearLayout>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -83,22 +92,24 @@ class PlaylistFragment : Fragment() {
         }
         recycler = binding.rvPl
 
-        val bottomSheetContainer = binding.bottomsheetPl
-        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
-        bottomSheetBehavior.addBottomSheetCallback(object :
+        playlistBottomSheetBehavior = BottomSheetBehavior.from(binding.bottomsheetPl)
+        moreBottomSheetBehavior = BottomSheetBehavior.from(binding.bottomsheetMore)
+
+        moreBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        moreBottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
-
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-
                 when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        binding.overlay.isVisible = true
+                    }
 
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.isVisible = false
                     }
 
                     else -> {
-
                     }
                 }
             }
@@ -106,30 +117,6 @@ class PlaylistFragment : Fragment() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
-
-        //bottomsheet поделиться
-        val bottomSheetContainerMore = binding.bottomsheetMore
-        val bottomSheetBehaviorMore = BottomSheetBehavior.from(bottomSheetContainerMore).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
-        bottomSheetBehaviorMore.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-
-                    }
-
-                    else -> {
-
-                    }
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-        })
 
 //            удалить трек
         onLongClick = { track ->
@@ -208,9 +195,38 @@ class PlaylistFragment : Fragment() {
         }
         viewModel.trackTime()
         binding.sharePl.setOnClickListener {
+            // TODO TODO
         }
         binding.morePl.setOnClickListener {
+            moreBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            showPlaylist()
         }
+        binding.sharePlBs.setOnClickListener {
+            // TODO TODO
+        }
+        binding.editPlBs.setOnClickListener {
+            // TODO TODO
+        }
+        binding.deletePlBs.setOnClickListener {
+            // TODO TODO
+        }
+
+    }
+
+    private fun showPlaylist() {
+        playlist.img?.let {
+            imageLoader.loadImage(
+                imageUrl = it,
+                context = binding.root,
+                placeholder = R.drawable.album,
+                errorPlaceholder = R.drawable.album,
+                into = binding.imageTrack
+            )
+            binding.playlistName.text = playlist.name
+            binding.playlistCount.text = playlist.description
+
+        }
+
     }
 
 

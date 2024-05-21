@@ -151,6 +151,7 @@ class PlayerFragment : Fragment() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
+
         binding.newPlaylist.setOnClickListener {
             findNavController().navigate(R.id.action_playerFragment_to_newPlayListFragment)
         }
@@ -328,6 +329,7 @@ class PlayerFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.loadPlaylists()
+        appBar.isVisible = true
     }
 
     override fun onDestroyView() {
