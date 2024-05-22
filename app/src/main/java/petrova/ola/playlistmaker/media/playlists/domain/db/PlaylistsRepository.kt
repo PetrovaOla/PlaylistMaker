@@ -29,8 +29,8 @@ interface PlaylistsRepository {
     suspend fun saveFile(inputFile: String): Uri
 
 
-    suspend fun deleteFile(uri: Uri)
+    suspend fun deleteFile(uri: String?)
 
-    suspend fun updatePlaylists() {}
+    suspend fun updatePlaylist(playlist: Playlist)
 }
 

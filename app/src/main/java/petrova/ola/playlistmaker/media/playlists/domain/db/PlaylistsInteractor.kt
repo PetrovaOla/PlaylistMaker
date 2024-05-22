@@ -21,7 +21,7 @@ interface PlaylistsInteractor {
 
     suspend fun saveFile(uri: String): Uri
 
-    suspend fun deleteFile(uri: Uri)
+    suspend fun deleteFile(uri: String?)
 
-    suspend fun updatePlaylists() {}
+    suspend fun updatePlaylist(playlist: Playlist) {}
 }

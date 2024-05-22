@@ -12,11 +12,14 @@ import petrova.ola.playlistmaker.media.playlists.domain.db.PlaylistsInteractor
 import petrova.ola.playlistmaker.media.playlists.domain.model.Playlist
 import petrova.ola.playlistmaker.playlist.domain.api.PlaylistInteractor
 import petrova.ola.playlistmaker.search.domain.model.Track
+import petrova.ola.playlistmaker.sharing.domain.SharingInteractor
+import kotlin.math.roundToInt
 
 class PlaylistViewModel(
     private val playlist: Playlist,
     private val networkInteractor: PlaylistInteractor,
-    private val databaseInteractor: PlaylistsInteractor
+    private val databaseInteractor: PlaylistsInteractor,
+    private val sharingInteractor: SharingInteractor,
 ) : ViewModel() {
 
     private val stateMutableLiveData = MutableLiveData<PlaylistState>()
@@ -74,8 +77,50 @@ class PlaylistViewModel(
         }
     }
 
+    fun deletePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            databaseInteractor.deletePlaylist(playlist)
+        }
+    }
+
+
     private fun renderState(state: PlaylistState) {
         stateMutableLiveData.postValue(state)
+    }
+
+    fun sharePlaylist() {
+        sharingInteractor.sharePlaylist(message = shareMessage())
+    }
+
+    private fun shareMessage(): String {
+        val builder = StringBuilder()
+            .appendLine(playlist.name)
+            .appendLine(playlist.description)
+            .append("Количество треков: ")
+            .appendLine(playlist.trackIds.size)
+
+        if (playlistsScreenState.value is PlaylistState.Empty) {
+            builder.appendLine()
+            builder.append("Треков нет")
+        } else {
+            val tracks = (playlistsScreenState.value as PlaylistState.Content).tracks
+            tracks.forEachIndexed { index, track ->
+                builder.appendLine()
+                builder.append(index + 1)
+                builder.append(". ")
+                builder.append(track.artistName)
+                builder.append(" - ")
+                builder.append(track.trackName)
+                builder.append(" (")
+                val seconds = (track.trackTimeMillis.toDouble() / 1000).roundToInt()
+                builder.append(seconds / 60)
+                builder.append(":")
+                builder.append(seconds % 60)
+                builder.append(")")
+            }
+        }
+
+        return builder.toString()
     }
 
 }

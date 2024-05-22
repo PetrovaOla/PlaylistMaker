@@ -85,7 +85,7 @@ class PlaylistsRepositoryImpl(
 
         return file
     }
-
+//todo повороты
     override suspend fun saveFile(inputFile: String): Uri {
         val uri = Uri.parse(inputFile)
 
@@ -128,8 +128,12 @@ class PlaylistsRepositoryImpl(
         }
     }
 
-    override suspend fun deleteFile(uri: Uri) {
-        uri.toFile().delete()
+    override suspend fun deleteFile(uri: String?) {
+        uri?.toUri()?.toFile()?.delete()
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        playlistDao.updatePlaylist(dbConvertor.mapToEntity(playlist))
     }
 
     companion object {

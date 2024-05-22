@@ -16,26 +16,27 @@
             android:id="@+id/placeholder_pl"
             android:layout_width="@dimen/_0dp"
             android:layout_height="@dimen/_0dp"
+            android:adjustViewBounds="true"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
             android:src="@drawable/placeholder"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/back_pl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@null"
-            android:clickable="true"
-            android:src="@drawable/arrow_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="@dimen/dp16"
             android:layout_marginTop="@dimen/dp16"
-            />
+            android:clickable="true"
+            android:contentDescription="@null"
+            android:src="@drawable/arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_left"
             android:layout_width="wrap_content"
@@ -48,8 +49,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/ys_display_bold"
-            android:textFontWeight="700"
             android:textColor="@color/YPBlack"
+            android:textFontWeight="700"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -62,9 +63,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/ys_display_regular"
+            android:textColor="@color/YPBlack"
             android:textFontWeight="400"
             android:textSize="18sp"
-            android:textColor="@color/YPBlack"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@id/guideline_left"
@@ -76,9 +77,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/ys_display_regular"
+            android:textColor="@color/YPBlack"
             android:textFontWeight="400"
             android:textSize="18sp"
-            android:textColor="@color/YPBlack"
             app:drawableEndCompat="@drawable/ic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -91,9 +92,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/ys_display_regular"
+            android:textColor="@color/YPBlack"
             android:textFontWeight="400"
             android:textSize="18sp"
-            android:textColor="@color/YPBlack"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/duration_pl"
@@ -117,9 +118,9 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/dp8"
             android:layout_marginStart="@dimen/dp16"
+            android:clickable="true"
             android:contentDescription="@null"
             android:src="@drawable/more"
-            android:clickable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/share_pl"
@@ -136,8 +137,8 @@
         android:orientation="vertical"
         app:behavior_hideable="false"
         app:behavior_peekHeight="230dp"
-        tools:visibility="gone"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        tools:visibility="gone">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_pl"
@@ -161,13 +162,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/sheet"
-        android:paddingTop="@dimen/dp16"
-        android:paddingHorizontal="13dp"
         android:orientation="vertical"
+        android:paddingHorizontal="13dp"
+        android:paddingTop="@dimen/dp16"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="250dp"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-       >
+        app:behavior_peekHeight="270dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -179,9 +180,9 @@
                 android:layout_height="@dimen/_45dp"
                 android:layout_marginVertical="@dimen/dp8"
                 android:layout_marginStart="@dimen/dp14"
+                android:adjustViewBounds="true"
                 android:contentDescription="@string/track_name"
                 android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
                 tools:background="@drawable/placeholder" />
 
             <LinearLayout

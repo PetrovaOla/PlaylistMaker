@@ -3,15 +3,10 @@ package petrova.ola.playlistmaker.playlist.ui
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -22,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -34,6 +30,7 @@ import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.utils.ImageLoader
 import petrova.ola.playlistmaker.utils.debounce
 import petrova.ola.playlistmaker.utils.msToTime
+import kotlin.math.roundToInt
 
 
 class PlaylistFragment : Fragment() {
@@ -164,7 +161,8 @@ class PlaylistFragment : Fragment() {
             descriptionPl.text = playlist.description
 
             viewModel.timeLiveData.observe(viewLifecycleOwner) { time ->
-                durationPl.text = msToTime(time)
+                val seconds = (time.toDouble() / 1000).roundToInt()
+                durationPl.text = "${seconds / 60}:${seconds % 60}"
             }
             durationPl.text = resources.getText(R.string.loading)
 
@@ -194,23 +192,56 @@ class PlaylistFragment : Fragment() {
 
         }
         viewModel.trackTime()
-        binding.sharePl.setOnClickListener {
-            // TODO TODO
-        }
+
         binding.morePl.setOnClickListener {
             moreBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             showPlaylist()
         }
+
+        binding.sharePl.setOnClickListener {
+            sharePlaylist(it)
+        }
         binding.sharePlBs.setOnClickListener {
-            // TODO TODO
+            sharePlaylist(it)
         }
         binding.editPlBs.setOnClickListener {
-            // TODO TODO
-        }
-        binding.deletePlBs.setOnClickListener {
-            // TODO TODO
+            val args = Bundle()
+            args.putSerializable(PLAYLIST_KEY, playlist)
+            findNavController().navigate(
+                R.id.action_playlistFragment_to_editPlayListFragment,
+                args
+            )
         }
 
+        binding.deletePlBs.setOnClickListener {
+            moreBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
+                .setTitle(getString(R.string.delete_playlist))
+                .setMessage(getString(R.string.delete_playlist_title))
+                .setNegativeButton(getString(R.string.no)) { _, _ ->
+                }
+                .setPositiveButton(getString(R.string.ok)) { _, _ ->
+                    viewModel.deletePlaylist(playlist)
+                    findNavController().navigateUp()
+                }
+                .show()
+        }
+
+    }
+
+    private fun sharePlaylist(view: View) {
+
+        if (playlist.trackIds.size == 0) {
+            Snackbar.make(
+                view, getString(R.string.no_tracks), Snackbar.LENGTH_LONG
+            ).show()
+        } else {
+            viewModel.sharePlaylist()
+        }
+
+        if (view === binding.sharePlBs) {
+            moreBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     private fun showPlaylist() {
@@ -255,6 +286,7 @@ class PlaylistFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.loadTracks()
+        bottomNavView.isVisible = false
     }
 
     override fun onDestroyView() {
@@ -266,7 +298,7 @@ class PlaylistFragment : Fragment() {
 
     companion object {
         fun newInstance() = PlaylistFragment()
-
+        const val PLAYLIST_KEY = "Playlist"
     }
 
 }

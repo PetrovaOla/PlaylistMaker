@@ -2,6 +2,7 @@ package petrova.ola.playlistmaker.di
 
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import petrova.ola.playlistmaker.editplaylist.ui.EditPlaylistViewModel
 import petrova.ola.playlistmaker.media.ui.media.MediaViewModel
 import petrova.ola.playlistmaker.media.favorite.ui.FavoritesViewModel
 import petrova.ola.playlistmaker.media.playlists.domain.model.Playlist
@@ -21,10 +22,12 @@ val viewModelModule = module {
     }
 
     viewModel { (track: Track) ->
-        PlayerViewModel(track = track,
+        PlayerViewModel(
+            track = track,
             playerInteractor = get(),
             favouritesInteractor = get(),
-            playlistsInteractor = get())
+            playlistsInteractor = get()
+        )
     }
 
     viewModel {
@@ -47,9 +50,17 @@ val viewModelModule = module {
         NewPlaylistViewModel(get())
     }
 
-    viewModel { (playlist:Playlist) ->
-        PlaylistViewModel(playlist = playlist,
-            get(), get())
+    viewModel {(playlist: Playlist) ->
+        EditPlaylistViewModel( playlist = playlist,
+            playlistsInteractor =  get()
+        )
+    }
+
+    viewModel { (playlist: Playlist) ->
+        PlaylistViewModel(
+            playlist = playlist,
+            get(), get(), get()
+        )
     }
 
 }

@@ -1,5 +1,7 @@
 package petrova.ola.playlistmaker.media.ui.new_playlist
 
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -16,6 +18,7 @@ class NewPlaylistViewModel(private val playlistsInteractor: PlaylistsInteractor)
                     playlistsInteractor.saveFile(uri = image).toString()
                 else
                     null
+                Log.d("rtjknjoenjo", (newUri == null).toString() + " " + newUri.toString())
                 playlistsInteractor.createPlaylist(
                     Playlist(
                         name = name,

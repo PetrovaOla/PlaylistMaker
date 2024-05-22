@@ -12,7 +12,7 @@ class DbConvertorPlaylist {
             id = playlist.id,
             description = playlist.description,
             name = playlist.name,
-            img = playlist.img.toString(),
+            img = playlist.img,
         )
     }
 

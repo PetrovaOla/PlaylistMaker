@@ -38,7 +38,12 @@ class PlaylistsInteractImpl(private val repository: PlaylistsRepository) : Playl
         return repository.saveFile(uri)
     }
 
-    override suspend fun deleteFile(uri: Uri) {
+    override suspend fun deleteFile(uri: String?) {
         repository.deleteFile(uri)
     }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        repository.updatePlaylist(playlist)
+    }
+
 }
