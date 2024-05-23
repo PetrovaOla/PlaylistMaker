@@ -102,28 +102,19 @@
         <item name="tabTextColor">@color/white</item>
     </style>
 
-    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="materialAlertDialogTitleTextStyle">@style/TitleTextStyle</item>
-        <item name="materialAlertDialogBodyTextStyle">@style/BodyTextStyle</item>
-        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@drawable/alert</item>
+        <item name="backgroundTint">@android:color/transparent</item>
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
-    </style>
-
-    <style name="TitleTextStyle" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">@color/red</item>
-        <item name="android:textSize">20sp</item>
-    </style>
-
-    <style name="BodyTextStyle" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
-        <item name="android:textColor">@color/YPBlue</item>
-        <item name="android:textSize">14sp</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
     </style>
     <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:textColor">#d81b60</item>
-        <item name="rippleColor">#ad1457</item>
+        <item name="android:textColor">@color/YPBlue</item>
+        <item name="rippleColor">@color/YPBlue</item>
     </style>
     <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:textColor">#757575</item>
-        <item name="rippleColor">#a4a4a4</item>
+        <item name="android:textColor">@color/YPBlue</item>
+        <item name="rippleColor">@color/YPBlue</item>
     </style>
 </resources>

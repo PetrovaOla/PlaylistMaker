@@ -29,7 +29,6 @@ import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.EXTRAS_KEY
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.utils.ImageLoader
 import petrova.ola.playlistmaker.utils.debounce
-import petrova.ola.playlistmaker.utils.msToTime
 import kotlin.math.roundToInt
 
 
@@ -117,7 +116,7 @@ class PlaylistFragment : Fragment() {
 
 //            удалить трек
         onLongClick = { track ->
-            MaterialAlertDialogBuilder(requireContext())
+            MaterialAlertDialogBuilder(requireContext(), R.style.CustomAlertDialog)
                 .setTitle(getString(R.string.delete_track_title))
                 .setMessage(getString(R.string.delete_track))
                 .setNegativeButton(getString(R.string.no)) { _, _ ->
@@ -215,7 +214,11 @@ class PlaylistFragment : Fragment() {
 
         binding.deletePlBs.setOnClickListener {
             moreBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
+
+//            playlistBottomSheetBehavior.isHideable = true
+//            playlistBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+            MaterialAlertDialogBuilder(requireContext(), R.style.CustomAlertDialog)
                 .setTitle(getString(R.string.delete_playlist))
                 .setMessage(getString(R.string.delete_playlist_title))
                 .setNegativeButton(getString(R.string.no)) { _, _ ->
@@ -271,7 +274,8 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun showEmpty() {
-        recycler.visibility = View.GONE
+        recycler.isVisible = false
+        binding.noTrack.isVisible = true
     }
 
     private fun showContent(screenState: PlaylistState.Content) {
@@ -279,7 +283,7 @@ class PlaylistFragment : Fragment() {
         rvAdapter!!.tracks.clear()
         rvAdapter!!.tracks.addAll(screenState.tracks)
         rvAdapter!!.notifyDataSetChanged()
-        recycler.visibility = View.VISIBLE
+        recycler.isVisible = true
 
     }
 

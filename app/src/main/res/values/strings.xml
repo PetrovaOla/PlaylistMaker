@@ -84,4 +84,6 @@
     <string name="save">Сохранить</string>
     <string name="edit">Редактировать</string>
     <string name="share_playlist_text">       </string>
+    <string name="minut">%1$d минут</string>
+    <string name="no_track">В этом плейлисте \nнет списка треков</string>
 </resources>
