@@ -173,6 +173,7 @@ class EditPlayListFragment : Fragment() {
         )
 
         createBtn.setOnClickListener {
+
             viewModel.updatePlaylist(name = name, description = description, image = img)
             findNavController().navigateUp()
 

@@ -6,7 +6,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import petrova.ola.playlistmaker.media.playlists.domain.db.PlaylistsInteractor
 import petrova.ola.playlistmaker.media.playlists.domain.model.Playlist
-import petrova.ola.playlistmaker.media.playlists.ui.PlaylistsState
 
 class EditPlaylistViewModel(
     private val playlistsInteractor: PlaylistsInteractor,
@@ -27,11 +26,19 @@ class EditPlaylistViewModel(
         if (playlist.img != image || playlist.name != name || playlist.description != description) {
             viewModelScope.launch {
                 runBlocking {
-                    val newUri: String? = if (image.isNotBlank() && image != playlist.img) {
-                        playlistsInteractor.deleteFile(playlist.img)
-                        playlistsInteractor.saveFile(uri = image).toString()
-                    } else
-                        null
+                    val newUri: String? = when (image) {
+                        playlist.img -> image
+                        "" -> null
+                        else -> {
+                            playlistsInteractor.deleteFile(playlist.img)
+                            try {
+                                playlistsInteractor.saveFile(uri = image).toString()
+                            } catch (e: Exception) {
+                                null
+                            }
+                        }
+                    }
+
                     playlistsInteractor.updatePlaylist(
                         Playlist(
                             id = playlist.id,
