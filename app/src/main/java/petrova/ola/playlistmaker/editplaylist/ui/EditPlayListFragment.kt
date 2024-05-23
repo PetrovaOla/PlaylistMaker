@@ -49,6 +49,7 @@ class EditPlayListFragment : Fragment() {
     private var name: String = EMPTY
     private var description: String = EMPTY
     private var img: String = EMPTY
+    private var hasChanges = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,6 +59,12 @@ class EditPlayListFragment : Fragment() {
         return binding.root
     }
 
+
+    fun checkInputs() {
+        val maySave = name.isNotBlank() && hasChanges
+        binding.createPlaylist.isEnabled = maySave
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -65,8 +72,9 @@ class EditPlayListFragment : Fragment() {
         bottomNavView.isVisible = false
 
         appBar = requireActivity().findViewById(R.id.toolbar)
+        appBar.isVisible = true
         appBar.setNavigationIcon(R.drawable.arrow_back)
-        appBar.setNavigationOnClickListener { backPressed() }
+        appBar.setNavigationOnClickListener { findNavController().navigateUp() }
         appBar.setTitle(R.string.edit)
 
         createBtn = binding.createPlaylist
@@ -113,6 +121,8 @@ class EditPlayListFragment : Fragment() {
                 if (uri != null) {
                     binding.newImgPlaceholder.setImageURI(uri)
                     img = uri.toString()
+                    hasChanges = true
+                    checkInputs()
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
@@ -122,17 +132,18 @@ class EditPlayListFragment : Fragment() {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
+        name = playlist.name
+        description = playlist.description ?: EMPTY
+        img = playlist.img ?: EMPTY
 
         inputName.addTextChangedListener(
             onTextChanged =
             { s: CharSequence?, start: Int, before: Int, count: Int ->
-                if (s.isNullOrBlank()) {
-                    binding.createPlaylist.isEnabled = false
-                } else {
-                    name = s.toString()
-                    binding.createPlaylist.isEnabled = true
-
-                }
+                name = if (!s.isNullOrBlank()) {
+                    s.toString()
+                } else EMPTY
+                hasChanges = true
+                checkInputs()
             },
             afterTextChanged =
             { editable ->
@@ -149,7 +160,9 @@ class EditPlayListFragment : Fragment() {
             { s: CharSequence?, start: Int, before: Int, count: Int ->
                 if (s.isNullOrBlank()) {
                 } else {
+                    hasChanges = true
                     description = s.toString()
+                    checkInputs()
                     binding.inputLayoutDescription.setBoxStrokeColorStateList(
                         requireContext().getColorStateList(
                             R.color.YPBlue
@@ -168,8 +181,6 @@ class EditPlayListFragment : Fragment() {
                  bundleOf(PLAYLIST_NAME to name)
              )*/
         }
-
-
     }
 
     private fun backPressed() {

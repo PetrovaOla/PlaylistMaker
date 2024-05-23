@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import petrova.ola.playlistmaker.media.playlists.domain.model.Playlist
 
 @Dao
 interface PlaylistDao {
@@ -46,4 +47,7 @@ interface PlaylistDao {
 
     @Query("DELETE FROM playlist_tracks_table WHERE playlist_id=:playlistId AND track_id=:trackId")
     suspend fun deleteTrack(playlistId: Long, trackId: Long)
+
+    @Query("SELECT * FROM playlist_table WHERE id=:playlistId LIMIT 1")
+    suspend fun getPlaylist(playlistId: Long): PlaylistWithTracks
 }

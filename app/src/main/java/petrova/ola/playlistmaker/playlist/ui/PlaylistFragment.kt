@@ -158,7 +158,7 @@ class PlaylistFragment : Fragment() {
 
             namePl.text = playlist.name
             descriptionPl.text = playlist.description
-
+//todo
             viewModel.timeLiveData.observe(viewLifecycleOwner) { time ->
                 val seconds = (time.toDouble() / 1000).roundToInt()
                 durationPl.text = "${seconds / 60}:${seconds % 60}"
@@ -194,7 +194,7 @@ class PlaylistFragment : Fragment() {
 
         binding.morePl.setOnClickListener {
             moreBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            showPlaylist()
+            updateBottomSheet()
         }
 
         binding.sharePl.setOnClickListener {
@@ -230,6 +230,11 @@ class PlaylistFragment : Fragment() {
                 .show()
         }
 
+        viewModel.playlistReload.observe(viewLifecycleOwner) {
+            playlist = it
+            updateBottomSheet()
+            updateData()
+        }
     }
 
     private fun sharePlaylist(view: View) {
@@ -247,7 +252,7 @@ class PlaylistFragment : Fragment() {
         }
     }
 
-    private fun showPlaylist() {
+    private fun updateBottomSheet() {
         playlist.img?.let {
             imageLoader.loadImage(
                 imageUrl = it,
@@ -256,11 +261,32 @@ class PlaylistFragment : Fragment() {
                 errorPlaceholder = R.drawable.album,
                 into = binding.imageTrack
             )
-            binding.playlistName.text = playlist.name
-            binding.playlistCount.text = playlist.description
-
         }
+        binding.playlistName.text = playlist.name
+        binding.playlistCount.text = resources.getQuantityString(
+            R.plurals.track_plurals,
+            playlist.trackIds.size,
+            playlist.trackIds.size
+        )
+    }
 
+    private fun updateData() {
+        playlist.img?.let {
+            imageLoader.loadImage(
+                imageUrl = it,
+                context = binding.root,
+                placeholder = R.drawable.album,
+                errorPlaceholder = R.drawable.album,
+                into = binding.placeholderPl
+            )
+        }
+        binding.namePl.text = playlist.name
+        binding.descriptionPl.text = playlist.description
+        binding.countPl.text = resources.getQuantityString(
+            R.plurals.track_plurals,
+            playlist.trackIds.size,
+            playlist.trackIds.size
+        )
     }
 
 
@@ -291,6 +317,7 @@ class PlaylistFragment : Fragment() {
         super.onResume()
         viewModel.loadTracks()
         bottomNavView.isVisible = false
+        viewModel.requestPlaylistUpdate()
     }
 
     override fun onDestroyView() {

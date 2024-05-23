@@ -65,7 +65,7 @@ class PlaylistsRepositoryImpl(
         }
     }
 
-    override fun getPlaylist(): Flow<List<Playlist>> = flow {
+    override fun getPlaylists(): Flow<List<Playlist>> = flow {
         emit(
             playlistDao
                 .getPlaylistsWithTracks()
@@ -78,14 +78,15 @@ class PlaylistsRepositoryImpl(
         // Получаем каталог с изображениями внутри специфичного для приложения каталога
         // во внешнем хранилище
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), albumName)
-        if (!file.exists() && !file.mkdirs()){
-                Log.e(LOG_TAG, "Директория не создана")
-                throw IOException("Directory not created")
-            }
+        if (!file.exists() && !file.mkdirs()) {
+            Log.e(LOG_TAG, "Директория не создана")
+            throw IOException("Directory not created")
+        }
 
         return file
     }
-//todo повороты
+
+    //todo повороты
     override suspend fun saveFile(inputFile: String): Uri {
         val uri = Uri.parse(inputFile)
 
@@ -128,12 +129,21 @@ class PlaylistsRepositoryImpl(
         }
     }
 
-    override suspend fun deleteFile(uri: String?) {
-        uri?.toUri()?.toFile()?.delete()
+    override suspend fun deleteFile(uri: String?): Boolean {
+        return try {
+            uri?.toUri()?.toFile()?.delete()
+            true
+        } catch (e: IllegalArgumentException) {
+            false
+        }
     }
 
     override suspend fun updatePlaylist(playlist: Playlist) {
         playlistDao.updatePlaylist(dbConvertor.mapToEntity(playlist))
+    }
+
+    override suspend fun getPlaylist(id: Long): Flow<Playlist> = flow {
+        emit(dbConvertor.mapToModel(playlistDao.getPlaylist(id)))
     }
 
     companion object {

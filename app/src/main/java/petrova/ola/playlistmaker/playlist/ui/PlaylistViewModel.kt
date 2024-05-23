@@ -1,5 +1,6 @@
 package petrova.ola.playlistmaker.playlist.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,7 +17,7 @@ import petrova.ola.playlistmaker.sharing.domain.SharingInteractor
 import kotlin.math.roundToInt
 
 class PlaylistViewModel(
-    private val playlist: Playlist,
+    private var playlist: Playlist,
     private val networkInteractor: PlaylistInteractor,
     private val databaseInteractor: PlaylistsInteractor,
     private val sharingInteractor: SharingInteractor,
@@ -28,6 +29,9 @@ class PlaylistViewModel(
 
     private val timeMutableLiveData = MutableLiveData<Int>()
     val timeLiveData: LiveData<Int> = timeMutableLiveData
+
+    private val mutablePlaylistReload = MutableLiveData<Playlist>()
+    val playlistReload: LiveData<Playlist> = mutablePlaylistReload
 
     init {
         loadTracks()
@@ -121,6 +125,14 @@ class PlaylistViewModel(
         }
 
         return builder.toString()
+    }
+
+    fun requestPlaylistUpdate() {
+        viewModelScope.launch {
+            val first = databaseInteractor.getPlaylist(playlist.id).firstOrNull() ?: return@launch
+            mutablePlaylistReload.postValue(first)
+            playlist = first
+        }
     }
 
 }

@@ -8,7 +8,7 @@ import petrova.ola.playlistmaker.search.domain.model.Track
 interface PlaylistsRepository {
 
     // добавление трека в плейлист
-    suspend fun addTrack(track: Track, playlist: Playlist):Boolean
+    suspend fun addTrack(track: Track, playlist: Playlist): Boolean
 
     // добавление плейлиста
     suspend fun createPlaylist(playlist: Playlist)
@@ -20,17 +20,18 @@ interface PlaylistsRepository {
     suspend fun deletePlaylist(playlist: Playlist)
 
     // получения списков плейлистов
-    fun getPlaylist(): Flow<List<Playlist>>
+    fun getPlaylists(): Flow<List<Playlist>>
 
-        // получения списков плейлистов
+    // получения списков плейлистов
     fun getTracks(playlistId: Long): Flow<List<Long>>
 
 
     suspend fun saveFile(inputFile: String): Uri
 
 
-    suspend fun deleteFile(uri: String?)
+    suspend fun deleteFile(uri: String?): Boolean
 
     suspend fun updatePlaylist(playlist: Playlist)
+    suspend fun getPlaylist(id: Long): Flow<Playlist>
 }
 

@@ -8,6 +8,4 @@ data class Playlist(
     val description: String?,
     var img: String?,
     val trackIds: List<Long>
-): Serializable{
-
-}
+): Serializable
