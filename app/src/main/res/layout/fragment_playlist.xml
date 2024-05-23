@@ -188,7 +188,7 @@
         android:paddingTop="@dimen/dp16"
         app:behavior_hideable="true"
         app:behavior_peekHeight="270dp"
-        tools:visibility="gone"
+
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout
@@ -205,7 +205,7 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/track_name"
                 android:scaleType="centerCrop"
-                tools:background="@drawable/placeholder" />
+                android:src="@drawable/placeholder" />
 
             <LinearLayout
                 android:id="@+id/aaa"
