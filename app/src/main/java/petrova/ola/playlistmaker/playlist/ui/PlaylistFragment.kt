@@ -1,5 +1,6 @@
 package petrova.ola.playlistmaker.playlist.ui
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
@@ -59,6 +60,7 @@ class PlaylistFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -158,10 +160,14 @@ class PlaylistFragment : Fragment() {
 
             namePl.text = playlist.name
             descriptionPl.text = playlist.description
-//todo
             viewModel.timeLiveData.observe(viewLifecycleOwner) { time ->
                 val seconds = (time.toDouble() / 1000).roundToInt()
-                durationPl.text = "${seconds / 60}:${seconds % 60}"
+                durationPl.text = binding.root.resources.getQuantityString(
+                    R.plurals.minut_plurals,
+                    seconds / 60,
+                    seconds / 60
+                )
+//                "${seconds / 60} "
             }
             durationPl.text = resources.getText(R.string.loading)
 
