@@ -56,7 +56,7 @@ class PlaylistsRepositoryImpl(
     }
 
     override fun getTracks(playlistId: Long): Flow<List<Long>> = flow {
-        playlistDao.getTracks(playlistId).firstOrNull()?.tracks?.map {
+        playlistDao.getTracks(playlistId).firstOrNull()?.tracks?.reversed()?.map {
             it.trackId
         }?.let {
             emit(

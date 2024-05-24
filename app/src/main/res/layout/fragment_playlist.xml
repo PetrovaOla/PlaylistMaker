@@ -33,7 +33,7 @@
             android:layout_marginTop="@dimen/dp16"
             android:clickable="true"
             android:contentDescription="@null"
-            android:src="@drawable/arrow_back"
+            android:src="@drawable/arrow_back_black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,7 +83,7 @@
             android:textSize="18sp"
             android:paddingVertical="@dimen/_4dp"
             android:paddingStart="@dimen/dp16"
-            app:drawableEndCompat="@drawable/ic"
+            app:drawableEndCompat="@drawable/ic_black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
