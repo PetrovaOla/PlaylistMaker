@@ -6,7 +6,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.ItemBottomsheetBinding
-import petrova.ola.playlistmaker.media.playlist.domain.model.Playlist
+import petrova.ola.playlistmaker.media.playlists.domain.model.Playlist
 
 
 class BottomSheetViewHolder(

@@ -5,9 +5,11 @@ import org.koin.dsl.module
 import petrova.ola.playlistmaker.player.domain.PlayerInteractor
 import petrova.ola.playlistmaker.media.favorite.domain.db.FavouritesInteractor
 import petrova.ola.playlistmaker.media.favorite.domain.impl.FavouritesInteractorImpl
-import petrova.ola.playlistmaker.media.playlist.domain.db.PlaylistInteractor
-import petrova.ola.playlistmaker.media.playlist.domain.impl.PlaylistInteractImpl
+import petrova.ola.playlistmaker.media.playlists.domain.db.PlaylistsInteractor
+import petrova.ola.playlistmaker.media.playlists.domain.impl.PlaylistsInteractImpl
 import petrova.ola.playlistmaker.player.domain.impl.PlayerInteractorImpl
+import petrova.ola.playlistmaker.playlist.domain.api.PlaylistInteractor
+import petrova.ola.playlistmaker.playlist.domain.impl.PlaylistInteractorImpl
 import petrova.ola.playlistmaker.search.domain.api.TracksInteractor
 import petrova.ola.playlistmaker.search.domain.impl.TracksInteractorImpl
 import petrova.ola.playlistmaker.setting.domain.SettingInteractor
@@ -37,8 +39,11 @@ val interactorModule = module {
         FavouritesInteractorImpl(get())
     }
 
-    single<PlaylistInteractor> {
-        PlaylistInteractImpl(get())
+    single<PlaylistsInteractor> {
+        PlaylistsInteractImpl(get())
     }
 
+    single<PlaylistInteractor> {
+        PlaylistInteractorImpl(get())
+    }
 }

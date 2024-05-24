@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -25,13 +24,14 @@ import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentPlayerBinding
-import petrova.ola.playlistmaker.media.playlist.domain.model.Playlist
-import petrova.ola.playlistmaker.media.playlist.ui.PlaylistFragment.Companion.PLAYLIST_CREATED
-import petrova.ola.playlistmaker.media.playlist.ui.PlaylistFragment.Companion.PLAYLIST_NAME
-import petrova.ola.playlistmaker.media.playlist.ui.PlaylistState
+import petrova.ola.playlistmaker.media.playlists.domain.model.Playlist
+import petrova.ola.playlistmaker.media.playlists.ui.PlaylistsFragment.Companion.PLAYLIST_CREATED
+import petrova.ola.playlistmaker.media.playlists.ui.PlaylistsFragment.Companion.PLAYLIST_NAME
+import petrova.ola.playlistmaker.media.playlists.ui.PlaylistsState
 import petrova.ola.playlistmaker.player.domain.PlayerState
+import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.CLICK_DEBOUNCE_DELAY
+import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.EXTRAS_KEY
 import petrova.ola.playlistmaker.search.domain.model.Track
-import petrova.ola.playlistmaker.search.ui.SearchFragment
 import petrova.ola.playlistmaker.utils.ImageLoader
 import petrova.ola.playlistmaker.utils.msToTime
 
@@ -85,12 +85,12 @@ class PlayerFragment : Fragment() {
         track = when {
             SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
                 arguments?.getSerializable(
-                    SearchFragment.EXTRAS_KEY,
+                    EXTRAS_KEY,
                     Track::class.java
                 ) as Track
 
             else ->
-                arguments?.getSerializable(SearchFragment.EXTRAS_KEY) as Track
+                arguments?.getSerializable(EXTRAS_KEY) as Track
         }
 
 
@@ -114,10 +114,9 @@ class PlayerFragment : Fragment() {
 
         viewModel.getResultLiveData().observe(viewLifecycleOwner) { (playlistName, isSuccess) ->
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            val view: CoordinatorLayout? = activity?.findViewById(R.id.main)
 
             Snackbar.make(
-                view!!,
+                requireActivity().findViewById(R.id.main),
                 getString(
                     when(isSuccess) {
                         true -> R.string.add_track_to_playlist
@@ -136,12 +135,12 @@ class PlayerFragment : Fragment() {
 
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.overlay.visibility = View.GONE
+                        binding.overlay.isVisible = false
                         appBar.setBackgroundColor(resources.getColor(R.color.bottom_navigation_background))
                     }
 
                     else -> {
-                        binding.overlay.visibility = View.VISIBLE
+                        binding.overlay.isVisible = true
                         appBar.setBackgroundColor(resources.getColor(R.color.overlay))
                     }
                 }
@@ -149,6 +148,7 @@ class PlayerFragment : Fragment() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
+
         binding.newPlaylist.setOnClickListener {
             findNavController().navigate(R.id.action_playerFragment_to_newPlayListFragment)
         }
@@ -168,7 +168,7 @@ class PlayerFragment : Fragment() {
             viewModel.onPlayClick()
         }
         viewModel.observeIsFavorite().observe(viewLifecycleOwner) { isFavorite ->
-            if (isFavorite == true) {
+            if (isFavorite) {
                 binding.buttonLike.setImageResource(R.drawable.button_like)
 
             } else {
@@ -236,11 +236,10 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun renderPlaylist(state: PlaylistState) {
+    private fun renderPlaylist(state: PlaylistsState) {
         when (state) {
-            is PlaylistState.Empty -> showEmpty()
-            is PlaylistState.Content -> showContent(state.playlists)
-            else -> {}
+            is PlaylistsState.Empty -> showEmpty()
+            is PlaylistsState.Content -> showContent(state.playlists)
         }
     }
 
@@ -250,11 +249,11 @@ class PlayerFragment : Fragment() {
             playlists.addAll(playlist)
             notifyDataSetChanged()
         }
-        binding.rvPlaylist.visibility = View.VISIBLE
+        binding.rvPlaylist.isVisible = true
     }
 
     private fun showEmpty() {
-        binding.rvPlaylist.visibility = View.VISIBLE
+        binding.rvPlaylist.isVisible = true
     }
 
     private fun debounceClick(): Boolean {
@@ -309,9 +308,8 @@ class PlayerFragment : Fragment() {
     }
 
     private fun showToast(playlistName: String) {
-        val view: CoordinatorLayout? = activity?.findViewById(R.id.main)
         val snackbar = Snackbar.make(
-            view!!,
+            requireActivity().findViewById(R.id.main),
             getString(R.string.playlist_show, playlistName),
             Snackbar.LENGTH_SHORT
         )
@@ -327,6 +325,7 @@ class PlayerFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.loadPlaylists()
+        appBar.isVisible = true
     }
 
     override fun onDestroyView() {
@@ -338,7 +337,6 @@ class PlayerFragment : Fragment() {
 
     companion object {
         private const val TAG = "Player Fragment"
-        private const val CLICK_DEBOUNCE_DELAY = 200L
     }
 }
 

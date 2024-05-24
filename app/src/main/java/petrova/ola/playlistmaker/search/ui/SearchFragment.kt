@@ -13,17 +13,22 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.Group
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentSearchBinding
 import petrova.ola.playlistmaker.root.ui.RootActivity
+import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.CLICK_DEBOUNCE_DELAY
+import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.EXTRAS_KEY
 import petrova.ola.playlistmaker.search.domain.model.Track
 import petrova.ola.playlistmaker.utils.debounce
 
@@ -49,6 +54,8 @@ class SearchFragment : Fragment() {
     private lateinit var historySearchTv: TextView
     private lateinit var clearHistoryButton: Button
     private lateinit var progressBar: ProgressBar
+    private lateinit var appBar: Toolbar
+    private lateinit var bottomNavView: BottomNavigationView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,6 +79,12 @@ class SearchFragment : Fragment() {
         historySearchTv = binding.historySearchTv
         progressBar = binding.progressBar
 
+        bottomNavView = requireActivity().findViewById(R.id.bottomNavigationView)
+        bottomNavView.isVisible = true
+
+        appBar = requireActivity().findViewById(R.id.toolbar)
+        appBar.isVisible = true
+
         rvAdapter = SearchRecyclerAdapter {
             (activity as RootActivity).animateBottomNavigationView(View.GONE)
             onTrackClickDebounce(it)
@@ -94,14 +107,15 @@ class SearchFragment : Fragment() {
                 is SearchScreenState.HistoryTracks -> showHistoryTracks(screenState)
                 is SearchScreenState.TrackList -> showSearchTracks(screenState)
             }
+
         }
 
-
-        inputEditText.setOnFocusChangeListener { _, hasFocus ->
+        val originalListener = binding.inputLayoutText.editText?.onFocusChangeListener
+        inputEditText.setOnFocusChangeListener { view, hasFocus ->
             viewModel.changeInputFocus(hasFocus, inputEditText.text!!.isEmpty())
-
-
+            originalListener?.onFocusChange(view, hasFocus)
         }
+
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 groupNotFound.visibility = View.GONE
@@ -231,9 +245,8 @@ class SearchFragment : Fragment() {
     }
 
     companion object {
-        const val EXTRAS_KEY: String = "TRACK"
+
         private const val EMPTY = ""
-        private const val CLICK_DEBOUNCE_DELAY = 200L
     }
 
 }

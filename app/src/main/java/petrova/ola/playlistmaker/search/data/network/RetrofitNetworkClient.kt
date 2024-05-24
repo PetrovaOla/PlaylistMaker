@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import petrova.ola.playlistmaker.search.data.NetworkClient
 import petrova.ola.playlistmaker.search.data.dto.Response
+import petrova.ola.playlistmaker.playlist.data.dto.TrackByIdRequest
 import petrova.ola.playlistmaker.search.data.dto.TrackSearchRequest
 
 class RetrofitNetworkClient(
@@ -14,15 +15,10 @@ class RetrofitNetworkClient(
     private val context: Context
 ) : NetworkClient {
 
-    override suspend fun doRequestSuspend(dto: NetworkRequest): Response {
+    override suspend fun searchTrack(dto: TrackSearchRequest): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = -1 }
         }
-
-        if (dto !is TrackSearchRequest) {
-            return Response().apply { resultCode = 400 }
-        }
-
 
         return withContext(Dispatchers.IO) {
             try {
@@ -32,9 +28,22 @@ class RetrofitNetworkClient(
                 Response().apply { resultCode = 500 }
             }
         }
-
     }
 
+    override suspend fun getTracks(dto: TrackByIdRequest): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = -1 }
+        }
+
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = apiService.getTrackIds(dto.ids.joinToString())
+                response.apply { resultCode = 200 }
+            } catch (e: Throwable) {
+                Response().apply { resultCode = 500 }
+            }
+        }
+    }
 
     private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(

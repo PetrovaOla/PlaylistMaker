@@ -61,4 +61,35 @@ class SharingInteractorImpl(
             Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
         }
     }
+
+    override fun sharePlaylist(message: String) {
+
+
+        val intent = Intent(Intent.ACTION_SEND)
+
+        val shareContent = getString(context, R.string.share_playlist_text)
+        intent.setType(getString(context, R.string.text_plain))
+
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(context, R.string.share_subject))
+        intent.putExtra(Intent.EXTRA_TEXT, message)
+        val createChooser = Intent.createChooser(
+            intent,
+            getString(context, R.string.share_using)
+        )
+        createChooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(
+            createChooser
+        )
+
+
+        /* val sendApp: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, link)
+            type = "text/plain"
+            Intent.createChooser(this, null)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(sendApp)
+*/
+    }
 }

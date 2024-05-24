@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_mediaFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_mediaFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
     </fragment>
 
     <fragment
@@ -45,6 +48,22 @@
         android:id="@+id/newPlayListFragment"
         android:name="petrova.ola.playlistmaker.media.ui.new_playlist.NewPlayListFragment"
         android:label="@string/new_playlist"
-        tools:layout="@layout/fragment_new_play_list" />
+        tools:layout="@layout/fragment_new_playlist" />
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="petrova.ola.playlistmaker.playlist.ui.PlaylistFragment"
+        android:label=""
+        tools:layout="@layout/fragment_playlist" >
+        <action
+            android:id="@+id/action_playlistFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_playlistFragment_to_editPlayListFragment"
+            app:destination="@id/editPlayListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPlayListFragment"
+        android:name="petrova.ola.playlistmaker.editplaylist.ui.EditPlayListFragment"
+        android:label="EditPlayListFragment" />
 
 </navigation>

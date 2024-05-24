@@ -31,12 +31,11 @@ class RootActivity : AppCompatActivity() {
                 R.id.searchFragment,
                 R.id.settingFragment,
                 R.id.mediaFragment,
-                R.id.newPlayListFragment
+                R.id.newPlayListFragment,
             )
         )
         findViewById<Toolbar>(R.id.toolbar)
-            .setupWithNavController(navController, appBarConfiguration,)
-
+            .setupWithNavController(navController, appBarConfiguration)
 
 
 //        navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -61,4 +60,8 @@ class RootActivity : AppCompatActivity() {
         super.onResume()
     }
 
+    companion object {
+        const val CLICK_DEBOUNCE_DELAY = 200L
+        const val EXTRAS_KEY: String = "TRACK"
+    }
 }

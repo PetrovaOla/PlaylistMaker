@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.Group
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentFavoritesBinding
+import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.EXTRAS_KEY
 import petrova.ola.playlistmaker.search.domain.model.Track
-import petrova.ola.playlistmaker.search.ui.SearchFragment.Companion.EXTRAS_KEY
 import petrova.ola.playlistmaker.search.ui.SearchRecyclerAdapter
 import petrova.ola.playlistmaker.utils.debounce
 
@@ -44,7 +45,7 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         groupNotFound = binding.groupNotFoundMedia
         recycler = binding.trackListFavorites
-        groupNotFound.visibility = View.GONE
+        groupNotFound.isVisible = false
 
         viewModel.loadFavoriteTracks()
 
@@ -81,17 +82,17 @@ class FavoritesFragment : Fragment() {
 
     private fun showProgress() {
         binding.apply {
-            groupNotFoundMedia.visibility = View.GONE
-            trackListFavorites.visibility = View.GONE
-            progressBarMedia.visibility = View.VISIBLE
+            groupNotFoundMedia.isVisible = false
+            trackListFavorites.isVisible = false
+            progressBarMedia.isVisible = true
         }
     }
 
     private fun showEmpty() {
         binding.apply {
-            groupNotFoundMedia.visibility = View.VISIBLE
-            trackListFavorites.visibility = View.GONE
-            progressBarMedia.visibility = View.GONE
+            groupNotFoundMedia.isVisible = true
+            trackListFavorites.isVisible = false
+            progressBarMedia.isVisible = false
         }
     }
 
@@ -99,10 +100,10 @@ class FavoritesFragment : Fragment() {
         binding.apply {
             rvAdapter!!.tracks.clear()
             rvAdapter!!.tracks.addAll(screenState.favoritesList)
-            rvAdapter!!.notifyDataSetChanged()
-            groupNotFoundMedia.visibility = View.GONE
-            trackListFavorites.visibility = View.VISIBLE
-            progressBarMedia.visibility = View.GONE
+            rvAdapter?.notifyDataSetChanged()
+            groupNotFoundMedia.isVisible = false
+            trackListFavorites.isVisible = true
+            progressBarMedia.isVisible = false
         }
     }
 

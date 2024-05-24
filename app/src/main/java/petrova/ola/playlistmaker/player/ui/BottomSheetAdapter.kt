@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import petrova.ola.playlistmaker.databinding.ItemBottomsheetBinding
-import petrova.ola.playlistmaker.media.playlist.domain.model.Playlist
+import petrova.ola.playlistmaker.media.playlists.domain.model.Playlist
 
 class BottomSheetAdapter (
     val playlists: MutableList<Playlist> = mutableListOf(),

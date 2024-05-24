@@ -101,4 +101,20 @@
         <item name="tabIndicatorColor">@color/white</item>
         <item name="tabTextColor">@color/white</item>
     </style>
+
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@drawable/alert</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/YPBlue</item>
+        <item name="rippleColor">@color/YPBlue</item>
+    </style>
+    <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/YPBlue</item>
+        <item name="rippleColor">@color/YPBlue</item>
+    </style>
 </resources>
