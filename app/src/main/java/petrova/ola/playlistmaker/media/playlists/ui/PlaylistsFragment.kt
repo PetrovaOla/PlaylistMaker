@@ -98,9 +98,9 @@ class PlaylistsFragment : Fragment() {
     }
 
     private fun showContent(screenState: PlaylistsState.Content) {
-        rvAdapter?.playlists?.clear()
-        rvAdapter?.playlists?.addAll(screenState.playlists)
-        rvAdapter?.notifyDataSetChanged()
+        rvAdapter!!.playlists.clear()
+        rvAdapter!!.playlists.addAll(screenState.playlists)
+        rvAdapter!!.notifyDataSetChanged()
         groupNotFound.isVisible = false
         recycler.isVisible = true
     }

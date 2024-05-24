@@ -98,8 +98,8 @@ class FavoritesFragment : Fragment() {
 
     private fun showContent(screenState: FavoritesState.Content) {
         binding.apply {
-            rvAdapter?.tracks?.clear()
-            rvAdapter?.tracks?.addAll(screenState.favoritesList)
+            rvAdapter!!.tracks.clear()
+            rvAdapter!!.tracks.addAll(screenState.favoritesList)
             rvAdapter?.notifyDataSetChanged()
             groupNotFoundMedia.isVisible = false
             trackListFavorites.isVisible = true
