@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -33,7 +32,6 @@ import petrova.ola.playlistmaker.player.domain.PlayerState
 import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.CLICK_DEBOUNCE_DELAY
 import petrova.ola.playlistmaker.root.ui.RootActivity.Companion.EXTRAS_KEY
 import petrova.ola.playlistmaker.search.domain.model.Track
-import petrova.ola.playlistmaker.search.ui.SearchFragment
 import petrova.ola.playlistmaker.utils.ImageLoader
 import petrova.ola.playlistmaker.utils.msToTime
 
@@ -116,10 +114,9 @@ class PlayerFragment : Fragment() {
 
         viewModel.getResultLiveData().observe(viewLifecycleOwner) { (playlistName, isSuccess) ->
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            val view: CoordinatorLayout? = activity?.findViewById(R.id.main)
 
             Snackbar.make(
-                view!!,
+                requireActivity().findViewById(R.id.main),
                 getString(
                     when(isSuccess) {
                         true -> R.string.add_track_to_playlist
@@ -138,12 +135,12 @@ class PlayerFragment : Fragment() {
 
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.overlay.visibility = View.GONE
+                        binding.overlay.isVisible = false
                         appBar.setBackgroundColor(resources.getColor(R.color.bottom_navigation_background))
                     }
 
                     else -> {
-                        binding.overlay.visibility = View.VISIBLE
+                        binding.overlay.isVisible = true
                         appBar.setBackgroundColor(resources.getColor(R.color.overlay))
                     }
                 }
@@ -252,11 +249,11 @@ class PlayerFragment : Fragment() {
             playlists.addAll(playlist)
             notifyDataSetChanged()
         }
-        binding.rvPlaylist.visibility = View.VISIBLE
+        binding.rvPlaylist.isVisible = true
     }
 
     private fun showEmpty() {
-        binding.rvPlaylist.visibility = View.VISIBLE
+        binding.rvPlaylist.isVisible = true
     }
 
     private fun debounceClick(): Boolean {
@@ -311,9 +308,8 @@ class PlayerFragment : Fragment() {
     }
 
     private fun showToast(playlistName: String) {
-        val view: CoordinatorLayout? = activity?.findViewById(R.id.main)
         val snackbar = Snackbar.make(
-            view!!,
+            requireActivity().findViewById(R.id.main),
             getString(R.string.playlist_show, playlistName),
             Snackbar.LENGTH_SHORT
         )

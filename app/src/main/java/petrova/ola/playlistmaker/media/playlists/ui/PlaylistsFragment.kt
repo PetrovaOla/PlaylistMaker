@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -57,7 +58,7 @@ class PlaylistsFragment : Fragment() {
         groupNotFound = binding.groupNotFoundPlaylist
         createButton = binding.createBtn
         recycler = binding.playlistRv
-        groupNotFound.visibility = View.GONE
+        groupNotFound.isVisible = false
 
         viewModel.loadPlaylist()
 
@@ -92,16 +93,16 @@ class PlaylistsFragment : Fragment() {
     }
 
     private fun showEmpty() {
-        groupNotFound.visibility = View.VISIBLE
-        recycler.visibility = View.GONE
+        groupNotFound.isVisible = true
+        recycler.isVisible = false
     }
 
     private fun showContent(screenState: PlaylistsState.Content) {
         rvAdapter?.playlists?.clear()
-        rvAdapter!!.playlists.addAll(screenState.playlists)
-        rvAdapter!!.notifyDataSetChanged()
-        groupNotFound.visibility = View.GONE
-        recycler.visibility = View.VISIBLE
+        rvAdapter?.playlists?.addAll(screenState.playlists)
+        rvAdapter?.notifyDataSetChanged()
+        groupNotFound.isVisible = false
+        recycler.isVisible = true
     }
 
 

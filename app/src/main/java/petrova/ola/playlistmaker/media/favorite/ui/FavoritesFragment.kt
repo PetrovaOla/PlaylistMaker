@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.Group
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -44,7 +45,7 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         groupNotFound = binding.groupNotFoundMedia
         recycler = binding.trackListFavorites
-        groupNotFound.visibility = View.GONE
+        groupNotFound.isVisible = false
 
         viewModel.loadFavoriteTracks()
 
@@ -81,28 +82,28 @@ class FavoritesFragment : Fragment() {
 
     private fun showProgress() {
         binding.apply {
-            groupNotFoundMedia.visibility = View.GONE
-            trackListFavorites.visibility = View.GONE
-            progressBarMedia.visibility = View.VISIBLE
+            groupNotFoundMedia.isVisible = false
+            trackListFavorites.isVisible = false
+            progressBarMedia.isVisible = true
         }
     }
 
     private fun showEmpty() {
         binding.apply {
-            groupNotFoundMedia.visibility = View.VISIBLE
-            trackListFavorites.visibility = View.GONE
-            progressBarMedia.visibility = View.GONE
+            groupNotFoundMedia.isVisible = true
+            trackListFavorites.isVisible = false
+            progressBarMedia.isVisible = false
         }
     }
 
     private fun showContent(screenState: FavoritesState.Content) {
         binding.apply {
-            rvAdapter!!.tracks.clear()
-            rvAdapter!!.tracks.addAll(screenState.favoritesList)
-            rvAdapter!!.notifyDataSetChanged()
-            groupNotFoundMedia.visibility = View.GONE
-            trackListFavorites.visibility = View.VISIBLE
-            progressBarMedia.visibility = View.GONE
+            rvAdapter?.tracks?.clear()
+            rvAdapter?.tracks?.addAll(screenState.favoritesList)
+            rvAdapter?.notifyDataSetChanged()
+            groupNotFoundMedia.isVisible = false
+            trackListFavorites.isVisible = true
+            progressBarMedia.isVisible = false
         }
     }
 
