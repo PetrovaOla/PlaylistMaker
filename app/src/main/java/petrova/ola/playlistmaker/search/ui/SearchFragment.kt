@@ -13,11 +13,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.Group
-import androidx.core.text.set
-import androidx.core.text.toSpannable
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -26,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout.END_ICON_CLEAR_TEXT
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import petrova.ola.playlistmaker.R
 import petrova.ola.playlistmaker.databinding.FragmentSearchBinding
@@ -114,20 +110,15 @@ class SearchFragment : Fragment() {
 
         }
 
-
-        inputEditText.setOnFocusChangeListener { _, hasFocus ->
+        val originalListener = binding.inputLayoutText.editText?.onFocusChangeListener
+        inputEditText.setOnFocusChangeListener { view, hasFocus ->
             viewModel.changeInputFocus(hasFocus, inputEditText.text!!.isEmpty())
-
+            originalListener?.onFocusChange(view, hasFocus)
         }
 
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 groupNotFound.visibility = View.GONE
-
-                /**
-                 * I'm sorry for that.
-                 * */
-                binding.inputLayoutText.isEndIconVisible = true
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -243,22 +234,6 @@ class SearchFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         inputEditText.requestFocus()
-        if (inputEditText.text?.isNotBlank() == true) {
-
-            /**
-             * And especially for this
-             * */
-            textWatcher?.let { inputEditText.removeTextChangedListener(it) }
-            binding.inputEditText.text.toString().let {
-                binding.inputEditText.text?.clear()
-                binding.inputEditText.text?.insert(0, it.toSpannable())
-            }
-            textWatcher?.let { inputEditText.addTextChangedListener(it) }
-
-
-            binding.inputLayoutText.endIconMode = END_ICON_CLEAR_TEXT
-            binding.inputLayoutText.isEndIconVisible = true
-        }
     }
 
     override fun onDestroyView() {
